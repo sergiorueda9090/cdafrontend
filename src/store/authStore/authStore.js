@@ -2,8 +2,6 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const savedInfoUser = JSON.parse(localStorage.getItem("infoUser")) || {};
 
-console.log("savedInfoUser ",savedInfoUser.isLogin)
-
 export const authStore = createSlice({
   name: 'authStore',
   initialState: {
@@ -21,17 +19,18 @@ export const authStore = createSlice({
         state.email     = action.payload.email
       },
       loginFail:(state,action) => {
-        localStorage.removeItem("access");
-        state.isLogin   = false
-        state.token     = ""
-        state.name_user = ""
-        state.email     = ""
+        localStorage.removeItem("infoUser");
+        state.infoUser  = {};
+        state.isLogin   = false;
+        state.token     = "";
+        state.name_user = "";
+        state.email     = "";
       },
       setAuthenticated:(state, action) => {
           state.token     = action.payload.access
 
           let local = {"access": action.payload.access, 
-                      "isLogin": action.payload.islogin};
+                       "isLogin": action.payload.islogin};
 
           localStorage.setItem("infoUser",JSON.stringify(local));
 

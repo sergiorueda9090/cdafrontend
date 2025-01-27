@@ -5,6 +5,7 @@ import Face6Icon from '@mui/icons-material/Face6';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/system';
+import SecurityIcon from '@mui/icons-material/Security';
 
 // Estiliza el componente Link
 const StyledLink = styled(Link)(({ theme }) => ({
@@ -34,10 +35,10 @@ export const SideBar = ({ drawerWidth = 240 }) => {
             route: '/tramites',
         },
         {
-            text: 'JournalApp',
-            icon: <TurnedInNot />,
-            secondary: 'Gestión de notas y tareas diarias.',
-            route: '/',
+            text: 'CodeVerification',
+            icon: <SecurityIcon />,
+            secondary: 'Verificación de código para acceso seguro.',
+            route: '/verify',
         },
     ];
 

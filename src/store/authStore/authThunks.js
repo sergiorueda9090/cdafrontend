@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setAuthenticated } from "./authStore.js";
+import { setAuthenticated, loginFail } from "./authStore.js";
 import { showBackDropStore, hideBackDropStore } from "../globalStore/globalStore.js";
 import { URL, TOKEN } from "../../constants.js/constantGlogal.js";
 
@@ -37,7 +37,7 @@ export const getAuth = (email,password) => {
             // Manejar errores
             await dispatch(hideBackDropStore());
             console.error(error);
-            //await dispatch(loginFail());
+            await dispatch(loginFail());
         }
     };
 };

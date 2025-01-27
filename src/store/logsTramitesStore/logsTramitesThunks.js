@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 //import { setAuthenticated } from "./authStore.js";
+import { loginFail } from "../authStore/authStore.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
 import { listStore  } from "./logsTramitesStore.js";
@@ -60,9 +61,9 @@ export const getAllThunks = (id) => {
             // Manejar errores
             console.error(error);
             
-            //await dispatch ( loginFail() );
+            await dispatch ( loginFail() );
             
-            //await dispatch( hideBackDropStore() );
+            await dispatch( hideBackDropStore() );
 
         }
     };

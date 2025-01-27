@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 //import { setAuthenticated } from "./authStore.js";
+import { loginFail } from "../authStore/authStore.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
 import { listUsuersStore, resetFormularioStore, showUserStore } from "./usersStore.js";
@@ -60,9 +61,9 @@ export const getAllThunks = () => {
             // Manejar errores
             console.error(error);
             
-            //await dispatch ( loginFail() );
+            await dispatch ( loginFail() );
             
-            //await dispatch( hideBackDropStore() );
+            await dispatch( hideBackDropStore() );
 
         }
     };
@@ -120,10 +121,10 @@ export const createThunks = (userData) => {
 
         } catch (error) {
 
-            //await dispatch ( loginFail() );
+            
             await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
             
-            await dispatch( getAllThunks() );
+            await dispatch ( loginFail() );
 
             await dispatch( closeModalShared() );
 
@@ -188,7 +189,7 @@ export const showThunk= (id = "") => {
 
         } catch (error) {
 
-            //await dispatch ( loginFail() );
+            await dispatch ( loginFail() );
 
             await dispatch( hideBackDropStore() );
             // Manejar errores
@@ -253,10 +254,10 @@ export const updateThunks = (userData) => {
 
         } catch (error) {
 
-            //await dispatch ( loginFail() );
+            
             await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
             
-            await dispatch( getAllThunks() );
+            await dispatch ( loginFail() );
 
             await dispatch( closeModalShared() );
 
@@ -309,7 +310,7 @@ export const deleteThunk = (idUser = "") => {
 
         } catch (error) {
 
-            //await dispatch ( loginFail() );
+            await dispatch ( loginFail() );
             
             await dispatch( hideBackDropStore() );
 

@@ -1,50 +1,59 @@
-import { Grid, Typography } from '@mui/material';
-import { StarOutline } from '@mui/icons-material';
-
-import { useSelector, useDispatch } from 'react-redux'
-import { decrement, increment } from '../../store/slices/couter/counterSlice'
+import React from "react";
+import {
+  Box,
+  Grid,
+  Typography,
+  Button,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import NotFoundImage from "../../assets/images/404cda.svg";
 
 export const NothingSelectedView = () => {
+  const navigate = useNavigate();
 
-  const {counter} = useSelector(state => state.counter)
-
-  const dispatch = useDispatch()
-
+  const handleGoBack = () => {
+    navigate("/users"); // Redirige al dashboard o a la página de inicio
+  };
 
   return (
     <Grid
       container
-      spacing={ 0 }
-      direction="column"
-      alignItems="center"
+      component="main"
+      sx={{ height: "100vh", backgroundColor: "#f4f5f7" }}
       justifyContent="center"
-      sx={{ minHeight: 'calc(100vh - 110px)', backgroundColor: 'primary.main', borderRadius: 3 }}
+      alignItems="center"
     >
-        <Grid item xs={ 12 }>
-            <StarOutline sx={{ fontSize: 100, color: 'white' }} />
-        </Grid>
-        <Grid item xs={ 12 }>
-            <Typography color="white" variant='h5'>Selecciona o crea una entrada</Typography>
-        </Grid>
+      <Box
+        sx={{
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          px: 3,
+        }}
+      >
+        <img
+          src={NotFoundImage}
+          alt="404 Not Found"
+          style={{ maxWidth: "100%", height: "auto", marginBottom: "20px" }}
+        />
 
+        <Typography
+          variant="h5"
+          sx={{ mt: 2, mb: 3, color: "text.secondary" }}
+        >
+          Oops! The page you're looking for isn't here.
+        </Typography>
 
-        <div>
-            <div>
-              <button
-                aria-label="Increment value"
-                onClick={() => dispatch(increment(1))}
-              >
-                Increment {counter}
-              </button>
-              <span>1</span>
-              <button
-                aria-label="Decrement value"
-                onClick={() => dispatch(decrement(1))}
-              >
-                Decrement {counter}
-              </button>
-            </div>
-        </div>
+        <Button
+          variant="contained"
+          size="large"
+          sx={{ mt: 2, px: 5, py: 1.5, backgroundColor: "#673ab7" }}
+          onClick={handleGoBack}
+        >
+          Back to Home
+        </Button>
+      </Box>
     </Grid>
-  )
+  );
 }

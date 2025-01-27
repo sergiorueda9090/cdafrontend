@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
-//import { setAuthenticated } from "./authStore.js";
+import { loginFail } from "../authStore/authStore.js";
+import { showThunk as precioClientesShow } from "../clientesStore/clientesThunks.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
 import { showStore, listStore, resetFormularioStore  } from "./tramitesStore.js";
@@ -60,9 +61,9 @@ export const getAllThunks = () => {
             // Manejar errores
             console.error(error);
             
-            //await dispatch ( loginFail() );
+            await dispatch ( loginFail() );
             
-            //await dispatch( hideBackDropStore() );
+            await dispatch( hideBackDropStore() );
 
         }
     };
@@ -134,12 +135,12 @@ export const createThunks = (data) => {
 
         } catch (error) {
 
-            //await dispatch ( loginFail() );
-
             // Mostrar una alerta con el mensaje de error
             await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
 
             await dispatch( getAllThunks() );
+
+            //await dispatch ( loginFail() );
 
             await dispatch( closeModalShared() );
 
@@ -178,6 +179,12 @@ export const showThunk= (id = "") => {
                 
                 await dispatch(showStore(response.data) );
 
+                if(response.data.idCliente){
+
+                    await dispatch(precioClientesShow(response.data.idCliente));
+                    
+                }
+
                 await dispatch(openModalShared());
 
                 await dispatch( hideBackDropStore() );
@@ -193,7 +200,7 @@ export const showThunk= (id = "") => {
 
         } catch (error) {
 
-            //await dispatch ( loginFail() );
+            await dispatch ( loginFail() );
 
             await dispatch( hideBackDropStore() );
             // Manejar errores
@@ -267,10 +274,10 @@ export const updateThunks = (data) => {
 
         } catch (error) {
 
-            //await dispatch ( loginFail() );
+            
             await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
             
-            await dispatch( getAllThunks() );
+            await dispatch ( loginFail() );
 
             await dispatch( closeModalShared() );
 
@@ -323,11 +330,12 @@ export const deleteThunk = (idUser = "") => {
 
         } catch (error) {
 
-            //await dispatch ( loginFail() );
-            
             await dispatch( hideBackDropStore() );
 
             await dispatch(setAlert({ message: 'Ocurrió un error.', type: 'error'}));
+            
+            await dispatch ( loginFail() );
+            
             // Manejar errores
             console.error(error);
         }

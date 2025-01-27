@@ -5,6 +5,7 @@ import { showThunk } from '../../store/clientesStore/clientesThunks';
 import { updateThunks } from '../../store/tramitesStore/tramitesThunks';
 
 export const EtapaTres = () => {
+
   const dispatch = useDispatch();
 
   // Obtener los precios de ley y el idCliente desde el store
@@ -12,26 +13,19 @@ export const EtapaTres = () => {
   const { id, idCliente, precioDeLey, comisionPrecioLey, total, estado } = useSelector((state) => state.tramitesStore);
 
   // Estados locales para manejar los valores seleccionados
-  const [precioLey, setPrecioLey] = useState(precioDeLey); // Precio de ley seleccionado
-  const [comision, setComision] = useState(comisionPrecioLey); // Comisión manual
+  const [precioLey, setPrecioLey]         = useState(precioDeLey); // Precio de ley seleccionado
+  const [comision, setComision]           = useState(comisionPrecioLey); // Comisión manual
   const [totalComision, setTotalComision] = useState(total); // Total calculado
-  const [errors, setErrors] = useState({}); // Estado para errores de validación
-
-  console.log("precioLey ",precioLey)
-  // Cargar los precios de ley cuando se monte el componente
-  useEffect(() => {
-    if (idCliente) {
-      dispatch(showThunk(idCliente));
-      setPrecioLey(precioDeLey)
-    }
-  }, [dispatch, idCliente]);
-
+  const [errors, setErrors]               = useState({}); // Estado para errores de validación
+ 
   // Manejar selección del precio de ley
   const handlePrecioLeyChange = (event, value) => {
     if (value) {
       setPrecioLey(value.precio_ley);
       setComision(value.comision);
-      setTotalComision(parseFloat(value.precio_ley) + parseFloat(value.comision));
+      const precioLeyNumerico = Number(value.precio_ley.replace(/\./g, '').replace(/,/g, '.'));
+      const comisionNumerica = Number(value.comision.replace(/\./g, '').replace(/,/g, '.'));
+      setTotalComision(precioLeyNumerico + comisionNumerica);
       setErrors((prevErrors) => ({ ...prevErrors, precioLey: undefined })); // Limpiar error
     } else {
       setPrecioLey("");
@@ -68,34 +62,35 @@ export const EtapaTres = () => {
     if (Object.keys(newErrors).length === 0) {
 
       const formData = {
-        id:id,
-        precioDeLey: precioLey,
-        comisionPrecioLey: comision,
-        total: totalComision,
-        estado: 'Ejecución'
+        id                :id,
+        precioDeLey       : precioLey,
+        comisionPrecioLey : comision,
+        total             : totalComision,
+        estado            : 'Ejecución'
       };
 
       dispatch(updateThunks(formData));
 
-      console.log("Formulario enviado:", formData);
-      // Aquí podrías despachar una acción de Redux o hacer una petición HTTP al backend
     }
   };
-  console.log("preciosLey ",preciosLey)
-  console.log("precioLey ",precioLey)
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         {/* Precio de ley */}
         <Grid item xs={12}>
           <FormControl fullWidth>
-            <Autocomplete
+          <Autocomplete
               disablePortal
-              options = {preciosLey}
-              value = {precioLey}
-              getOptionLabel={(option) => option.precio_ley}
+              options={preciosLey}
+              value={preciosLey.find((option) => option.precio_ley === precioLey) || null} // Encuentra el objeto correspondiente
               onChange={handlePrecioLeyChange}
+              getOptionLabel={(option) => option.precio_ley || ''} // Muestra el precio de ley como texto
+              renderOption={(props, option) => (
+                <li {...props}>
+                  {option.precio_ley} {/* Si quieres mostrar más datos */}
+                </li>
+              )}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -115,7 +110,7 @@ export const EtapaTres = () => {
             fullWidth
             label="💵 Comisión"
             variant="outlined"
-            value={parseFloat(comision).toLocaleString('es-CO')}
+            value={comision}
             onChange={handleComisionChange}
             placeholder="Ingrese la comisión manual"
             error={!!errors.comision}
@@ -126,9 +121,10 @@ export const EtapaTres = () => {
 
         {/* Total */}
         <Grid item xs={12}>
-          <Typography variant="h6">
-            🧾 Total: {totalComision.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}
-          </Typography>
+        <Typography variant="h6">
+  🧾 Total: {new Intl.NumberFormat('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(totalComision)}
+</Typography>
+
           {errors.totalComision && <Typography color="error">{errors.totalComision}</Typography>}
         </Grid>
 
