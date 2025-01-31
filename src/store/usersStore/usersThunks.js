@@ -73,8 +73,9 @@ export const createThunks = (userData) => {
 
     return async (dispatch, getState) => {
 
-        const {authStore} = getState();
-        const token       = authStore.token
+        const { authStore } = getState();
+        
+        const token = authStore.token;
 
         await dispatch(showBackDropStore());
 
@@ -83,60 +84,40 @@ export const createThunks = (userData) => {
             url: `${URL}/users/api/users/create/`,
             headers: {
                 Authorization: `Bearer ${token}`,
-                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
-              },
-            data:userData
-        }
+                "Content-Type": "multipart/form-data",
+            },
+            data: userData, // Aquí se pasa el FormData
+        };
 
         try {
             // Hacer la solicitud
             const response = await axios.request(options);
-            
-            console.log("response.data ",response);
 
-            if(response.status == 201){
-                
+            console.log("response.data ", response);
+
+            if (response.status == 201) {
                 await dispatch(resetFormularioStore());
-
-                await dispatch(setAlert({ message: '¡✨ Acción completada con éxito!', type: 'success'}));
-
-                await dispatch( getAllThunks() );
-
-                await dispatch( closeModalShared() );
-
-                await dispatch( hideBackDropStore() );
-                //toast.success('Successfully created!');
-            }else{
-
-                await dispatch(setAlert({ message: '❌ Ocurrió un error.', type: 'error'}));
-
-                await dispatch( getAllThunks() );
-
-                await dispatch( closeModalShared() );
-
-                await dispatch( hideBackDropStore() );
-                //toast.error('This is an error!');;
+                await dispatch(setAlert({ message: "¡✨ Acción completada con éxito!", type: "success" }));
+                await dispatch(getAllThunks());
+                await dispatch(closeModalShared());
+                await dispatch(hideBackDropStore());
+            } else {
+                await dispatch(setAlert({ message: "❌ Ocurrió un error.", type: "error" }));
+                await dispatch(getAllThunks());
+                await dispatch(closeModalShared());
+                await dispatch(hideBackDropStore());
             }
-            
-
         } catch (error) {
+            await dispatch(setAlert({ message: "❌ Error en el servidor.", type: "error" }));
+            await dispatch(loginFail());
+            await dispatch(closeModalShared());
+            await dispatch(hideBackDropStore());
 
-            
-            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
-            
-            await dispatch ( loginFail() );
-
-            await dispatch( closeModalShared() );
-
-            await dispatch( hideBackDropStore() );
             // Manejar errores
             console.error(error);
-       
         }
-
-    }
-
-}
+    };
+};
 
 export const showThunk= (id = "") => {
 

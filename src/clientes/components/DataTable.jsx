@@ -110,8 +110,15 @@ export function DataTable() {
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
-        checkboxSelection
-        sx={{ border: 0 }}
+        //checkboxSelection
+        sx={{
+          border: 0,
+          "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
+          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+        }}
+        getRowClassName={(params) =>
+          params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
+        }
       />
     </Paper>
   );

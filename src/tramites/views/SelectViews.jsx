@@ -10,9 +10,10 @@ import { FormDialogUser }               from '../components/Modal';
 
 import { useSelector, useDispatch }     from 'react-redux';
 
-import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
-import { getAllThunks }                 from "../../store/tramitesStore/tramitesThunks";
-import { getAllThunksTramites }         from '../../store/clientesStore/clientesThunks';
+import { SimpleBackdrop }                 from "../../components/Backdrop/BackDrop";
+import { getAllCotizadorTramitesThunks }  from "../../store/cotizadorStore/cotizadorThunks";
+
+//import { getAllThunksTramites }           from '../../store/clientesStore/clientesThunks';
 
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -34,8 +35,8 @@ export const SelectViews = () => {
     }, [alert]);
 
     useEffect(() => {
-        dispatch(getAllThunks());
-        dispatch(getAllThunksTramites());
+        dispatch(getAllCotizadorTramitesThunks());
+        //dispatch(getAllThunksTramites());
       },[])
 
     const handleOpenModal = async () => {
@@ -48,13 +49,6 @@ export const SelectViews = () => {
 
         <Grid item>
             <Typography fontSize={39} fontWeight="light"> </Typography>
-        </Grid>
-
-        <Grid item>
-            <Button color="primary" variant="outlined" onClick={ (e) => handleOpenModal() }>
-                <PersonAddAltIcon sx={{ fontSize:30, mr:1 }}/>
-                 Crear Tramite
-            </Button>
         </Grid>
 
         <Grid container sx={{ mt:2, width:"99.99%" }}>

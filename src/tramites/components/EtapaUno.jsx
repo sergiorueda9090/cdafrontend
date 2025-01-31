@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, TextField, MenuItem, FormControl, InputLabel, Button, Autocomplete, ButtonGroup } from '@mui/material';
+import { Grid, TextField, MenuItem, FormControl, InputLabel, Button, Autocomplete, ButtonGroup, Alert } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { createThunks, updateThunks } from '../../store/tramitesStore/tramitesThunks';
 import ReplayIcon from '@mui/icons-material/Replay';
@@ -22,7 +22,7 @@ export const EtapaUno = () => {
    const tipoDocumentoOptions = ["Cedula", "Pasaporte", "Licencia"];
 
    // Lista de prefijos válidos
-   const prefijos = ["314", "313", "300", "301", "321", "322"];
+   const prefijos = ["319", "314", "313", "300", "301", "321", "322"];
 
      // Función para generar un número aleatorio
   const generarNumeroAleatorio = () => {
@@ -328,6 +328,9 @@ export const EtapaUno = () => {
 
         {/* Botón de guardar */}
         <Grid item xs={12}>
+          <Alert  severity="success">
+           Hola, el seguro (SOAT) para el vehiculo ITX001 tiene un costo de xxxx + una comisión por gestión de xxxx, para un total a consignar de xxxxx
+          </Alert>
           {
             formValues.id != "" 
                     ? (<Button variant="contained" color="primary" fullWidth type="submit">Editar</Button>) 

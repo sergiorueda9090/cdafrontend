@@ -12,6 +12,7 @@ export const usersStore = createSlice({
     password    : '',
     repetirPassword:'',
     imageUser   :false,
+    image       : '',
     users       : [],
     statesUser  :[
         {
@@ -22,7 +23,8 @@ export const usersStore = createSlice({
           value: true,
           label: 'Activo',
         },
-      ]
+      ],
+    openModalUser:true,
   },
   reducers: {
     showUserStore:(state,action) => {
@@ -35,6 +37,7 @@ export const usersStore = createSlice({
       state.password    = action.payload.password;
       state.repetirPassword = action.payload.repetirPassword;
       state.imageUser   = false;
+      state.image       = action.payload.image;
       state.statesUser  = [
           {
             value: false,
@@ -50,6 +53,7 @@ export const usersStore = createSlice({
       state.users = action.payload.users
     },
     resetFormularioStore:(state) => {
+      console.log("resetFormularioStore ",resetFormularioStore)
       state.idUser      = null;
       state.username    = '';
       state.name        = '';
@@ -59,6 +63,7 @@ export const usersStore = createSlice({
       state.password    = '';
       state.repetirPassword= '';
       state.imageUser   = false;
+      state.image       = '';
       state.statesUser  = [
           {
             value: false,

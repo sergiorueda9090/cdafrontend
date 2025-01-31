@@ -3,12 +3,12 @@ import { Dialog, DialogTitle, Tabs, Tab, Box, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { closeModalShared } from '../../store/globalStore/globalStore';
-import { createThunks, updateThunks }     from '../../store/clientesStore/clientesThunks';
+//import { createThunks, updateThunks }     from '../../store/clientesStore/clientesThunks';
 
-import { EtapaUno }     from "./EtapaUno";
+//import { EtapaUno }     from "./EtapaUno";
 import { EtapaDos }     from "./EtapaDos";
-import { EtapaTres }    from "./EtapaTres";
-import { EtapaCuatro }  from "./EtapaCuatro";
+//import { EtapaTres }    from "./EtapaTres";
+//import { EtapaCuatro }  from "./EtapaCuatro";
 
 export const FormDialogUser = () => {
 
@@ -16,7 +16,7 @@ export const FormDialogUser = () => {
 
     // Estado global del modal y cliente actual
     const { openModalStore } = useSelector((state) => state.globalStore);
-    const { id, etiquetaUno, precioDeLey } = useSelector((state) => state.tramitesStore);
+    //const { id, etiquetaUno, precioDeLey } = useSelector((state) => state.tramitesStore);
   
     // Cerrar el modal
     const handleClose = () => {
@@ -24,17 +24,17 @@ export const FormDialogUser = () => {
     };
   
 
-    const [value, setValue] = React.useState('one');
+    //const [value, setValue] = React.useState('one');
 
-    const handleChange = (event, newValue) => {
+    /*const handleChange = (event, newValue) => {
       setValue(newValue);
-    };
+    };*/
   
     // Renderizar contenido basado en la etapa
-    const renderContent = () => {
+    {/*const renderContent = () => {
       switch (value) {
         case 'one':
-          return <EtapaUno />;
+          return <EtapaDos />;
         case 'two':
           return <EtapaDos/>;
         case 'three':
@@ -46,15 +46,15 @@ export const FormDialogUser = () => {
         default:
           return <Typography>Selecciona una etapa</Typography>;
       }
-    };
+    };*/}
   
     return (
       <Dialog open={openModalStore} onClose={handleClose} fullWidth maxWidth="lg">
         
-        <DialogTitle>Crear Tramite</DialogTitle>
+        <DialogTitle>Tramite</DialogTitle>
   
-        <Box sx={{ width: '100%' }}>
-          {/* Pestañas */}
+        {/*<Box sx={{ width: '100%' }}>
+     
           <Tabs
             value={value}
             onChange={handleChange}
@@ -62,17 +62,17 @@ export const FormDialogUser = () => {
             indicatorColor="secondary"
             aria-label="secondary tabs example"
           >
-            <Tab value="one" label="Etapa 1 (Digitación)" />
-            <Tab value="two" label="Etapa 2 (Gestion del trámite)"  disabled={!id}  />
+
+            <Tab value="two" label="Gestion del trámite" />
             <Tab value="three" label="Etapa 3 (Confirmacion de precios)" disabled={!etiquetaUno} />
             <Tab value="four" label="Etapa 4 (Subir PDFs)" disabled={!precioDeLey} />
             <Tab value="five" label="Etapa Cinco" disabled />
           </Tabs>
-        </Box>
+        </Box>*/}
   
         <Box sx={{ padding: 2 }}>
           {/* Contenido de las etapas */}
-          {renderContent()}
+          {<EtapaDos />}
         </Box>
       </Dialog>
     );

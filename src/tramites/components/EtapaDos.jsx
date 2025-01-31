@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { Grid, TextField, Autocomplete, FormControl, RadioGroup, FormControlLabel, Radio, Typography, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { createThunks, updateThunks } from '../../store/tramitesStore/tramitesThunks';
+//import { createThunks, updateThunks } from '../../store/tramitesStore/tramitesThunks';
+import { updateThunks }     from '../../store/cotizadorStore/cotizadorThunks';
 
 export const EtapaDos = () => {
   const dispatch = useDispatch();
 
   // Obtener datos iniciales del estado global
-  const { etiquetaUno, etiquetaDos, linkPago, pagoInmediato, etiquetaUnoArray, etiquetaDosArray, id, estado } = useSelector((state) => state.tramitesStore);
+  const { etiquetaDos, linkPago, pagoInmediato, etiquetaDosArray, id } = useSelector((state) => state.cotizadorStore);
 
   // Estados locales para los valores del formulario
-  const [formValues, setFormValues] = useState({ etiquetaUno, etiquetaDos, linkPago, pagoInmediato, estado:'Validación' });
+  const [formValues, setFormValues] = useState({ etiquetaDos, linkPago, pagoInmediato });
   const [errors, setErrors] = useState({});
 
   // Manejar cambios en los campos de texto y radio
@@ -19,7 +20,6 @@ export const EtapaDos = () => {
     setFormValues({ 
                     ...formValues, 
                     [name]: value,  
-                    ['estado']: 'Validación', 
                   });
   };  
 
@@ -39,7 +39,6 @@ export const EtapaDos = () => {
     const newErrors = {};
 
     // Validaciones
-    if (!formValues.etiquetaUno) newErrors.etiquetaUno = 'Seleccione una opción para Etiqueta Uno.';
     if (!formValues.etiquetaDos) newErrors.etiquetaDos = 'Seleccione una opción para Etiqueta Dos.';
 
     // Validar link de pago si "LINK DE PAGO" está seleccionado
@@ -55,7 +54,8 @@ export const EtapaDos = () => {
     if (Object.keys(newErrors).length === 0) {
        
         console.log("formValues ",formValues)
-      if (etiquetaUno) {
+        //return;
+      if (etiquetaDos) {
         // Si existe un ID, actualizar el trámite
         dispatch(updateThunks({ id, ...formValues }));
       } else {
@@ -68,28 +68,8 @@ export const EtapaDos = () => {
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
-        {/* Seleccionar Etiqueta Uno */}
-        <Grid item xs={6}>
-          <FormControl fullWidth>
-            <Autocomplete
-              disablePortal
-              options={etiquetaUnoArray}
-              value={formValues.etiquetaUno}
-              onChange={(e, value) => handleAutocompleteChange('etiquetaUno', value)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="ETIQUETA UNO"
-                  error={!!errors.etiquetaUno}
-                  helperText={errors.etiquetaUno}
-                />
-              )}
-            />
-          </FormControl>
-        </Grid>
-
-        {/* Seleccionar Etiqueta Dos */}
-        <Grid item xs={6}>
+        {/* Seleccionar Etiqueta */}
+        <Grid item xs={12}>
           <FormControl fullWidth>
             <Autocomplete
               disablePortal
@@ -99,7 +79,7 @@ export const EtapaDos = () => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="ETIQUETA DOS"
+                  label="ETIQUETA"
                   error={!!errors.etiquetaDos}
                   helperText={errors.etiquetaDos}
                 />
@@ -148,7 +128,7 @@ export const EtapaDos = () => {
         {/* Botón de guardar */}
         <Grid item xs={12}>
           <Button variant="contained" color="primary" fullWidth type="submit">
-            {etiquetaUno ? 'Actualizar' : 'Guardar'}
+            {etiquetaDos ? 'Actualizar' : 'Guardar'}
           </Button>
         </Grid>
       </Grid>

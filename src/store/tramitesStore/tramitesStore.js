@@ -7,6 +7,7 @@ export const tramitesStore = createSlice({
     idUsuario       : '',
     idCliente       : '',
     nombre_usuario  : '',
+    image_usuario   : '',
     nombre_cliente  : '',
     etiquetaUno     : '',
     etiquetaDos     : '',
@@ -56,11 +57,13 @@ export const tramitesStore = createSlice({
   },
   reducers: {
     showStore:(state,action) => {
+      console.log("action.payload ",action.payload)
       state.id              = action.payload.id;
       state.idUsuario       = action.payload.idUsuario;
       state.idCliente       = action.payload.idCliente;
 
       state.nombre_usuario  = action.payload.nombre_usuario;
+      state.image_usuario   = action.payload.image_usuario;
       state.nombre_cliente  = action.payload.nombre_cliente;
 
       state.etiquetaUno     = action.payload.etiquetaUno;
@@ -95,6 +98,7 @@ export const tramitesStore = createSlice({
       state.idUsuario       = '';
       state.idCliente       = '';
       state.nombre_usuario  = '';
+      state.image_usuario   = '';
       state.nombre_cliente  = '';
       state.etiquetaUno     = '';
       state.etiquetaDos     = '';

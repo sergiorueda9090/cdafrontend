@@ -4,10 +4,12 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
 import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk } from '../../store/usersStore/usersThunks';
 import { toast } from 'react-toastify';
+import { URL } from '../../constants.js/constantGlogal';
 
 export function DataTable() {
 
@@ -16,11 +18,32 @@ export function DataTable() {
     let { users } = useSelector(state => state.usersStore);
 
     const columns = [
-      { field: 'id',        headerName: 'ID', width: 100 },
-      { field: 'email',     headerName: 'Email', width: 230 },
-      { field: 'username',  headerName: 'UserName', width: 230 },
-      { field: 'first_name', headerName: 'First name', width: 230 },
-      { field: 'last_name',  headerName: 'Last name', width: 230 },
+      { field: 'id',        headerName: 'ID', width: 60 },
+      {
+        field: "image",
+        headerName: "Image",
+        width: 80,
+        sortable: false,
+        renderCell: (params) => {
+          const imageUrl = URL+params.row.image; // Asegúrate de que tu API devuelve `image`
+          console.log("imageUrl ",imageUrl)
+          const fullName = `${params.row.first_name || ""} ${params.row.last_name || ""}`.trim();
+          return (
+            <Avatar
+              alt={fullName || "User Avatar"}
+              src={imageUrl || ""}
+              sx={{ width: 32, height: 32, fontSize: 14, bgcolor: "#2196f3" }}
+            >
+              {!imageUrl && fullName ? fullName[0] : ""}
+            </Avatar>
+          );
+        },
+      },
+      { field: 'email',     headerName: 'Email', width: 200 },
+      { field: 'username',  headerName: 'UserName', width: 180 },
+      { field: 'first_name', headerName: 'First name', width: 180 },
+      { field: 'last_name',  headerName: 'Last name', width: 180 },
+      { field: 'last_name',  headerName: 'Last name', width: 180 },
       {
         field: 'actions',
         headerName: 'Actions',
@@ -110,8 +133,15 @@ export function DataTable() {
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
-        checkboxSelection
-        sx={{ border: 0 }}
+        //checkboxSelection
+        sx={{
+          border: 0,
+          "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
+          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+        }}
+        getRowClassName={(params) =>
+          params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
+        }
       />
     </Paper>
   );

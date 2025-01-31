@@ -32,7 +32,41 @@ export const FormDialogUser = () => {
         setFormValues(usersStore);
     },[usersStore])
     
-    console.log("formValues ",formValues.idUser);
+        // Referencia al input de archivo
+        const fileInputRef = useRef(null);
+
+        //START IMAGEN
+        const [selectedImage, setSelectedImage] = useState(null);
+        const [preview, setPreview] = useState(null);
+        const [isLoading, setIsLoading] = useState(false);
+    
+        // Manejar selección de imagen
+        const handleImageChange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+            setSelectedImage(file);
+            setIsLoading(true); // Mostrar skeleton mientras se carga
+            const imageUrl = URL.createObjectURL(file);
+    
+            // Simular un tiempo de carga
+            setTimeout(() => {
+                setPreview(imageUrl);
+                setIsLoading(false);
+            }, 1500);
+            }
+        };
+    
+    
+        // Eliminar la imagen seleccionada y resetear el input
+        const handleRemoveImage = () => {
+            setSelectedImage(null);
+            setPreview(null);
+            if (fileInputRef.current) {
+            fileInputRef.current.value = ""; // Resetear el valor del input
+            }
+        };
+        //END IMAGEN
+
     const [errors, setErrors]         = useState({});
 
     // Manejar cambios en los inputs
@@ -130,7 +164,26 @@ export const FormDialogUser = () => {
         if(formValues.idUser == null){
 
             if (validateForm()) {
-                await dispatch(createThunks(formValues));
+               
+                let formData = new FormData();
+
+                // Agregar campos de texto al FormData
+                formData.append("username",         "twotwo"); // Asignando un username por defecto
+                formData.append("email",            formValues.email);
+                formData.append("first_name",       formValues.first_name);
+                formData.append("last_name",        formValues.last_name);
+                formData.append("password",         formValues.password);
+                formData.append("repetirPassword",  formValues.repetirPassword);
+        
+                // Agregar imagen solo si existe
+                if (selectedImage) {
+                    formData.append("image", selectedImage);
+                }
+        
+                console.log("FormData enviado:", formData);
+        
+                // Enviar al Thunk
+                await dispatch(createThunks(formData));
             }
 
         }else{
@@ -138,14 +191,15 @@ export const FormDialogUser = () => {
             if (validateUpdateForm()) {
 
                 let data = {
-                    id:formValues.idUser,
-                    email:formValues.email,
-                    first_name:formValues.first_name,
-                    last_name:formValues.last_name,
-                    password:formValues.password,
+                    id          : formValues.idUser,
+                    email       : formValues.email,
+                    first_name  : formValues.first_name,
+                    last_name   : formValues.last_name,
+                    password    : formValues.password,
                     repetirPassword:formValues.repetirPassword,
+                    image       : selectedImage
                 }
-
+                
                 await dispatch(updateThunks(data));
 
             } else {
@@ -161,40 +215,6 @@ export const FormDialogUser = () => {
     const handleClose = () => {
         dispatch(closeModalShared());
     };
-    // Referencia al input de archivo
-    const fileInputRef = useRef(null);
-
-    //START IMAGEN
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [preview, setPreview] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-
-    // Manejar selección de imagen
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-        setSelectedImage(file);
-        setIsLoading(true); // Mostrar skeleton mientras se carga
-        const imageUrl = URL.createObjectURL(file);
-
-        // Simular un tiempo de carga
-        setTimeout(() => {
-            setPreview(imageUrl);
-            setIsLoading(false);
-        }, 1500);
-        }
-    };
-
-
-    // Eliminar la imagen seleccionada y resetear el input
-    const handleRemoveImage = () => {
-        setSelectedImage(null);
-        setPreview(null);
-        if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // Resetear el valor del input
-        }
-    };
-    //END IMAGEN
   
   return (
       <Dialog
@@ -318,7 +338,7 @@ export const FormDialogUser = () => {
                                     fullWidth
                                 />
                                 {isLoading ? (
-                                <Skeleton variant="rectangular" width={300} height={200} />
+                                <Skeleton variant="rectangular" width={180} height={180} />
                                 ) : (
                                 preview && (
                                     <div style={{ position: "relative", display: "inline-block" }}>
@@ -381,7 +401,7 @@ export const FormDialogUser = () => {
             formValues.idUser == null ? 
                                         <Button type="submit" variant="outlined" color="primary">Crear Usuario</Button> 
                                       : 
-                                        <Button type="submit" variant="outlined" color="primary">Editar Usuario</Button>
+                                        <Button type="submit" variant="outlined" color="success">Editar Usuario</Button>
 
           }
 

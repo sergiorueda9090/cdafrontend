@@ -33,6 +33,8 @@ export const getAllThunks = () => {
             if(response.status === 200){
 
                 let data = response.data;
+                
+                console.log("datos ",data);
 
                 if(data.length > 0){
                     
@@ -91,12 +93,6 @@ export const createThunks = (data) => {
         try {
             // Hacer la solicitud
             const response = await axios.request(options);
-            
-            console.log("response.data ",response);
-            console.log("response.status ",response.status)
-            console.log("response.data ",response.data)
-            console.log("response.data.error ",response.data.error)
-            
 
             if(response.status == 201){
                 
@@ -232,15 +228,6 @@ export const updateThunks = (data) => {
         }
         /******************************** */
 
-
-
-
-
-
-
-
-
-
         try {
             // Hacer la solicitud
             const response = await axios.request(options);
@@ -255,7 +242,7 @@ export const updateThunks = (data) => {
 
                 await dispatch( getAllThunks() );
 
-                await dispatch( closeModalShared() );
+                //await dispatch( closeModalShared() );
 
                 await dispatch( hideBackDropStore() );
                 //toast.success('Successfully created!');
@@ -265,7 +252,7 @@ export const updateThunks = (data) => {
 
                 await dispatch( getAllThunks() );
 
-                await dispatch( closeModalShared() );
+                //await dispatch( closeModalShared() );
 
                 await dispatch( hideBackDropStore() );
                 //toast.error('This is an error!');;
@@ -279,7 +266,7 @@ export const updateThunks = (data) => {
             
             await dispatch ( loginFail() );
 
-            await dispatch( closeModalShared() );
+            //await dispatch( closeModalShared() );
 
             await dispatch( hideBackDropStore() );
             // Manejar errores
@@ -343,3 +330,70 @@ export const deleteThunk = (idUser = "") => {
     }
 
 }
+
+
+
+
+export const getAllCotizadorTramitesThunks = () => {
+
+    return async (dispatch, getState) => {
+        
+        await dispatch(showBackDropStore());
+        
+        const {authStore} = getState();
+        const token = authStore.token
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${ URL}/cotizador/get_logs_cotizador_tramites/api`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+                
+                console.log("datos ",data);
+
+                if(data.length > 0){
+                    
+                    await dispatch(listStore({'tramites':data}))
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    await dispatch(listStore({'tramites':[]}))
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+
+        } catch (error) {
+            
+            await dispatch(hideBackDropStore());
+
+            // Manejar errores
+            console.error(error);
+            
+            await dispatch ( loginFail() );
+            
+            await dispatch( hideBackDropStore() );
+
+        }
+    };
+};
