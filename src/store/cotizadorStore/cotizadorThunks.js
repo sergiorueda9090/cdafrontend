@@ -70,7 +70,7 @@ export const getAllThunks = () => {
     };
 };
 
-export const createThunks = (data) => {
+export const createThunks = (data, modulo="") => {
 
     return async (dispatch, getState) => {
 
@@ -99,7 +99,16 @@ export const createThunks = (data) => {
 
                 await dispatch(setAlert({ message: '¡✨ Acción completada con éxito!', type: 'success'}));
 
-                await dispatch( getAllThunks() );
+                if(modulo == "tramite"){
+
+                    await dispatch( getAllCotizadorTramitesThunks() );
+
+                }else{
+
+                    await dispatch( getAllThunks() );
+                    
+                }
+                
 
                 await dispatch( closeModalShared() );
 

@@ -74,6 +74,11 @@ export function DataTable() {
       });
     };
    
+    const getPastelColor = () => {
+      const hue = Math.floor(Math.random() * 360); // Color aleatorio en el espectro HSL
+      return `hsl(${hue}, 70%, 85%)`; // Colores suaves
+    };
+
     const columns = [
       { field: 'id',              headerName: 'ID',                 width: 80},
       {
@@ -85,28 +90,44 @@ export function DataTable() {
           return dayjs(fechaRegistro).fromNow(); // Convierte la fecha a "hace X minutos"
         },
       },
-      {
-        field: "image_usuario",
-        headerName: "Usuario",
-        width: 100,
-        sortable: false,
-        renderCell: (params) => {
-          const imageUrl = URL + params.row.image_usuario; // URL completa de la imagen
-          const fullName = params.row.nombre_usuario || "Usuario";
-      
-          return (
-            <Tooltip title={fullName} arrow>
-              <Avatar
-                alt={fullName}
-                src={imageUrl || ""}
-                sx={{ width: 40, height: 40, fontSize: 16, bgcolor: "#2196f3", cursor: "pointer" }}
-              >
-                {!imageUrl ? fullName[0] : ""}
-              </Avatar>
-            </Tooltip>
-          );
-        },
-      },
+ {
+    field: "image_usuario",
+    headerName: "Usuario",
+    width: 100,
+    sortable: false,
+    renderCell: (params) => {
+      const imageUrl = URL + params.row.image_usuario; // URL de la imagen
+      const fullName = params.row.nombre_usuario || "Usuario";
+      const colorPunto = getPastelColor(); // Color único para cada usuario
+
+      return (
+        <Tooltip title={fullName} arrow>
+          <Box sx={{ position: "relative", display: "inline-block" }}>
+            <Avatar
+              alt={fullName}
+              src={imageUrl || ""}
+              sx={{ width: 40, height: 40, fontSize: 16, bgcolor: "#2196f3", cursor: "pointer" }}
+            >
+              {!imageUrl ? fullName[0] : ""}
+            </Avatar>
+            {/* Punto de color en la esquina inferior derecha */}
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                backgroundColor: colorPunto,
+                border: "2px solid white",
+              }}
+            />
+          </Box>
+        </Tooltip>
+      );
+    },
+  },
       { field: 'etiquetaDos',     headerName: 'Etiqueta',           width: 150 },
       {
         field: "linkPago",
@@ -216,7 +237,7 @@ export function DataTable() {
 
 
   return (
-    <Paper sx={{ height: 700, width: '100%' }}>
+    <Paper sx={{ padding: 2 }}>
 
           {/* Contenedor de filtros */}
           <Box display="flex" justifyContent="space-between" marginBottom={2}>

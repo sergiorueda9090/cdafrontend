@@ -125,10 +125,32 @@ export function DataTable() {
 
     };
 
+    const getPastelColor = () => {
+      const hue = Math.floor(Math.random() * 360); // Selecciona un tono aleatorio
+      return `hsl(${hue}, 70%, 85%)`; // 70% de saturación y 85% de luminosidad para colores suaves
+    };
 
     const columns = [
       { field: 'id',                    headerName: 'ID',              width: 90},
-      { field: 'nombre_cliente',        headerName: 'Cliente',         width: 130 },
+      {
+        field: "nombre_cliente",
+        headerName: "Cliente",
+        width: 150,
+        renderCell: (params) => (
+          <div
+            style={{
+              backgroundColor: getPastelColor(),
+              color: "#333", // Color de texto oscuro para mejor contraste
+              padding: "5px",
+              borderRadius: "5px",
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
+            {params.value}
+          </div>
+        ),
+      },
       { field: 'etiquetaDos',           headerName: 'Etiqueta',        width: 130 },
       { field: 'placa',                 headerName: 'Placa',           width: 130 },
       { field: 'modelo',                headerName: 'Modelo',          width: 130 },
@@ -297,7 +319,7 @@ export function DataTable() {
 
 
   return (
-    <Paper sx={{ height: 700, width: '100%' }}>
+    <Paper sx={{ padding: 2 }}>
 
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
           <FilterData  cotizador="pdfs"/>  {/* Componente de filtros adicionales */}

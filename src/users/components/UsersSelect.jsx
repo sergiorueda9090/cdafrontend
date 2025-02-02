@@ -44,12 +44,13 @@ export const UsersSelect = () => {
                   correo, 
                   direccion,
                   total,
-                  tramiteModulo:1
+                  tramiteModulo:1,
+                  cotizadorModulo:1
     }
     
     alert("envio de notificacion whatsapp");
  
-    dispatch(updateThunks(data, "tramite"));
+    dispatch(createThunks(data, "tramite"));
 
     navigate(`/tramites`);
 

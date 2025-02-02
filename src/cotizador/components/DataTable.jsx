@@ -31,32 +31,70 @@ export function DataTable() {
       navigator.clipboard.writeText(value);
     };
 
+    const getPastelColor = () => {
+      const hue = Math.floor(Math.random() * 360); // Selecciona un tono aleatorio
+      return `hsl(${hue}, 70%, 85%)`; // 70% de saturación y 85% de luminosidad para colores suaves
+    };
+
     const columns = [
       { field: 'id',              headerName: 'ID',                 width: 90},
+  {
+     field: "image_usuario",
+     headerName: "Usuario",
+     width: 100,
+     sortable: false,
+     renderCell: (params) => {
+       const imageUrl = URL + params.row.image_usuario; // URL de la imagen
+       const fullName = params.row.nombre_usuario || "Usuario";
+       const colorPunto = getPastelColor(); // Color único para cada usuario
+ 
+       return (
+         <Tooltip title={fullName} arrow>
+           <Box sx={{ position: "relative", display: "inline-block" }}>
+             <Avatar
+               alt={fullName}
+               src={imageUrl || ""}
+               sx={{ width: 40, height: 40, fontSize: 16, bgcolor: "#2196f3", cursor: "pointer" }}
+             >
+               {!imageUrl ? fullName[0] : ""}
+             </Avatar>
+             {/* Punto de color en la esquina inferior derecha */}
+             <Box
+               sx={{
+                 position: "absolute",
+                 bottom: 0,
+                 right: 0,
+                 width: 10,
+                 height: 10,
+                 borderRadius: "50%",
+                 backgroundColor: colorPunto,
+                 border: "2px solid white",
+               }}
+             />
+           </Box>
+         </Tooltip>
+       );
+     },
+   },
       {
-        field: "image_usuario",
-        headerName: "Usuario",
-        width: 100,
-        sortable: false,
-        renderCell: (params) => {
-          console.log("params.row. ",params.row)
-          const imageUrl = URL + params.row.image_usuario; // URL completa de la imagen
-          const fullName = params.row.nombre_usuario || "Usuario";
-      
-          return (
-            <Tooltip title={fullName} arrow>
-              <Avatar
-                alt={fullName}
-                src={imageUrl || ""}
-                sx={{ width: 40, height: 40, fontSize: 16, bgcolor: "#2196f3", cursor: "pointer" }}
-              >
-                {!imageUrl ? fullName[0] : ""}
-              </Avatar>
-            </Tooltip>
-          );
-        },
+        field: "nombre_cliente",
+        headerName: "Cliente",
+        width: 150,
+        renderCell: (params) => (
+          <div
+            style={{
+              backgroundColor: getPastelColor(),
+              color: "#333", // Color de texto oscuro para mejor contraste
+              padding: "5px",
+              borderRadius: "5px",
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
+            {params.value}
+          </div>
+        ),
       },
-      { field: 'nombre_cliente',  headerName: 'Cliente',            width: 130 },
       { field: 'etiquetaDos',     headerName: 'Etiqueta',           width: 170 },
       {
         field: 'placa',

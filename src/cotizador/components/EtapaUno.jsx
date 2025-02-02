@@ -19,8 +19,6 @@ export const EtapaUno = () => {
   const { id, idCliente, precioDeLey, comisionPrecioLey, etiquetaDosArray, etiquetaDos, placa, cilindraje,modelo, chasis, 
           telefono,nombreCompleto,numeroDocumento,tipoDocumento,correo, direccion, total, dateFilter } = formValues;
   
-          console.log("dateFilter ",dateFilter);
-
   const { clientes }  = useSelector(state => state.clientesStore);
   const { preciosLey } = useSelector((state) => state.clientesStore);
 
@@ -164,9 +162,6 @@ export const EtapaUno = () => {
       tipoDocumento,
       numeroDocumento,
       nombreCompleto,
-      precioDeLey,
-      comisionPrecioLey,
-      total,
     };
   
     // Validar si algún campo está vacío
