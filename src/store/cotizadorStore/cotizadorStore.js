@@ -6,6 +6,7 @@ export const cotizadorStore = createSlice({
     id              : '',
     idUsuario       : '',
     idCliente       : '',
+    image_usuario   : '',
     nombre_usuario  : '',
     nombre_cliente  : '',
     etiquetaUno     : '',
@@ -58,6 +59,8 @@ export const cotizadorStore = createSlice({
     tramiteModulo   : '0',
     confirmacionPreciosModulo: '0',
     pdfsModulo      : '0',
+
+    dateFilter      : false,  // false puede editar, true no puede editar 
   },
   reducers: {
     showStore:(state,action) => {
@@ -65,6 +68,7 @@ export const cotizadorStore = createSlice({
       state.idUsuario       = action.payload.idUsuario;
       state.idCliente       = action.payload.idCliente;
 
+      state.image_usuario   = action.payload.image_usuario;
       state.nombre_usuario  = action.payload.nombre_usuario;
       state.nombre_cliente  = action.payload.nombre_cliente;
 
@@ -96,14 +100,23 @@ export const cotizadorStore = createSlice({
       state.pdfsModulo      = action.payload.pdfsModulo;
       state.tramiteModulo   = action.payload.tramiteModulo;
 
+      
     },
     listStore:(state, action) => {
       state.cotizadores = action.payload.cotizadores
+
+      if(action.payload.dateFilter){
+        state.dateFilter =  action.payload.dateFilter
+      }else{
+        state.dateFilter =  action.payload.dateFilter
+      }
+      
     },
     resetFormularioStore:(state) => {
       state.id              = '';
       state.idUsuario       = '';
       state.idCliente       = '';
+      state.image_usuario   = '';
       state.nombre_usuario  = '';
       state.nombre_cliente  = '';
       state.etiquetaUno     = '';
@@ -152,6 +165,7 @@ export const cotizadorStore = createSlice({
       state.clientes        = [];
       state.tiposDocumentos = [];
       //state.cotizadores        = [];
+      state.dateFilter      = false;  
     },
     handleFormStore:(state , action) => {
       const { name, value } = action.payload; // Obtener el nombre y el valor

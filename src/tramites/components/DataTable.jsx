@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, { useState } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
+import { Box } from "@mui/material";
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import { Tooltip } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
@@ -13,10 +13,16 @@ import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk, updateThunks }   from '../../store/cotizadorStore/cotizadorThunks';
 
-import { toast } from 'react-toastify';
-
 import { useNavigate }              from 'react-router-dom';
 import { URL } from '../../constants.js/constantGlogal';
+import { FilterData } from '../../cotizador/components/FilterData';
+import { DateRange } from '../../cotizador/components/DateRange';
+
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+// Habilitar el plugin de tiempo relativo
+dayjs.extend(relativeTime);
 
 export function DataTable() {
 
@@ -25,15 +31,60 @@ export function DataTable() {
     const dispatch = useDispatch();
     
     let { cotizadores } = useSelector(state => state.cotizadorStore);
+
+    const [rows, setRows] = useState(cotizadores);
+
+    const [editingField, setEditingField] = useState("");
+    const [editingValue, setEditingValue] = useState("");
+  
+    const processRowUpdate = (newRow) => {
+    
+      const oldRow = cotizadores.find((row) => row.id === newRow.id); // Encuentra la fila original
+      
+      if (!oldRow) return newRow; // Si no se encuentra, salir
+    
+      // Encontrar el campo modificado comparando los valores
+      const changedField = Object.keys(newRow).find((key) => oldRow[key] !== newRow[key]);
+    
+      if (changedField) {
+
+        const newValue = newRow[changedField];
+    
+        console.log(`Campo modificado: ${changedField}, Nuevo Valor: ${newValue}, ID: ${newRow.id}`);
+    
+        // Actualizar estados
+        setEditingField(changedField);
+        
+        setEditingValue(newValue);
+      
+        let formValues = {[changedField]:newValue, 'id':newRow.id};
+
+        dispatch(updateThunks(formValues, 'tramite'));
+        
+      }
+      
+      
+      return oldRow
+
+    };
     
     const handleCopyToClipboard = (text) => {
       navigator.clipboard.writeText(text).then(() => {
         alert("Link copiado al portapapeles");
       });
     };
-
+   
     const columns = [
       { field: 'id',              headerName: 'ID',                 width: 80},
+      {
+        field: 'fechaCreacion',
+        headerName: 'Hace',
+        width: 150,
+        valueGetter: (params) => {
+          const fechaRegistro = params; // Asegúrate de que "fechaEmision" sea un campo en tus datos
+          return dayjs(fechaRegistro).fromNow(); // Convierte la fecha a "hace X minutos"
+        },
+      },
       {
         field: "image_usuario",
         headerName: "Usuario",
@@ -78,13 +129,27 @@ export function DataTable() {
           </>
         ),
       },
-      { field: 'placa',           headerName: 'Placa',              width: 130 },
-      { field: 'cilindraje',      headerName: 'Cilindraje',         width: 130 },
-      { field: 'modelo',          headerName: 'Modelo',             width: 100 },
-      { field: 'chasis',          headerName: 'Chasis',             width: 130 },
-      { field: 'tipoDocumento',   headerName: 'Tipo Documento',     width: 150 },
-      { field: 'numeroDocumento', headerName: 'Documento',          width: 150 },
-      { field: 'nombreCompleto',  headerName: 'Nombre',             width: 130 },
+      { field: 'placa',           headerName: 'Placa',              width: 130, editable: true },
+      { field: 'cilindraje',      headerName: 'Cilindraje',         width: 130, editable: true },
+      { field: 'modelo',          headerName: 'Modelo',             width: 100, editable: true },
+      { field: 'chasis',          headerName: 'Chasis',             width: 130, editable: true },
+      {
+        field: "tipoDocumento",
+        headerName: "Tipo Documento",
+        width: 150,
+        renderCell: (params) => {
+          const mapDocumentTypes = {
+            "Cedula": "CC",
+            "Pasaporte": "PPT",
+            "Licencia": "LIC"
+          };
+    
+          // Si existe en el diccionario, se reemplaza, si no, se muestra el valor original
+          return mapDocumentTypes[params.value] || params.value;
+        }
+      },
+      { field: 'numeroDocumento', headerName: 'Documento',          width: 150, editable: true },
+      { field: 'nombreCompleto',  headerName: 'Nombre',             width: 130, editable: true },
       {
         field: 'actions',
         headerName: 'Actions',
@@ -102,18 +167,6 @@ export function DataTable() {
               <EditIcon />
             </IconButton>
           </Tooltip>
-    
-          {/* Botón de Eliminar 
-          <Tooltip title="Eliminar" arrow>
-            <IconButton
-              aria-label="delete"
-              onClick={() => handleDelete(params.row.id)}
-              color="error"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-          */}
     
           {/* Botón de Logs (Mostrar detalles) */}
           <Tooltip title="Ver detalles" arrow>
@@ -142,59 +195,13 @@ export function DataTable() {
     ];
     
 
-    // Función para manejar la eliminación
-    const handleDelete = (id) => {
-      // Mostrar la notificación con opciones de confirmación
-      toast(
-        ({ closeToast }) => (
-          <div>
-            <p>¿Estás seguro de que deseas eliminar el cliente?</p>
-            <button
-              onClick={() => {
-                confirmDelete(id, closeToast); // Confirmar eliminación
-              }}
-              style={{
-                marginRight: '10px',
-                backgroundColor: 'red',
-                color: 'white',
-                border: 'none',
-                padding: '5px 10px',
-                cursor: 'pointer',
-              }}
-            >
-              Sí, eliminar
-            </button>
-            <button
-              onClick={closeToast} // Cancelar eliminación
-              style={{
-                backgroundColor: 'gray',
-                color: 'white',
-                border: 'none',
-                padding: '5px 10px',
-                cursor: 'pointer',
-              }}
-            >
-              Cancelar
-            </button>
-          </div>
-        ),
-        { autoClose: false } // Evitar cierre automático
-      );
-    };
-
-    // Lógica para confirmar la eliminación
-    const confirmDelete = async (id, closeToast) => {
-      await dispatch(deleteThunk(id));
-      closeToast(); // Cerrar la notificación
-    };
-
     const handleShow = async(id) => {
       navigate(`/tramites/PageShow/${id}`);
     };
 
     const handleConfirmEmitido = async(id) => {
 
-      dispatch(updateThunks({ id, confirmacionPreciosModulo: 1 }));
+      dispatch(updateThunks({ id, confirmacionPreciosModulo: 1 }, 'tramite'));
       
       navigate('/confirmacionprecios')
     
@@ -202,17 +209,25 @@ export function DataTable() {
     
     const paginationModel = { page: 0, pageSize: 15 };
 
-  // Función para manejar la edición
-  const handleEdit = async (row) => {
-    await dispatch(showThunk(row.id));
-  };
+    // Función para manejar la edición
+    const handleEdit = async (row) => {
+      await dispatch(showThunk(row.id));
+    };
 
 
   return (
     <Paper sx={{ height: 700, width: '100%' }}>
+
+          {/* Contenedor de filtros */}
+          <Box display="flex" justifyContent="space-between" marginBottom={2}>
+            <FilterData cotizador="tramite"/>  {/* Componente de filtros adicionales */}
+            <DateRange  cotizador="tramite"/>  {/* Componente para selección de rango de fechas */}
+        </Box>
+
       <DataGrid
         rows={cotizadores}
         columns={columns}
+        processRowUpdate={processRowUpdate}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         sx={{
@@ -223,6 +238,7 @@ export function DataTable() {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
+        //onCellEditCommit={handleEditCellCommit}
       />
     </Paper>
   );

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
-import { Tooltip } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
 //import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
@@ -22,6 +22,8 @@ import { toast } from 'react-toastify';
 import { showThunk, deleteThunk, updateThunks } from '../../store/cotizadorStore/cotizadorThunks';
 
 import { useNavigate }              from 'react-router-dom';
+import { FilterData } from '../../cotizador/components/FilterData';
+import { DateRange } from '../../cotizador/components/DateRange';
 
 
 export function DataTable() {
@@ -32,10 +34,11 @@ export function DataTable() {
     
     let { cotizadores, archivo } = useSelector(state => state.cotizadorStore);
 
-    console.log("cotizadores ",cotizadores)
-    const [selectedRow, setSelectedRow] = useState(null);
+    const [selectedRow, setSelectedRow]     = useState(null);
     const [uploadedFiles, setUploadedFiles] = useState({}); // Estado para archivos subidos
+
     const fileInputRef = useRef(null);
+
     const [fileUpload, setFileUpload] = useState('');
   
     const handleUpload = (event) => {
@@ -126,7 +129,7 @@ export function DataTable() {
 
     const columns = [
       { field: 'id',                    headerName: 'ID',              width: 90},
-      { field: 'nombre_usuario',        headerName: 'Cliente',         width: 130 },
+      { field: 'nombre_cliente',        headerName: 'Cliente',         width: 130 },
       { field: 'etiquetaDos',           headerName: 'Etiqueta',        width: 130 },
       { field: 'placa',                 headerName: 'Placa',           width: 130 },
       { field: 'numeroDocumento',       headerName: 'Documento',       width: 150 },
@@ -149,15 +152,7 @@ export function DataTable() {
               <IconButton aria-label="edit" onClick={() => handleEdit(params.row)} color="primary">
                 <EditIcon />
               </IconButton>
-  
-               {/*<IconButton aria-label="delete" onClick={() => handleDelete(params.row.id)} color="error">
-                <DeleteIcon />
-              </IconButton>
-  
-              <IconButton aria-label="Show" onClick={() => handleShow(params.row.id)} color="warning">
-                <ReceiptLongIcon />
-              </IconButton>*/}
-  
+
               {/* Mostrar icono de subir archivo SOLO si no hay archivo cargado */}
               {!archivoFile && !isFileUploaded && (
                 <Tooltip title="Subir archivo">
@@ -172,7 +167,6 @@ export function DataTable() {
               )}
   
               {/* Mostrar icono de confirmación y eliminar archivo si hay un archivo subido */}
-
               {
                 archivoFile ? (  <>
                   <Tooltip title="Eliminar archivo">
@@ -186,7 +180,8 @@ export function DataTable() {
                   </Tooltip>      
                 </>):('')
               }
-              {isFileUploaded && (
+
+              {!archivoFile && isFileUploaded && (
                 <>
                   <Tooltip title={`Archivo subido: ${isFileUploaded}`}>
                   <IconButton
@@ -316,7 +311,7 @@ export function DataTable() {
     }
 
     const handleUploadFileConfirmar = (id) => {
-      dispatch(updateThunks({id, 'archivo':fileUpload}))
+      dispatch(updateThunks({id, 'archivo':fileUpload}, 'confirmarprecio'))
     }
     
     const paginationModel = { page: 0, pageSize: 15 };
@@ -329,6 +324,13 @@ export function DataTable() {
 
   return (
     <Paper sx={{ height: 700, width: '100%' }}>
+
+      {/* Contenedor de filtros */}
+      <Box display="flex" justifyContent="space-between" marginBottom={2}>
+          <FilterData  cotizador="confirmacionprecios"/>  {/* Componente de filtros adicionales */}
+          <DateRange   cotizador="confirmacionprecios"/>  {/* Componente para selección de rango de fechas */}
+      </Box>
+
       {/* Input de archivo oculto */}
       <input
         type="file"

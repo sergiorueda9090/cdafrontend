@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
+import { Box } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,7 +13,11 @@ import { showThunk, deleteThunk }   from '../../store/cotizadorStore/cotizadorTh
 import { toast } from 'react-toastify';
 
 import { useNavigate }              from 'react-router-dom';
-
+import { DateRange } from './DateRange';
+import { FilterData } from './FilterData';
+import { Avatar, Tooltip } from '@mui/material';
+import { URL } from '../../constants.js/constantGlogal';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 export function DataTable() {
 
@@ -21,17 +25,119 @@ export function DataTable() {
 
     const dispatch = useDispatch();
     
-    let { cotizadores } = useSelector(state => state.cotizadorStore);
+    let { cotizadores, dateFilter } = useSelector(state => state.cotizadorStore);
+
+    const handleCopyToClipboard = (value) => {
+      navigator.clipboard.writeText(value);
+    };
 
     const columns = [
       { field: 'id',              headerName: 'ID',                 width: 90},
-      { field: 'nombre_usuario',  headerName: 'Usuario',            width: 130 },
+      {
+        field: "image_usuario",
+        headerName: "Usuario",
+        width: 100,
+        sortable: false,
+        renderCell: (params) => {
+          console.log("params.row. ",params.row)
+          const imageUrl = URL + params.row.image_usuario; // URL completa de la imagen
+          const fullName = params.row.nombre_usuario || "Usuario";
+      
+          return (
+            <Tooltip title={fullName} arrow>
+              <Avatar
+                alt={fullName}
+                src={imageUrl || ""}
+                sx={{ width: 40, height: 40, fontSize: 16, bgcolor: "#2196f3", cursor: "pointer" }}
+              >
+                {!imageUrl ? fullName[0] : ""}
+              </Avatar>
+            </Tooltip>
+          );
+        },
+      },
       { field: 'nombre_cliente',  headerName: 'Cliente',            width: 130 },
       { field: 'etiquetaDos',     headerName: 'Etiqueta',           width: 170 },
-      { field: 'placa',           headerName: 'Placa',              width: 130 },
-      { field: 'cilindraje',      headerName: 'Cilindraje',         width: 130 },
-      { field: 'modelo',          headerName: 'Modelo',             width: 130 },
-      { field: 'chasis',          headerName: 'Chasis',             width: 130 },
+      {
+        field: 'placa',
+        headerName: 'Placa',
+        width: 150,
+        renderCell: (params) => (
+          <>
+            <Tooltip title="Copiar placa">
+              <IconButton
+                aria-label="Copiar placa"
+                onClick={() => handleCopyToClipboard(params.value)}
+                color="primary"
+                size="small"
+              >
+                <ContentCopyIcon />
+              </IconButton>
+            </Tooltip>
+            {params.value}
+          </>
+        ),
+      },
+      {
+        field: 'cilindraje',
+        headerName: 'Cilindraje',
+        width: 150,
+        renderCell: (params) => (
+          <>
+            <Tooltip title="Copiar cilindraje">
+              <IconButton
+                aria-label="Copiar cilindraje"
+                onClick={() => handleCopyToClipboard(params.value)}
+                color="primary"
+                size="small"
+              >
+                <ContentCopyIcon />
+              </IconButton>
+            </Tooltip>
+            {params.value}
+          </>
+        ),
+      },
+      {
+        field: 'modelo',
+        headerName: 'Modelo',
+        width: 150,
+        renderCell: (params) => (
+          <>
+            <Tooltip title="Copiar modelo">
+              <IconButton
+                aria-label="Copiar modelo"
+                onClick={() => handleCopyToClipboard(params.value)}
+                color="primary"
+                size="small"
+              >
+                <ContentCopyIcon />
+              </IconButton>
+            </Tooltip>
+            {params.value}
+          </>
+        ),
+      },
+      {
+        field: 'chasis',
+        headerName: 'Chasis',
+        width: 180,
+        renderCell: (params) => (
+          <>
+            <Tooltip title="Copiar chasis">
+              <IconButton
+                aria-label="Copiar chasis"
+                onClick={() => handleCopyToClipboard(params.value)}
+                color="primary"
+                size="small"
+              >
+                <ContentCopyIcon />
+              </IconButton>
+            </Tooltip>
+            {params.value}
+          </>
+        ),
+      },
       { field: 'numeroDocumento', headerName: 'Documento',          width: 150 },
       { field: 'nombreCompleto',  headerName: 'Nombre',             width: 130 },
       {
@@ -41,21 +147,27 @@ export function DataTable() {
         sortable: false,
         renderCell: (params) => (
           <>
-            <IconButton
-              aria-label="edit"
-              onClick={() => handleEdit(params.row)}
-              color="primary"
-            >
-              <EditIcon />
-            </IconButton>
-
-              <IconButton
-                aria-label="Show"
-                onClick={() => handleShow(params.row.id)}
-                color="success"
-              >
-                  <ReceiptLongIcon />
-              </IconButton>
+            <Tooltip title="Editar" arrow>
+                <IconButton
+                  aria-label="edit"
+                  onClick={() => handleEdit(params.row)}
+                  color="primary"
+                >
+                  <EditIcon />
+                </IconButton>
+            </Tooltip>
+            {!dateFilter ? <>
+               <Tooltip title="Historia de registros" arrow>
+                  <IconButton
+                    aria-label="Show"
+                    onClick={() => handleShow(params.row.id)}
+                    color="success"
+                  >
+                      <ReceiptLongIcon />
+                  </IconButton>
+               </Tooltip>
+            </>:''}
+             
           </>
         ),
       },
@@ -115,14 +227,30 @@ export function DataTable() {
     const paginationModel = { page: 0, pageSize: 15 };
 
   // Función para manejar la edición
-  const handleEdit = async (row) => {;
-    await dispatch(resetFormularioStore());
-    await dispatch(showThunk(row.id));
+  const handleEdit = async (row) => {
+    if(!dateFilter){
+
+      await dispatch(resetFormularioStore());
+      await dispatch(showThunk(row.id, dateFilter));
+
+    }else{
+
+      await dispatch(showThunk(row.id));
+
+    }
+
   };
 
 
   return (
-    <Paper sx={{ height: 700, width: '100%' }}>
+    <Paper sx={{ padding: 2 }}>
+      
+        {/* Contenedor de filtros */}
+        <Box display="flex" justifyContent="space-between" marginBottom={2}>
+            <FilterData  cotizador="cotizador"/>  {/* Componente de filtros adicionales */}
+            <DateRange   cotizador="cotizador"/>  {/* Componente para selección de rango de fechas */}
+        </Box>
+
       <DataGrid
         rows={cotizadores}
         columns={columns}
@@ -137,6 +265,7 @@ export function DataTable() {
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
       />
+
     </Paper>
   );
 }

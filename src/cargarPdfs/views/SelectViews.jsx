@@ -11,8 +11,7 @@ import { FormDialogUser }               from '../components/Modal';
 import { useSelector, useDispatch }     from 'react-redux';
 
 import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
-import { getAllThunks }                 from '../../store/cotizadorStore/cotizadorThunks';                
-import { getAllThunksTramites }         from '../../store/clientesStore/clientesThunks';
+import { getAllCotizadorPdfsThunks }    from '../../store/cotizadorStore/cotizadorThunks';                
 
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -34,8 +33,7 @@ export const SelectViews = () => {
     }, [alert]);
 
     useEffect(() => {
-        dispatch(getAllThunks());
-        dispatch(getAllThunksTramites());
+        dispatch(getAllCotizadorPdfsThunks());
       },[])
 
     const handleOpenModal = async () => {
@@ -65,7 +63,7 @@ export const SelectViews = () => {
         {/* START ALERT */}
         <ToastContainer
             position="top-center" // Posición predeterminada
-            autoClose={4000} // Tiempo de cierre automático
+            autoClose={1000} // Tiempo de cierre automático
             hideProgressBar={false} // Mostrar barra de progreso
             newestOnTop={true} // Notificaciones más recientes arriba
             closeOnClick // Cierre al hacer clic

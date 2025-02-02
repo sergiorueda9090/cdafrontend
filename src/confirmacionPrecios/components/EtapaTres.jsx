@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, TextField, FormControl, Autocomplete, Typography, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-//import { showThunk } from '../../store/clientesStore/clientesThunks';
-
 import { updateThunks } from '../../store/cotizadorStore/cotizadorThunks';
 
 export const EtapaTres = () => {
@@ -65,14 +63,14 @@ export const EtapaTres = () => {
     if (Object.keys(newErrors).length === 0) {
 
       const formData = {
-        id                :id,
+        id                : id,
         precioDeLey       : precioLey,
         comisionPrecioLey : comision,
         total             : totalComision,
         estado            : 'Ejecución'
       };
 
-      dispatch(updateThunks(formData));
+      dispatch(updateThunks(formData, 'confirmarprecio'));
 
     }
   };

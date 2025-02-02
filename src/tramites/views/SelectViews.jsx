@@ -36,13 +36,8 @@ export const SelectViews = () => {
 
     useEffect(() => {
         dispatch(getAllCotizadorTramitesThunks());
-        //dispatch(getAllThunksTramites());
       },[])
 
-    const handleOpenModal = async () => {
-        await dispatch(resetFormularioStore());
-        await dispatch(openModalShared())
-    }
   
   return (
     <Grid container direction="row" justifyContent="space-between" sx={{ mb:1 }} alignItems='center'>
@@ -66,7 +61,7 @@ export const SelectViews = () => {
         {/* START ALERT */}
         <ToastContainer
             position="top-center" // Posición predeterminada
-            autoClose={4000} // Tiempo de cierre automático
+            autoClose={1000} // Tiempo de cierre automático
             hideProgressBar={false} // Mostrar barra de progreso
             newestOnTop={true} // Notificaciones más recientes arriba
             closeOnClick // Cierre al hacer clic

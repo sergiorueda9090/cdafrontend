@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
-import { Tooltip } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -20,6 +20,8 @@ import { toast } from 'react-toastify';
 
 import { useNavigate }              from 'react-router-dom';
 import { URL } from '../../constants.js/constantGlogal';
+import { FilterData } from '../../cotizador/components/FilterData';
+import { DateRange } from '../../cotizador/components/DateRange';
 
 
 export function DataTable() {
@@ -29,9 +31,6 @@ export function DataTable() {
     const dispatch = useDispatch();
     
     let { cotizadores } = useSelector(state => state.cotizadorStore);
-    
-    console.log("cotizadores ",cotizadores);
-
     
     const [selectedRow, setSelectedRow] = useState(null);
     const [uploadedFiles, setUploadedFiles] = useState({}); // Estado para archivos subidos
@@ -100,7 +99,7 @@ export function DataTable() {
     }
     
     const handleUploadFileConfirmar = (id) => {
-      dispatch(updateThunks({id, 'pdf':fileUpload}))
+      dispatch(updateThunks({id, 'pdf':fileUpload}, 'pdf'))
     }
     const handleOpenFileDialog = (row) => {
       setSelectedRow(row);
@@ -129,7 +128,7 @@ export function DataTable() {
 
     const columns = [
       { field: 'id',                    headerName: 'ID',              width: 90},
-      { field: 'nombre_usuario',        headerName: 'Cliente',         width: 130 },
+      { field: 'nombre_cliente',        headerName: 'Cliente',         width: 130 },
       { field: 'etiquetaDos',           headerName: 'Etiqueta',        width: 130 },
       { field: 'placa',                 headerName: 'Placa',           width: 130 },
       { field: 'modelo',                headerName: 'Modelo',          width: 130 },
@@ -167,9 +166,9 @@ export function DataTable() {
 
           return (
             <>
-              <IconButton aria-label="edit" onClick={() => handleEdit(params.row)} color="primary">
+              {/*<IconButton aria-label="edit" onClick={() => handleEdit(params.row)} color="primary">
                 <EditIcon />
-              </IconButton>
+              </IconButton>*/}
   
               {/* Mostrar icono de subir archivo SOLO si no hay archivo cargado */}
               {!archivoFile && !isFileUploaded && (
@@ -199,7 +198,7 @@ export function DataTable() {
               }
 
               {/* Mostrar icono de confirmación y eliminar archivo si hay un archivo subido */}
-              {isFileUploaded && (
+              {!archivoFile && isFileUploaded && (
                 <>
                   <Tooltip title={`Archivo subido: ${isFileUploaded}`}>
                   <IconButton
@@ -299,6 +298,12 @@ export function DataTable() {
 
   return (
     <Paper sx={{ height: 700, width: '100%' }}>
+
+      <Box display="flex" justifyContent="space-between" marginBottom={2}>
+          <FilterData  cotizador="pdfs"/>  {/* Componente de filtros adicionales */}
+          <DateRange   cotizador="pdfs"/>  {/* Componente para selección de rango de fechas */}
+      </Box>
+
       {/* Input de archivo oculto */}
       <input
         type="file"

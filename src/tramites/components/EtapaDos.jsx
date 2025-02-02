@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, TextField, Autocomplete, FormControl, RadioGroup, FormControlLabel, Radio, Typography, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-//import { createThunks, updateThunks } from '../../store/tramitesStore/tramitesThunks';
 import { updateThunks }     from '../../store/cotizadorStore/cotizadorThunks';
 
 export const EtapaDos = () => {
@@ -52,15 +51,13 @@ export const EtapaDos = () => {
 
     // Si no hay errores, procesar el formulario
     if (Object.keys(newErrors).length === 0) {
-       
-        console.log("formValues ",formValues)
         //return;
       if (etiquetaDos) {
         // Si existe un ID, actualizar el trámite
-        dispatch(updateThunks({ id, ...formValues }));
+        dispatch(updateThunks({ id, ...formValues }, 'tramite'));
       } else {
         // Si no hay ID, crear un nuevo trámite
-        dispatch(updateThunks({ id, ...formValues }));
+        dispatch(updateThunks({ id, ...formValues }, 'tramite'));
       }
     }
   };

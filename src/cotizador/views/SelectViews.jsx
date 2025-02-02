@@ -54,7 +54,7 @@ export const SelectViews = () => {
         <Grid item>
             <Button color="primary" variant="outlined" onClick={ (e) => handleOpenModal() }>
                 <PersonAddAltIcon sx={{ fontSize:30, mr:1 }}/>
-                 Crear Cotizador
+                 Crear Tramite
             </Button>
         </Grid>
 
@@ -73,7 +73,7 @@ export const SelectViews = () => {
         {/* START ALERT */}
         <ToastContainer
             position="top-center" // Posición predeterminada
-            autoClose={4000} // Tiempo de cierre automático
+            autoClose={1000} // Tiempo de cierre automático
             hideProgressBar={false} // Mostrar barra de progreso
             newestOnTop={true} // Notificaciones más recientes arriba
             closeOnClick // Cierre al hacer clic

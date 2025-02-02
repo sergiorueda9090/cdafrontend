@@ -37,13 +37,13 @@ export const getAllThunks = () => {
 
                 if(data.length > 0){
                     
-                    await dispatch(listStore({'cotizadores':data}))
+                    await dispatch(listStore({'cotizadores':data, 'dateFilter':false}))
 
                     await dispatch(hideBackDropStore());
 
                 }else{
 
-                    await dispatch(listStore({'cotizadores':[]}))
+                    await dispatch(listStore({'cotizadores':[], 'dateFilter':false}))
 
                     await dispatch(hideBackDropStore());
                 }
@@ -207,14 +207,14 @@ export const showThunk= (id = "") => {
 
 }
 
-export const updateThunks = (data) => {
+export const updateThunks = (data, modulo="") => {
 
     return async (dispatch, getState) => {
 
         const {authStore} = getState();
         const token       = authStore.token
         
-        console.log("data ",data);
+        console.log("modulo ",modulo);
 
         await dispatch(showBackDropStore());
   
@@ -233,15 +233,34 @@ export const updateThunks = (data) => {
             // Hacer la solicitud
             const response = await axios.request(options);
             
-            console.log("response.data ",response);
-
             if(response.status == 201 || response.status == 200){
                 
                 await dispatch(resetFormularioStore());
 
                 await dispatch(setAlert({ message: '¡ ✏️ Acción completada con éxito!', type: 'success'}));
 
-                await dispatch( getAllCotizadorTramitesThunks() );
+                if(modulo == "cotizador"){
+                
+                    await dispatch(getAllThunks());
+
+                }else if(modulo == "tramite"){
+
+                    await dispatch( getAllCotizadorTramitesThunks() );
+
+                }else if(modulo == "confirmarprecio"){
+
+                    await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
+
+                }else if(modulo == "pdf"){
+
+                    await dispatch( getAllCotizadorPdfsThunks() );
+
+                }else{
+                    
+                    alert("eeeee");
+
+                }
+                
 
                 await dispatch( closeModalShared() );
 
@@ -464,5 +483,154 @@ export const getAllCotizadorConfirmacionPreciosThunks = () => {
             await dispatch( hideBackDropStore() );
 
         }
+    };
+};
+
+export const getAllCotizadorPdfsThunks = () => {
+
+    return async (dispatch, getState) => {
+       
+        await dispatch(showBackDropStore());
+        
+        const {authStore} = getState();
+        const token = authStore.token
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${ URL}/cotizador/get_cotizadores_pdfs/api`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+                
+                if(data.length > 0){
+                    
+                    await dispatch(listStore({'cotizadores':data}))
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    await dispatch(listStore({'cotizadores':[]}))
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+
+        } catch (error) {
+            
+            await dispatch(hideBackDropStore());
+
+            // Manejar errores
+            console.error(error);
+            
+            //await dispatch ( loginFail() );
+            
+            await dispatch( hideBackDropStore() );
+
+        }
+    };
+};
+
+
+export const getAllFilterDateThunks = (fechaInicio, fechaFin) => {
+
+    return async (dispatch, getState) => {
+        await dispatch(showBackDropStore());
+        
+        const { authStore } = getState();
+        const token = authStore.token;
+
+        // Construir la URL con los parámetros de fecha
+        let url = `${URL}/cotizador/get_cotizadores_filter_date/api/`;
+
+        // Agregar las fechas a los parámetros de la URL si existen
+        if (fechaInicio || fechaFin) {
+            const params = new URLSearchParams();
+            if (fechaInicio) params.append("fechaInicio", fechaInicio);
+            if (fechaFin) params.append("fechaFin", fechaFin);
+            url += `?${params.toString()}`;
+        }
+
+        const options = {
+            method: "GET",
+            url: url,
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+
+            if (response.status === 200) {
+                let data = response.data;
+
+                // Si hay datos, actualizar el store
+                await dispatch(listStore({ cotizadores: data.length > 0 ? data : [], dateFilter: true }));
+            }
+
+        } catch (error) {
+            console.error("Error al obtener cotizadores:", error);
+        }
+
+        // Ocultar el loader sin importar si hubo éxito o error
+        await dispatch(hideBackDropStore());
+    };
+};
+
+
+export const search_cotizadores = (searchTerm) => {
+
+    return async (dispatch, getState) => {
+
+        await dispatch(showBackDropStore());
+        
+        const { authStore } = getState();
+
+        const token = authStore.token;
+
+        let url = `${URL}/cotizador/search_cotizadores/api/`;
+
+        const options = {
+            method: "GET",
+            url: url,
+            headers: {Authorization: `Bearer ${token}`},
+            params:  { q: searchTerm },
+        };
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+
+            if (response.status === 200) {
+                let data = response.data;
+                // Si hay datos, actualizar el store
+                await dispatch(listStore({ cotizadores: data.length > 0 ? data : [], dateFilter: true }));
+            }
+
+        } catch (error) {
+            console.error("Error al obtener cotizadores:", error);
+        }
+
+        // Ocultar el loader sin importar si hubo éxito o error
+        await dispatch(hideBackDropStore());
     };
 };

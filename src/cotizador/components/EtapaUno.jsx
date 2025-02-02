@@ -17,8 +17,10 @@ export const EtapaUno = () => {
   const formValues = useSelector((state) => state.cotizadorStore);
 
   const { id, idCliente, precioDeLey, comisionPrecioLey, etiquetaDosArray, etiquetaDos, placa, cilindraje,modelo, chasis, 
-          telefono,nombreCompleto,numeroDocumento,tipoDocumento,correo, direccion, total } = formValues;
+          telefono,nombreCompleto,numeroDocumento,tipoDocumento,correo, direccion, total, dateFilter } = formValues;
   
+          console.log("dateFilter ",dateFilter);
+
   const { clientes }  = useSelector(state => state.clientesStore);
   const { preciosLey } = useSelector((state) => state.clientesStore);
 
@@ -135,7 +137,7 @@ export const EtapaUno = () => {
       // Aquí puedes enviar los datos al backend o realizar alguna acción
       if (id) {
         // Actualizar trámite existente
-        dispatch(updateThunks(formValues));
+        dispatch(updateThunks(formValues, "cotizador"));
       } else {
         // Crear nuevo trámite
         dispatch(createThunks(formValues));
@@ -477,7 +479,7 @@ export const EtapaUno = () => {
         </Grid>
             <Grid item xs={6}>
               {
-                formValues.id != "" ? (<Button variant="contained" color="primary" fullWidth type="submit">Editar</Button>) : (<Button variant="contained" color="primary" fullWidth type="submit">Guardar</Button>)
+                formValues.id != "" ? (<Button disabled={dateFilter} variant="contained" color="primary" fullWidth type="submit">Editar</Button>) : (<Button variant="contained" color="primary" fullWidth type="submit">Guardar</Button>)
               }
             </Grid>
             <Grid item xs={6}>

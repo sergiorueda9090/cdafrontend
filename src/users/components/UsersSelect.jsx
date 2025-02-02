@@ -48,9 +48,8 @@ export const UsersSelect = () => {
     }
     
     alert("envio de notificacion whatsapp");
-    console.log("handleSendNotification data ",data);
-
-    dispatch(createThunks(data));
+ 
+    dispatch(updateThunks(data, "tramite"));
 
     navigate(`/tramites`);
 

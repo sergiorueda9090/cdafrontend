@@ -12,8 +12,6 @@ import { useSelector, useDispatch }     from 'react-redux';
 
 import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
 import { getAllCotizadorConfirmacionPreciosThunks } from '../../store/cotizadorStore/cotizadorThunks';                           
-//import { getAllThunksTramites }         from '../../store/clientesStore/clientesThunks';
-
 import { ToastContainer, toast }        from 'react-toastify';
 
 export const SelectViews = () => {
@@ -35,7 +33,6 @@ export const SelectViews = () => {
 
     useEffect(() => {
         dispatch(getAllCotizadorConfirmacionPreciosThunks());
-        //dispatch(getAllThunksTramites());
       },[])
 
     const handleOpenModal = async () => {
@@ -65,7 +62,7 @@ export const SelectViews = () => {
         {/* START ALERT */}
         <ToastContainer
             position="top-center" // Posición predeterminada
-            autoClose={4000} // Tiempo de cierre automático
+            autoClose={1000} // Tiempo de cierre automático
             hideProgressBar={false} // Mostrar barra de progreso
             newestOnTop={true} // Notificaciones más recientes arriba
             closeOnClick // Cierre al hacer clic
