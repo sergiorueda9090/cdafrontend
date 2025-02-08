@@ -21,6 +21,8 @@ import { DateRange } from '../../cotizador/components/DateRange';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+
 // Habilitar el plugin de tiempo relativo
 dayjs.extend(relativeTime);
 
@@ -68,9 +70,12 @@ export function DataTable() {
 
     };
     
-    const handleCopyToClipboard = (text) => {
+    const handleCopyToClipboard = (text, id="") => {
+      console.log("id ",id)
       navigator.clipboard.writeText(text).then(() => {
-        alert("Link copiado al portapapeles");
+        if(id != ""){
+          mostrarToast(id)
+        }
       });
     };
    
@@ -79,6 +84,97 @@ export function DataTable() {
       return `hsl(${hue}, 70%, 85%)`; // Colores suaves
     };
 
+    /* ====================== */
+    const mostrarToast = (id) => {
+      let tiempoRestante = 180; // 3 minutos en segundos
+      console.log("mostrarToast ",id);
+      const idToast = toast(
+        <div>
+          ⏳ Tienes <span id="contador">3:00</span> minutos para confirmar el link de pago.
+          <div style={{ marginTop: "10px", display: "flex", justifyContent: "space-between" }}>
+            <button 
+              onClick={() => confirmarPago(idToast,id)} 
+              style={{ background: "green", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
+              ✅ Pago Exitoso
+            </button>
+            <button 
+              onClick={() => noPuedePagar(idToast)} 
+              style={{ background: "red", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
+              ❌ No Puedo Pagar
+            </button>
+          </div>
+        </div>,
+        {
+          position: "bottom-right",
+          autoClose: 180000, // 3 minutos
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "light",
+          transition: Bounce,
+        }
+      );
+  
+      // Actualizar el mensaje cada segundo
+      const interval = setInterval(() => {
+        tiempoRestante -= 1;
+        const minutos = Math.floor(tiempoRestante / 60);
+        const segundos = tiempoRestante % 60;
+        const tiempoFormato = `${minutos}:${segundos.toString().padStart(2, "0")}`;
+  
+        toast.update(idToast, {
+          render: (
+            <div>
+              ⏳ Tienes <span id="contador">{tiempoFormato}</span> minutos para confirmar el link de pago.
+              <div style={{ marginTop: "10px", display: "flex", justifyContent: "space-between" }}>
+                <button 
+                  onClick={() => confirmarPago(idToast,id)} 
+                  style={{ background: "green", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
+                  ✅ Pago Exitoso
+                </button>
+                <button 
+                  onClick={() => noPuedePagar(idToast)} 
+                  style={{ background: "red", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
+                  ❌ No Puedo Pagar
+                </button>
+              </div>
+            </div>
+          ),
+        });
+  
+        if (tiempoRestante <= 0) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    };
+  
+    const confirmarPago = async (idToast, id="") => {
+      toast.dismiss(idToast);
+    
+      await handleConfirmEmitido(id)
+      
+      toast.success("✅ Pago confirmado con éxito.", {
+        position: "bottom-right",
+        autoClose: 5000,
+      });
+    
+    };
+  
+    const noPuedePagar = (idToast) => {
+      toast.dismiss(idToast);
+      toast.error("❌ No pudiste realizar el pago.", {
+        position: "bottom-right",
+        autoClose: 5000,
+      });
+    };
+
+
+    const confirmDelete = (rowId) => {
+      alert("llama el endpoint de elminar el archivo");
+    }
+    /* ====================== */
+
     const columns = [
       { field: 'id',              headerName: 'ID',                 width: 80},
       {
@@ -86,91 +182,229 @@ export function DataTable() {
         headerName: 'Hace',
         width: 150,
         valueGetter: (params) => {
-          const fechaRegistro = params; // Asegúrate de que "fechaEmision" sea un campo en tus datos
-          return dayjs(fechaRegistro).fromNow(); // Convierte la fecha a "hace X minutos"
+          const fechaRegistro = params; // Accede a la fecha desde la fila
+          if (!fechaRegistro) return ''; // Manejo de valores nulos o indefinidos
+      
+          const ahora = dayjs();
+          const diferenciaEnMinutos = ahora.diff(dayjs(fechaRegistro), 'minute'); // Calcula la diferencia en minutos
+      
+          return `${diferenciaEnMinutos} minutos`;
         },
-      },
- {
-    field: "image_usuario",
-    headerName: "Usuario",
-    width: 100,
-    sortable: false,
-    renderCell: (params) => {
-      const imageUrl = URL + params.row.image_usuario; // URL de la imagen
-      const fullName = params.row.nombre_usuario || "Usuario";
-      const colorPunto = getPastelColor(); // Color único para cada usuario
 
-      return (
-        <Tooltip title={fullName} arrow>
-          <Box sx={{ position: "relative", display: "inline-block" }}>
-            <Avatar
-              alt={fullName}
-              src={imageUrl || ""}
-              sx={{ width: 40, height: 40, fontSize: 16, bgcolor: "#2196f3", cursor: "pointer" }}
-            >
-              {!imageUrl ? fullName[0] : ""}
-            </Avatar>
-            {/* Punto de color en la esquina inferior derecha */}
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 0,
-                right: 0,
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                backgroundColor: colorPunto,
-                border: "2px solid white",
-              }}
-            />
-          </Box>
-        </Tooltip>
-      );
-    },
-  },
-      { field: 'etiquetaDos',     headerName: 'Etiqueta',           width: 150 },
+      },
       {
-        field: "linkPago",
-        headerName: "link",
-        width: 80,
-        renderCell: (params) => (
-          <>
-            {params.value && (
-              <Tooltip title="Copiar link de pago">
-                <IconButton
-                  aria-label="Copiar link de pago"
-                  onClick={() => handleCopyToClipboard(params.value)}
-                  color="success"
-                  size="small"
-                >
-                  <ContentCopyIcon />
-                </IconButton>
+          field: "image_usuario",
+          headerName: "Usuario",
+          width: 100,
+          sortable: false,
+          renderCell: (params) => {
+            const imageUrl = URL + params.row.image_usuario; // URL de la imagen
+            const fullName = params.row.nombre_usuario || "Usuario";
+            const colorPunto = getPastelColor(); // Color único para cada usuario
+
+            return (
+              <Tooltip title={fullName} arrow>
+                <Box sx={{ position: "relative", display: "inline-block" }}>
+                  <Avatar
+                    alt={fullName}
+                    src={imageUrl || ""}
+                    sx={{ width: 40, height: 40, fontSize: 16, bgcolor: "#2196f3", cursor: "pointer" }}
+                  >
+                    {!imageUrl ? fullName[0] : ""}
+                  </Avatar>
+                  {/* Punto de color en la esquina inferior derecha */}
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      bottom: 0,
+                      right: 0,
+                      width: 10,
+                      height: 10,
+                      borderRadius: "50%",
+                      backgroundColor: colorPunto,
+                      border: "2px solid white",
+                    }}
+                  />
+                </Box>
               </Tooltip>
-            )}
-          </>
-        ),
-      },
-      { field: 'placa',           headerName: 'Placa',              width: 130, editable: true },
-      { field: 'cilindraje',      headerName: 'Cilindraje',         width: 130, editable: true },
-      { field: 'modelo',          headerName: 'Modelo',             width: 100, editable: true },
-      { field: 'chasis',          headerName: 'Chasis',             width: 130, editable: true },
-      {
-        field: "tipoDocumento",
-        headerName: "Tipo Documento",
-        width: 150,
-        renderCell: (params) => {
-          const mapDocumentTypes = {
-            "Cedula": "CC",
-            "Pasaporte": "PPT",
-            "Licencia": "LIC"
-          };
-    
-          // Si existe en el diccionario, se reemplaza, si no, se muestra el valor original
-          return mapDocumentTypes[params.value] || params.value;
-        }
-      },
-      { field: 'numeroDocumento', headerName: 'Documento',          width: 150, editable: true },
-      { field: 'nombreCompleto',  headerName: 'Nombre',             width: 130, editable: true },
+            );
+          },
+        },
+        { field: 'nombre_cliente',  headerName: 'Cliente', width: 150,        
+          renderCell: (params) => {
+              const colorFondo = params.row.color_cliente || "#ddd"; // Usa color_cliente o un color por defecto
+              return (
+                <div
+                  style={{
+                    backgroundColor: colorFondo,
+                    color: "#333", // Color de texto oscuro para mejor contraste
+                    padding: "5px",
+                    borderRadius: "5px",
+                    textAlign: "center",
+                    width: "100%",
+                  }}
+                >
+                  {params.value}
+                </div>
+              );
+            },
+          },
+          { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 150,
+            renderCell: (params) => {
+              const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
+              return (
+                <div
+                  style={{
+                    backgroundColor: colorFondoEtiqueta,
+                    padding: "5px",
+                    borderRadius: "5px",
+                    textAlign: "center",
+                    width: "100%",
+                  }}
+                >
+                  {params.value}
+                </div>
+              );
+            },
+          },
+          {
+            field: "linkPago",
+            headerName: "link",
+            width: 80,
+            renderCell: (params) => (
+              <>
+                {params.value && (
+                  <Tooltip title="Copiar link de pago">
+                    <IconButton
+                      aria-label="Copiar link de pago"
+                      onClick={() => handleCopyToClipboard(params, params.id)}
+                      color="success"
+                      size="small"
+                    >
+                      <ContentCopyIcon />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </>
+            ),
+          },
+          { field: 'placa',           headerName: 'Placa',              width: 130, editable: true,  
+            renderCell: (params) => (
+              <>
+                <Tooltip title="Copiar Placa">
+                  <IconButton
+                    aria-label="Copiar Placa"
+                    onClick={() => handleCopyToClipboard(params.value)}
+                    color="primary"
+                    size="small"
+                  >
+                    <ContentCopyIcon />
+                  </IconButton>
+                </Tooltip>
+                {params.value}
+              </>
+            ), 
+          },
+          { field: 'cilindraje',      headerName: 'Cilindraje',         width: 130, editable: true,  
+            renderCell: (params) => (
+              <>
+                <Tooltip title="Copiar Cilindraje">
+                  <IconButton
+                    aria-label="Copiar Cilindraje"
+                    onClick={() => handleCopyToClipboard(params.value)}
+                    color="primary"
+                    size="small"
+                  >
+                    <ContentCopyIcon />
+                  </IconButton>
+                </Tooltip>
+                {params.value}
+              </>
+            ), 
+          },
+          { field: 'modelo',          headerName: 'Modelo',             width: 100, editable: true,  
+            renderCell: (params) => (
+              <>
+                <Tooltip title="Copiar Modelo">
+                  <IconButton
+                    aria-label="Copiar Modelo"
+                    onClick={() => handleCopyToClipboard(params.value)}
+                    color="primary"
+                    size="small"
+                  >
+                    <ContentCopyIcon />
+                  </IconButton>
+                </Tooltip>
+                {params.value}
+              </>
+            ), 
+          },
+          { field: 'chasis',          headerName: 'Chasis',             width: 220, editable: true,  
+            renderCell: (params) => (
+              <>
+                <Tooltip title="Copiar Cilindraje">
+                  <IconButton
+                    aria-label="Copiar Cilindraje"
+                    onClick={() => handleCopyToClipboard(params.value)}
+                    color="primary"
+                    size="small"
+                  >
+                    <ContentCopyIcon />
+                  </IconButton>
+                </Tooltip>
+                {params.value}
+              </>
+            ), 
+          },
+          {
+            field: "tipoDocumento",
+            headerName: "Tipo Documento",
+            width: 150,
+            renderCell: (params) => {
+              const mapDocumentTypes = {
+                "Cedula": "CC",
+                "Pasaporte": "PPT",
+                "Licencia": "LIC"
+              };
+        
+              // Si existe en el diccionario, se reemplaza, si no, se muestra el valor original
+              return mapDocumentTypes[params.value] || params.value;
+            }
+          },
+          { field: 'numeroDocumento', headerName: 'Documento',          width: 150, editable: true,  
+            renderCell: (params) => (
+              <>
+                <Tooltip title="Copiar Documento">
+                  <IconButton
+                    aria-label="Copiar Documento"
+                    onClick={() => handleCopyToClipboard(params.value)}
+                    color="primary"
+                    size="small"
+                  >
+                    <ContentCopyIcon />
+                  </IconButton>
+                </Tooltip>
+                {params.value}
+              </>
+            ), 
+          },
+          { field: 'nombreCompleto',  headerName: 'Nombre',             width: 130, editable: true,  
+            renderCell: (params) => (
+              <>
+                <Tooltip title="Copiar Nombre">
+                  <IconButton
+                    aria-label="Copiar Nombre"
+                    onClick={() => handleCopyToClipboard(params.value)}
+                    color="primary"
+                    size="small"
+                  >
+                    <ContentCopyIcon />
+                  </IconButton>
+                </Tooltip>
+                {params.value}
+              </>
+            ), 
+          },
       {
         field: 'actions',
         headerName: 'Actions',
@@ -222,7 +456,7 @@ export function DataTable() {
 
     const handleConfirmEmitido = async(id) => {
 
-      dispatch(updateThunks({ id, confirmacionPreciosModulo: 1 }, 'tramite'));
+      dispatch(updateThunks({ id, confirmacionPreciosModulo: 1, pdfsModulo:1, tramiteModulo:0 }, 'tramite'));
       
       navigate('/confirmacionprecios')
     
@@ -238,6 +472,9 @@ export function DataTable() {
 
   return (
     <Paper sx={{ padding: 2 }}>
+          
+          <button onClick={mostrarToast}>Mostrar Toast</button>
+          <ToastContainer />
 
           {/* Contenedor de filtros */}
           <Box display="flex" justifyContent="space-between" marginBottom={2}>

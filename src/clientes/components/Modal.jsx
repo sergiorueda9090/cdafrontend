@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { closeModalShared } from '../../store/globalStore/globalStore';
 import { createThunks, updateThunks }     from '../../store/clientesStore/clientesThunks';
+import ExcelUploader from "./ExcelUploader";
 
 export const FormDialogUser = () => {
   const dispatch = useDispatch();
@@ -19,10 +20,12 @@ export const FormDialogUser = () => {
   const { openModalStore } = useSelector((state) => state.globalStore);
   const clientesStore = useSelector((state) => state.clientesStore);
 
+ 
   const [formValues, setFormValues] = useState({
     nombre: "",
     preciosLey: [],
   });
+
   const [preciosLey, setPreciosLey] = useState([]);
   const [errors, setErrors] = useState({});
 
@@ -72,14 +75,17 @@ export const FormDialogUser = () => {
     e.preventDefault();
     if (!validateForm()) return;
     const payload = { ...formValues, preciosLey };
+
     if (!formValues.id) {
       const dataSend = {
         nombre: payload.nombre,
         apellidos: payload.apellidos,
         direccion: payload.direccion,
         telefono: payload.telefono,
+        color: payload.color,
         precios_ley: JSON.stringify(payload.preciosLey),
       };
+      console.log("dataSend ",dataSend);
       dispatch(createThunks(dataSend));
     } else {
       const dataSend = {
@@ -88,6 +94,7 @@ export const FormDialogUser = () => {
         apellidos: payload.apellidos,
         direccion: payload.direccion,
         telefono: payload.telefono,
+        color: payload.color,
         precios_ley: JSON.stringify(payload.preciosLey),
       };
       dispatch(updateThunks(dataSend));
@@ -130,7 +137,7 @@ export const FormDialogUser = () => {
                 helperText={errors.apellidos}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <TextField
                 fullWidth
                 name="telefono"
@@ -139,7 +146,7 @@ export const FormDialogUser = () => {
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <TextField
                 fullWidth
                 name="direccion"
@@ -148,57 +155,25 @@ export const FormDialogUser = () => {
                 onChange={handleInputChange}
               />
             </Grid>
-          </Grid>
-          <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            <Grid item xs={12}>
-              <Button variant="outlined" onClick={addPrecioLey}>
-                Agregar Precio de Ley
-              </Button>
+
+            <Grid item xs={4}>
+              <TextField
+                fullWidth
+                name="color"
+                label="🎨 Seleccionar Color"
+                type="color" // Permite seleccionar un color
+                value={formValues.color || "#000000"} // Valor predeterminado
+                onChange={handleInputChange}
+                InputLabelProps={{ shrink: true }} // Mantiene la etiqueta visible
+              />
             </Grid>
-            {preciosLey.map((precio, index) => (
-              <Grid container spacing={2} key={index} sx={{ marginTop: 1 }}>
-                <Grid item xs={4}>
-                  <TextField
-                    fullWidth
-                    label="📝 Descripción"
-                    value={precio.descripcion}
-                    onChange={(e) =>
-                      handlePrecioLeyChange(index, "descripcion", e.target.value)
-                    }
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    fullWidth
-                    label="💰 Precio de Ley"
-                    value={precio.precio_ley}
-                    onChange={(e) =>
-                      handlePrecioLeyChange(index, "precio_ley", e.target.value)
-                    }
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <TextField
-                    fullWidth
-                    label="📊 Comisión"
-                    value={precio.comision}
-                    onChange={(e) =>
-                      handlePrecioLeyChange(index, "comision", e.target.value)
-                    }
-                  />
-                </Grid>
-                <Grid item xs={1}>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => removePrecioLey(index)}
-                  >
-                    Eliminar
-                  </Button>
-                </Grid>
-              </Grid>
-            ))}
           </Grid>
+
+          <Grid container spacing={2} sx={{ marginTop: 2 }}>
+            <ExcelUploader/>
+          </Grid>
+
+          
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} variant="outlined" color="error">

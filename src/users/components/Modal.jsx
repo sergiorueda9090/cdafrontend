@@ -168,7 +168,7 @@ export const FormDialogUser = () => {
                 let formData = new FormData();
 
                 // Agregar campos de texto al FormData
-                formData.append("username",         "twotwo"); // Asignando un username por defecto
+                formData.append("username",         formValues.username); // Asignando un username por defecto
                 formData.append("email",            formValues.email);
                 formData.append("first_name",       formValues.first_name);
                 formData.append("last_name",        formValues.last_name);

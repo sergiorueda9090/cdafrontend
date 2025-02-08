@@ -8,19 +8,23 @@ import { closeModalShared } from '../../store/globalStore/globalStore';
 import ContentCopyIcon  from "@mui/icons-material/ContentCopy";
 import ReplayIcon       from '@mui/icons-material/Replay';
 import { UsersSelect } from '../../users/components/UsersSelect';
+import { useNavigate }  from 'react-router-dom';
 
 export const EtapaUno = () => {
 
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   // Obtener valores del store
   const formValues = useSelector((state) => state.cotizadorStore);
 
-  const { id, idCliente, precioDeLey, comisionPrecioLey, etiquetaDosArray, etiquetaDos, placa, cilindraje,modelo, chasis, 
-          telefono,nombreCompleto,numeroDocumento,tipoDocumento,correo, direccion, total, dateFilter } = formValues;
+  const { id, idCliente, precioDeLey, comisionPrecioLey, etiquetaDosArray, idEtiqueta, etiquetaDos, placa, cilindraje,modelo, chasis, 
+          telefono,nombreCompleto,numeroDocumento,tipoDocumento,correo, direccion, total, dateFilter, disableBtn } = formValues;
   
   const { clientes }  = useSelector(state => state.clientesStore);
   const { preciosLey } = useSelector((state) => state.clientesStore);
+  const { etiquetas } = useSelector((state)  => state.etiquetasStore);
+  
+  console.log("etiquetas ",etiquetas);
 
   const tipoDocumentoOptions    = ['Cedula', 'Pasaporte', 'Licencia'];
   const prefijos                = ['319', '314', '313', '300', '301', '321', '322'];
@@ -28,7 +32,6 @@ export const EtapaUno = () => {
 
   // Estado para los errores
   const [errors, setErrors]       = useState({});
-  const [enableBtnBoolean, setEnableBtnBoolean] = useState(false);
 
   const handlePriceClieen = (value) => {
     dispatch(showThunk(value.value))
@@ -61,18 +64,16 @@ export const EtapaUno = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     dispatch(handleFormStoreThunk({ name, value }));
-    handleEnableButtonPasarAemision();
   };
 
   // Manejar selección de clientes
   const handleTypeDocumentChange = (value) => {
     dispatch(handleFormStoreThunk({ name: 'tipoDocumento', value: value}));
-    handleEnableButtonPasarAemision();
   };
 
   const handleEtiquetaDosChange = (value) => {
-    dispatch(handleFormStoreThunk({ name: 'etiquetaDos', value: value}));
-    handleEnableButtonPasarAemision();
+    dispatch(handleFormStoreThunk({ name: 'etiquetaDos',  value: value.nombre}));
+    dispatch(handleFormStoreThunk({ name: 'idEtiqueta',   value: value.id}));
   };
 
   // Manejar selección de precios de ley
@@ -89,7 +90,6 @@ export const EtapaUno = () => {
       dispatch(handleFormStoreThunk({ name: 'comisionPrecioLey', value: '' }));
       dispatch(handleFormStoreThunk({ name: 'total', value: '0' }));
     }
-    handleEnableButtonPasarAemision();
   };
 
   // Manejar envío del formulario
@@ -143,67 +143,54 @@ export const EtapaUno = () => {
     }
   };
 
-  const handleEnableButtonPasarAemision = () => {
- 
-    const currentYear = new Date().getFullYear(); // Año actual
-    const nextYear = currentYear + 1; // Año máximo permitido
+
+    const handleCopy = () => {
+      const texto = `Hola, el seguro (SOAT) para el vehículo ${placa} tiene un costo de ${precioDeLey} + una comisión por gestión de ${comisionPrecioLey}, para un total a consignar de ${new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(total)}.`;
   
-    // Validar campos requeridos
-    const newBtn = {};
-  
-    // Lista de campos obligatorios
-    const requiredFields = {
-      modelo,
-      idCliente,
-      etiquetaDos,
-      placa,
-      cilindraje,
-      chasis,
-      tipoDocumento,
-      numeroDocumento,
-      nombreCompleto,
+      navigator.clipboard.writeText(texto)
+        .then(() => {
+          //alert("Texto copiado al portapapeles");
+        })
+        .catch(err => {
+          console.error("Error al copiar el texto: ", err);
+        });
     };
-  
-    // Validar si algún campo está vacío
-    for (const key in requiredFields) {
-      if (!requiredFields[key]) {
-        newBtn[key] = `El campo ${key} es obligatorio.`;
-      }
-    }
-  
-    // Validar el campo modelo con restricciones adicionales
-    if (modelo) {
-      if (isNaN(modelo)) {
-        newBtn.modelo = "El modelo debe ser un año válido.";
-      } else if (modelo > nextYear) {
-        newBtn.modelo = `El modelo no puede ser mayor a ${nextYear}.`;
-      }
-    }
-  
-    console.log("newBtn", newBtn);
-  
-    // Si no hay errores, habilitar el botón; de lo contrario, deshabilitarlo
-    setEnableBtnBoolean(Object.keys(newBtn).length === 0);
-  };
-  
-  const handleCopy = () => {
-    const text = `Hola, el seguro (SOAT) para el vehículo ${placa} tiene un costo de ${new Intl.NumberFormat(
-      "es-CO",
-      { style: "currency", currency: "COP" }
-    ).format(precioDeLey)} + una comisión por gestión de ${new Intl.NumberFormat(
-      "es-CO",
-      { style: "currency", currency: "COP" }
-    ).format(comisionPrecioLey)}, para un total a consignar de ${new Intl.NumberFormat(
-      "es-CO",
-      { style: "currency", currency: "COP" }
-    ).format(total)}`;
-  };
 
-  const [showSelectUser, setShowSelectUser] = useState(false);
+    const [showSelectUser, setShowSelectUser] = useState(false);
 
-  const handleShowUserSelect = () => {
-    setShowSelectUser(!showSelectUser);
-  }
+    const handleShowUserSelect = () => {
+
+        if(id){
+
+          let data = {id, tramiteModulo:1, cotizadorModulo:0}
+          
+          dispatch(updateThunks(data, "tramite"));
+
+        }else{
+
+              let data = { 
+                            idCliente, 
+                            precioDeLey, 
+                            comisionPrecioLey, 
+                            etiquetaDos, 
+                            placa, 
+                            cilindraje,
+                            modelo, 
+                            chasis, 
+                            telefono, 
+                            nombreCompleto,
+                            numeroDocumento,
+                            tipoDocumento,
+                            correo, 
+                            direccion,
+                            total,
+                            tramiteModulo:1,
+                            cotizadorModulo:1
+              }
+              dispatch(createThunks(data, "tramite"));
+        }
+        navigate(`/tramites`);
+    }
 
     return (
       <form onSubmit={handleSubmit}>
@@ -280,9 +267,10 @@ export const EtapaUno = () => {
             <FormControl fullWidth>
               <Autocomplete
                 disablePortal
-                options={etiquetaDosArray}
-                value={etiquetaDos}
-                onChange={(event, value) => handleEtiquetaDosChange(value)}
+                options={etiquetas}
+                value={etiquetas.find(e => e.id === idEtiqueta) || null} // Asegura que el valor seleccionado sea un objeto
+                onChange={(event, value) => handleEtiquetaDosChange(value)} // Solo enviamos el nombre
+                getOptionLabel={(option) => option.nombre} // Muestra solo el nombre en la lista
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -306,6 +294,7 @@ export const EtapaUno = () => {
               onChange={handleChange}
               error={!!errors.placa}
               helperText={errors.placa}
+              autoComplete="off"
             />
           </Grid>
   
@@ -321,6 +310,7 @@ export const EtapaUno = () => {
               error={!!errors.cilindraje}
               helperText={errors.cilindraje}
               type='number'
+              autoComplete="off"
             />
           </Grid>
 
@@ -337,6 +327,7 @@ export const EtapaUno = () => {
               error={!!errors.modelo}
               helperText={errors.modelo}
               type='number'
+              autoComplete="off"
             />
           </Grid>
   
@@ -352,6 +343,7 @@ export const EtapaUno = () => {
                 onChange={handleChange}
                 error={!!errors.chasis}
                 helperText={errors.chasis}
+                autoComplete="off"
               />
           </Grid>
 
@@ -386,6 +378,7 @@ export const EtapaUno = () => {
             onChange={handleChange}
             error={!!errors.numeroDocumento}
             helperText={errors.numeroDocumento}
+            autoComplete="off"
           />
         </Grid>
 
@@ -400,6 +393,7 @@ export const EtapaUno = () => {
             onChange={handleChange}
             error={!!errors.nombreCompleto}
             helperText={errors.nombreCompleto}
+            autoComplete="off"
           />
         </Grid>
 
@@ -413,6 +407,7 @@ export const EtapaUno = () => {
               variant="outlined"
               value={telefono.trimStart()}
               onChange={handleChange}
+              autoComplete="off"
             />
             <Button
               variant="contained"
@@ -433,6 +428,7 @@ export const EtapaUno = () => {
             variant="outlined"
             value={correo.trimStart()}
             onChange={handleChange}
+            autoComplete="off"
           />
         </Grid>
 
@@ -446,6 +442,7 @@ export const EtapaUno = () => {
               variant="outlined"
               value={direccion}
               onChange={handleChange}
+              autoComplete="off"
             />
             <Button
               variant="contained"
@@ -478,7 +475,7 @@ export const EtapaUno = () => {
               }
             </Grid>
             <Grid item xs={6}>
-              <Button disabled={!enableBtnBoolean} variant="contained" color="warning" fullWidth type="button" onClick={handleShowUserSelect}>PASAR A EMISION</Button>
+              <Button disabled={!disableBtn} variant="contained" color="warning" fullWidth type="button" onClick={handleShowUserSelect}>PASAR A EMISION</Button>
             </Grid>
 
               {/* NOTIFICACION WHATSAPP USUARIOS */}

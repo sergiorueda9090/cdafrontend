@@ -34,7 +34,7 @@ export const getAllThunks = () => {
             if(response.status === 200){
 
                 let data = response.data;
-
+          
                 if(data.length > 0){
                     
                     await dispatch(listStore({'cotizadores':data, 'dateFilter':false}))

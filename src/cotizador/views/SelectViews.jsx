@@ -13,6 +13,7 @@ import { useSelector, useDispatch }     from 'react-redux';
 import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
 import { getAllThunks }                 from "../../store/cotizadorStore/cotizadorThunks";
 import { getAllThunksTramites }         from '../../store/clientesStore/clientesThunks';
+import { getAllThunks as getAllThunksEtiqutas } from '../../store/etiquetasStore/etiquetasThunks';
 
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -20,7 +21,7 @@ export const SelectViews = () => {
 
     const dispatch = useDispatch();
     
-    const { alert }         = useSelector( state => state.globalStore );
+    const { alert } = useSelector( state => state.globalStore );
   
    
     useEffect(() => {
@@ -36,6 +37,7 @@ export const SelectViews = () => {
 
     useEffect(() => {
         dispatch(getAllThunks());
+        dispatch(getAllThunksEtiqutas());
         dispatch(getAllThunksTramites());
       },[])
 

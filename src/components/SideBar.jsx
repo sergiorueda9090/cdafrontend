@@ -7,9 +7,12 @@ import PeopleIcon from '@mui/icons-material/People';
 import Face6Icon from '@mui/icons-material/Face6';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
+import LabelIcon from '@mui/icons-material/Label';
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import SecurityIcon from '@mui/icons-material/Security';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import ContactPageIcon from '@mui/icons-material/ContactPage';
 
 const StyledLink = styled(Link)({
     textDecoration: 'none',
@@ -21,13 +24,17 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
     const location = useLocation(); 
 
     const items = [
-        { text: 'Usuarios', icon: <PeopleIcon />, route: '/users' },
-        { text: 'Clientes', icon: <Face6Icon />, route: '/clientes' },
-        { text: 'Cotizador', icon: <RequestQuoteIcon />, route: '/cotizador' },
-        { text: 'Trámites', icon: <ReceiptLongIcon />, route: '/tramites' },
-        { text: 'Confirmación de Precios', icon: <AttachMoneyIcon />, route: '/confirmacionprecios' },
-        { text: 'Cargar PDFs', icon: <PictureAsPdfIcon />, route: '/cargarpdfs' },
-        { text: 'Verificación de Código', icon: <SecurityIcon />, route: '/verify' },
+        { text: 'Usuarios',                 icon: <PeopleIcon />,                       route: '/users' },
+        { text: 'Clientes',                 icon: <Face6Icon />,                        route: '/clientes' },
+        { text: 'Etiquetas',                icon: <LabelIcon />,                        route: '/etiquetas' },
+        { text: 'Cotizador',                icon: <RequestQuoteIcon />,                 route: '/cotizador' },
+        { text: 'Trámites',                 icon: <ReceiptLongIcon />,                  route: '/tramites' },
+        { text: 'Confirmación de Precios',  icon: <AttachMoneyIcon />,                  route: '/confirmacionprecios' },
+        { text: 'Cargar PDFs',              icon: <PictureAsPdfIcon />,                 route: '/cargarpdfs' },
+        { text: 'Cuentas Bancarias',        icon: <AccountBalanceIcon />,               route: '/bancos' },
+        { text: 'Ficha del Cliente',        icon: <ContactPageIcon />,                  route: '/fichaCliente' },
+        { text: 'Verificación de Código',   icon: <SecurityIcon />,                     route: '/verify' },
+        
     ];
 
     return (

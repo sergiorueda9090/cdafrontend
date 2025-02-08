@@ -3,7 +3,7 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { loginFail } from "../authStore/authStore.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { showStore, listStore, resetFormularioStore, listStoreMain  } from "./clientesStore.js";
+import { showStore, listStore, resetFormularioStore, listStoreMain, addPreciosLeyStore  } from "./clientesStore.js";
 
 // Función asincrónica para obtener los Pokemons
 export const getAllThunks = () => {
@@ -72,18 +72,21 @@ export const createThunks = (data) => {
 
     return async (dispatch, getState) => {
 
-        const {authStore} = getState();
+        const {authStore, clientesStore} = getState();
         const token       = authStore.token
 
+        console.log("clientesStore ",clientesStore.preciosLey);
+        
         await dispatch(showBackDropStore());
-        //console.log("createThunks data ",data)
+        console.log("createThunks data ",data)
         const form = new FormData();
-        form.append("nombre", data.nombre);
-        form.append("apellidos", data.apellidos);
-        form.append("telefono", data.telefono);
-        form.append("direccion", data.direccion);
-        form.append("precios_ley", data.precios_ley);
-
+        form.append("nombre",       data.nombre);
+        form.append("apellidos",    data.apellidos);
+        form.append("telefono",     data.telefono);
+        form.append("direccion",    data.direccion);
+        form.append("color",        data.color);
+        form.append("precios_ley",  JSON.stringify(clientesStore.preciosLey));
+        //return
         const options = {
             method: 'POST',
             url: `${URL}/clientes/api/create/`,
@@ -130,7 +133,7 @@ export const createThunks = (data) => {
             //await dispatch ( loginFail() );
             await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
             
-            await dispatch ( loginFail() );
+            //await dispatch ( loginFail() );
             
             await dispatch( closeModalShared() );
 
@@ -220,6 +223,7 @@ export const updateThunks = (data) => {
         form.append("nombre", data.nombre);
         form.append("apellidos", data.apellidos);
         form.append("telefono", data.telefono);
+        form.append("color", data.color);
         form.append("direccion", data.direccion);
         form.append("precios_ley", data.precios_ley);
 
@@ -408,3 +412,12 @@ export const getAllThunksTramites = () => {
         }
     };
 };
+
+/* ADD PRECIOS DE LEY */
+export const addPreciosLeyThunks =  (data) => {
+
+    return (dispatch, getState) => {
+         dispatch(addPreciosLeyStore(data))
+    }
+
+}

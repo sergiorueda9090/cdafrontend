@@ -136,11 +136,30 @@ export function DataTable() {
         field: "nombre_cliente",
         headerName: "Cliente",
         width: 150,
-        renderCell: (params) => (
+        renderCell: (params) => {
+          const colorFondo = params.row.color_cliente || "#ddd"; // Usa color_cliente o un color por defecto
+          return (
+            <div
+              style={{
+                backgroundColor: colorFondo,
+                color: "#333", // Color de texto oscuro para mejor contraste
+                padding: "5px",
+                borderRadius: "5px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              {params.value}
+            </div>
+          );
+        },
+      },
+      { field: 'etiquetaDos',           headerName: 'Etiqueta',        width: 130,        renderCell: (params) => {
+        const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
+        return (
           <div
             style={{
-              backgroundColor: getPastelColor(),
-              color: "#333", // Color de texto oscuro para mejor contraste
+              backgroundColor: colorFondoEtiqueta,
               padding: "5px",
               borderRadius: "5px",
               textAlign: "center",
@@ -149,9 +168,9 @@ export function DataTable() {
           >
             {params.value}
           </div>
-        ),
+        );
       },
-      { field: 'etiquetaDos',           headerName: 'Etiqueta',        width: 130 },
+     },
       { field: 'placa',                 headerName: 'Placa',           width: 130 },
       { field: 'modelo',                headerName: 'Modelo',          width: 130 },
       { field: 'chasis',                headerName: 'Chasis',          width: 130 },

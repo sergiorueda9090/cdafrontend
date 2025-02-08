@@ -10,6 +10,7 @@ export const cotizadorStore = createSlice({
     nombre_usuario  : '',
     nombre_cliente  : '',
     etiquetaUno     : '',
+    idEtiqueta      : '',
     etiquetaDos     : '',
     placa           : '',
     cilindraje      : '',
@@ -60,7 +61,8 @@ export const cotizadorStore = createSlice({
     confirmacionPreciosModulo: '0',
     pdfsModulo      : '0',
 
-    dateFilter      : false,  // false puede editar, true no puede editar 
+    dateFilter      : false,  // false puede editar, true no puede editar
+    disableBtn      : false,
   },
   reducers: {
     showStore:(state,action) => {
@@ -73,7 +75,10 @@ export const cotizadorStore = createSlice({
       state.nombre_cliente  = action.payload.nombre_cliente;
 
       state.etiquetaUno     = action.payload.etiquetaUno;
+
+      state.idEtiqueta      = action.payload.idEtiqueta;
       state.etiquetaDos     = action.payload.etiquetaDos;
+
       state.placa           = action.payload.placa;
       state.cilindraje      = action.payload.cilindraje;
       state.modelo          = action.payload.modelo;
@@ -100,7 +105,21 @@ export const cotizadorStore = createSlice({
       state.pdfsModulo      = action.payload.pdfsModulo;
       state.tramiteModulo   = action.payload.tramiteModulo;
 
-      
+      let requiredFields = [
+        "modelo",
+        "idCliente",
+        "etiquetaDos",
+        "placa",
+        "cilindraje",
+        "chasis",
+        "tipoDocumento",
+        "numeroDocumento",
+        "nombreCompleto",
+    ];
+
+    
+    let allFieldsFilled = requiredFields.every(field => state[field] && state[field].toString().trim() !== "");
+    state.disableBtn = allFieldsFilled;
     },
     listStore:(state, action) => {
       state.cotizadores = action.payload.cotizadores
@@ -120,6 +139,7 @@ export const cotizadorStore = createSlice({
       state.nombre_usuario  = '';
       state.nombre_cliente  = '';
       state.etiquetaUno     = '';
+      state.idEtiqueta      = '';
       state.etiquetaDos     = '';
       state.placa           = '';
       state.cilindraje      = '';
@@ -165,12 +185,33 @@ export const cotizadorStore = createSlice({
       state.clientes        = [];
       state.tiposDocumentos = [];
       //state.cotizadores        = [];
-      state.dateFilter      = false;  
+      state.dateFilter      = false; 
+      state.disableBtn      = false;
     },
-    handleFormStore:(state , action) => {
+    handleFormStore: (state, action) => {
       const { name, value } = action.payload; // Obtener el nombre y el valor
-      console.log( name, value )
       state[name] = value; // Actualizar dinámicamente la propiedad en el estado
+  
+      let requiredFields = [
+          "modelo",
+          "idCliente",
+          "etiquetaDos",
+          "placa",
+          "cilindraje",
+          "chasis",
+          "tipoDocumento",
+          "numeroDocumento",
+          "nombreCompleto",
+      ];
+  
+      // Verificar si todos los campos están llenos
+      let allFieldsFilled = requiredFields.every(field => state[field] && state[field].toString().trim() !== "");
+  
+      // Verificar si "etiquetaDos" tiene un valor permitido
+      let validEtiquetaDos = ["LINK DE PAGO", "AMALFI", "AURA", "CENTRO"].includes(state.etiquetaDos);
+  
+      // Habilitar el botón solo si ambas condiciones se cumplen
+      state.disableBtn = allFieldsFilled && validEtiquetaDos;
     }
   }
 })

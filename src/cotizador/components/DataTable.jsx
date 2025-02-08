@@ -80,22 +80,42 @@ export function DataTable() {
         field: "nombre_cliente",
         headerName: "Cliente",
         width: 150,
-        renderCell: (params) => (
-          <div
-            style={{
-              backgroundColor: getPastelColor(),
-              color: "#333", // Color de texto oscuro para mejor contraste
-              padding: "5px",
-              borderRadius: "5px",
-              textAlign: "center",
-              width: "100%",
-            }}
-          >
-            {params.value}
-          </div>
-        ),
+        renderCell: (params) => {
+          const colorFondo = params.row.color_cliente || "#ddd"; // Usa color_cliente o un color por defecto
+          return (
+            <div
+              style={{
+                backgroundColor: colorFondo,
+                color: "#333", // Color de texto oscuro para mejor contraste
+                padding: "5px",
+                borderRadius: "5px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              {params.value}
+            </div>
+          );
+        },
       },
-      { field: 'etiquetaDos',     headerName: 'Etiqueta',           width: 170 },
+      { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 170,       
+          renderCell: (params) => {
+          const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
+          return (
+            <div
+              style={{
+                backgroundColor: colorFondoEtiqueta,
+                padding: "5px",
+                borderRadius: "5px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              {params.value}
+            </div>
+          );
+        }, 
+      },
       {
         field: 'placa',
         headerName: 'Placa',
@@ -176,8 +196,40 @@ export function DataTable() {
           </>
         ),
       },
-      { field: 'numeroDocumento', headerName: 'Documento',          width: 150 },
-      { field: 'nombreCompleto',  headerName: 'Nombre',             width: 130 },
+      { field: 'numeroDocumento', headerName: 'Documento',  width: 150,        
+        renderCell: (params) => (
+          <>
+            <Tooltip title="Copiar Documento">
+              <IconButton
+                aria-label="Copiar Documento"
+                onClick={() => handleCopyToClipboard(params.value)}
+                color="primary"
+                size="small"
+              >
+                <ContentCopyIcon />
+              </IconButton>
+            </Tooltip>
+            {params.value}
+          </>
+        ), 
+    },
+      { field: 'nombreCompleto',  headerName: 'Nombre',   width: 130,  
+        renderCell: (params) => (
+          <>
+            <Tooltip title="Copiar Nombre">
+              <IconButton
+                aria-label="Copiar Nombre"
+                onClick={() => handleCopyToClipboard(params.value)}
+                color="primary"
+                size="small"
+              >
+                <ContentCopyIcon />
+              </IconButton>
+            </Tooltip>
+            {params.value}
+          </>
+        ),  
+      },
       {
         field: 'actions',
         headerName: 'Actions',

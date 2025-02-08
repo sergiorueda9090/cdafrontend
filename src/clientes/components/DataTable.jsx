@@ -22,6 +22,22 @@ export function DataTable() {
       { field: 'telefono',    headerName: 'Telefono',   width: 230 },
       { field: 'direccion',   headerName: 'Direccion',  width: 230 },
       {
+        field: "color",
+        headerName: "Color",
+        width: 90,
+        renderCell: (params) => (
+          <div
+            style={{
+              width: "100%", // Ancho del cuadro de color
+              height: "100%", // Alto del cuadro de color
+              backgroundColor: params.value, // Color desde el valor de la celda
+              border: "1px solid #ccc",
+              borderRadius: "5px",
+            }}
+          ></div>
+        ),
+      },
+      {
         field: 'actions',
         headerName: 'Actions',
         width: 150,
