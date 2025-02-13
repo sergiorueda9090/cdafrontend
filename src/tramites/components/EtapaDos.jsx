@@ -33,6 +33,7 @@ export const EtapaDos = () => {
 
   // Validar y manejar el envío del formulario
   const handleSubmit = (e) => {
+    
     e.preventDefault();
 
     const newErrors = {};

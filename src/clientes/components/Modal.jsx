@@ -11,93 +11,73 @@ import { Grid } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { closeModalShared } from '../../store/globalStore/globalStore';
-import { createThunks, updateThunks }     from '../../store/clientesStore/clientesThunks';
+import { createThunks, updateThunks, handleFormStoreThunk }     from '../../store/clientesStore/clientesThunks';
 import ExcelUploader from "./ExcelUploader";
 
 export const FormDialogUser = () => {
   const dispatch = useDispatch();
 
   const { openModalStore } = useSelector((state) => state.globalStore);
-  const clientesStore = useSelector((state) => state.clientesStore);
 
- 
-  const [formValues, setFormValues] = useState({
-    nombre: "",
-    preciosLey: [],
-  });
+  const {id, nombre, apellidos, telefono, direccion, color, preciosLey } = useSelector((state) => state.clientesStore);
 
-  const [preciosLey, setPreciosLey] = useState([]);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    setFormValues(clientesStore);
-    setPreciosLey(clientesStore?.preciosLey || []);
-  }, [clientesStore]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues({ ...formValues, [name]: value });
-  };
-
-  // Formateador de moneda
-  const formatCurrency = (value) => {
-    if (!value) return "";
-    const number = value.replace(/\./g, ""); // Elimina puntos
-    return new Intl.NumberFormat("es-CO").format(number); // Formatea como moneda colombiana
-  };
-
-  const handlePrecioLeyChange = (index, field, value) => {
-    const formattedValue = field !== "descripcion" ? formatCurrency(value) : value;
-    const updatedPreciosLey = preciosLey.map((precio, i) =>
-      i === index ? { ...precio, [field]: formattedValue } : precio
-    );
-    setPreciosLey(updatedPreciosLey);
+    dispatch(handleFormStoreThunk(e.target));
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formValues.nombre.trim()) {
+    
+    if (!nombre.trim()) {
       newErrors.nombre = "El nombre es obligatorio";
     }
+
+    if (!apellidos.trim()) {
+      newErrors.apellidos = "El Apellido es obligatorio";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const addPrecioLey = () => {
-    setPreciosLey([...preciosLey, { descripcion: "", precio_ley: "", comision: "" }]);
-  };
-
-  const removePrecioLey = (index) => {
-    setPreciosLey(preciosLey.filter((_, i) => i !== index));
-  };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    const payload = { ...formValues, preciosLey };
 
-    if (!formValues.id) {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+  
+
+    if (!id) {
+
       const dataSend = {
-        nombre: payload.nombre,
-        apellidos: payload.apellidos,
-        direccion: payload.direccion,
-        telefono: payload.telefono,
-        color: payload.color,
-        precios_ley: JSON.stringify(payload.preciosLey),
+        nombre      : nombre.trim(),
+        apellidos   : apellidos.trim(),
+        direccion   : direccion?.trim() || '',
+        telefono    : telefono?.trim() || '',
+        color       : color,
+        precios_ley : JSON.stringify(preciosLey),
       };
-      console.log("dataSend ",dataSend);
+
       dispatch(createThunks(dataSend));
+
     } else {
+
       const dataSend = {
-        id: payload.id,
-        nombre: payload.nombre,
-        apellidos: payload.apellidos,
-        direccion: payload.direccion,
-        telefono: payload.telefono,
-        color: payload.color,
-        precios_ley: JSON.stringify(payload.preciosLey),
+        id          : id,
+        nombre      : nombre.trim(),
+        apellidos   : apellidos.trim(),
+        direccion   : direccion?.trim() || '',
+        telefono    : telefono?.trim() || '',
+        color       : color,
+        precios_ley : JSON.stringify(preciosLey),
       };
+    
       dispatch(updateThunks(dataSend));
+    
     }
     dispatch(closeModalShared());
   };
@@ -108,7 +88,7 @@ export const FormDialogUser = () => {
 
   return (
     <Dialog open={openModalStore} onClose={handleClose} fullWidth maxWidth="lg">
-      <DialogTitle>{formValues.id ? "Editar Cliente" : "Crear Cliente"}</DialogTitle>
+      <DialogTitle>{id ? "Editar Cliente" : "Crear Cliente"}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <DialogContentText>
@@ -120,10 +100,11 @@ export const FormDialogUser = () => {
                 fullWidth
                 name="nombre"
                 label="👤 Nombre"
-                value={formValues.nombre}
+                value={nombre}
                 onChange={handleInputChange}
                 error={!!errors.nombre}
                 helperText={errors.nombre}
+                type="text"
               />
             </Grid>
             <Grid item xs={6}>
@@ -131,10 +112,11 @@ export const FormDialogUser = () => {
                 fullWidth
                 name="apellidos"
                 label="👤 Apellidos"
-                value={formValues.apellidos}
+                value={apellidos}
                 onChange={handleInputChange}
                 error={!!errors.apellidos}
                 helperText={errors.apellidos}
+                type="text"
               />
             </Grid>
             <Grid item xs={4}>
@@ -142,8 +124,9 @@ export const FormDialogUser = () => {
                 fullWidth
                 name="telefono"
                 label="📞 Teléfono"
-                value={formValues.telefono}
+                value={telefono}
                 onChange={handleInputChange}
+                type="text"
               />
             </Grid>
             <Grid item xs={4}>
@@ -151,8 +134,9 @@ export const FormDialogUser = () => {
                 fullWidth
                 name="direccion"
                 label="🏠 Dirección"
-                value={formValues.direccion}
+                value={direccion}
                 onChange={handleInputChange}
+                type="text"
               />
             </Grid>
 
@@ -162,7 +146,7 @@ export const FormDialogUser = () => {
                 name="color"
                 label="🎨 Seleccionar Color"
                 type="color" // Permite seleccionar un color
-                value={formValues.color || "#000000"} // Valor predeterminado
+                value={color} // Valor predeterminado
                 onChange={handleInputChange}
                 InputLabelProps={{ shrink: true }} // Mantiene la etiqueta visible
               />
@@ -180,7 +164,7 @@ export const FormDialogUser = () => {
             Cancelar
           </Button>
           <Button type="submit" variant="outlined" color="primary">
-            {formValues.id ? "Editar Cliente" : "Crear Cliente"}
+            {id ? "Editar Cliente" : "Crear Cliente"}
           </Button>
         </DialogActions>
       </form>

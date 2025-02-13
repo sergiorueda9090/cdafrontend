@@ -60,6 +60,8 @@ export const cotizadorStore = createSlice({
     tramiteModulo   : '0',
     confirmacionPreciosModulo: '0',
     pdfsModulo      : '0',
+    
+    idBanco         : '',
 
     dateFilter      : false,  // false puede editar, true no puede editar
     disableBtn      : false,
@@ -120,6 +122,8 @@ export const cotizadorStore = createSlice({
     
     let allFieldsFilled = requiredFields.every(field => state[field] && state[field].toString().trim() !== "");
     state.disableBtn = allFieldsFilled;
+
+    state.idBanco = action.payload.idBanco;
     },
     listStore:(state, action) => {
       state.cotizadores = action.payload.cotizadores
@@ -185,6 +189,9 @@ export const cotizadorStore = createSlice({
       state.clientes        = [];
       state.tiposDocumentos = [];
       //state.cotizadores        = [];
+
+      state.idBanco         = '';
+
       state.dateFilter      = false; 
       state.disableBtn      = false;
     },

@@ -37,6 +37,16 @@ export const FilterData = ({cotizador}) => {
 
             dispatch(getAllCotizadorPdfsThunks());
 
+        }else if(cotizador == "cuentasbancarias"){
+            
+            alert("Ceutnas bancarias EN PROCESO DE DESARROLLO....");
+            return;
+
+        }else if(cotizador == "fichacliente"){
+            
+            alert("Ficha de los Clientes EN PROCESO DE DESARROLLO....");
+            return;
+
         }else{
 
             dispatch(getAllThunks());

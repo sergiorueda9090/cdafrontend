@@ -4,6 +4,7 @@ import { loginFail } from "../authStore/authStore.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
 import { showStore, listStore, resetFormularioStore, listStoreMain, addPreciosLeyStore  } from "./clientesStore.js";
+import { handleFormStore } from "../clientesStore/clientesStore.js";
 
 // Función asincrónica para obtener los Pokemons
 export const getAllThunks = () => {
@@ -131,7 +132,7 @@ export const createThunks = (data) => {
         } catch (error) {
 
             //await dispatch ( loginFail() );
-            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
+            await dispatch(setAlert({ message: `❌ ${error.response.data.error}.`, type: 'error'}));
             
             //await dispatch ( loginFail() );
             
@@ -139,7 +140,6 @@ export const createThunks = (data) => {
 
             await dispatch( hideBackDropStore() );
             // Manejar errores
-            console.error(error);
        
         }
 
@@ -171,12 +171,13 @@ export const showThunk= (id = "") => {
             if(response.status == 200){
 
                 await dispatch(showStore(
-                                            { id        : response.data.id ?? '',
-                                              nombre    : response.data.nombre ?? '',
-                                              apellidos : response.data.apellidos ?? '',
-                                              telefono  : response.data.telefono ?? '',
-                                              direccion : response.data.direccion ?? '',
+                                            { id        :   response.data.id ?? '',
+                                              nombre    :   response.data.nombre ?? '',
+                                              apellidos :   response.data.apellidos ?? '',
+                                              telefono  :   response.data.telefono ?? '',
+                                              direccion :   response.data.direccion ?? '',
                                               precios_ley : response.data.precios_ley ?? '',
+                                              color     :   response.data.color ?? '',
                                             }
                                         )
                                 );
@@ -415,9 +416,15 @@ export const getAllThunksTramites = () => {
 
 /* ADD PRECIOS DE LEY */
 export const addPreciosLeyThunks =  (data) => {
-
     return (dispatch, getState) => {
          dispatch(addPreciosLeyStore(data))
     }
-
 }
+
+
+export const handleFormStoreThunk = (data) => {
+    return async (dispatch) => {
+      const { name, value } = data; // Extraer el nombre y el valor del evento
+      dispatch(handleFormStore({ name, value })); // Despachar la acción para actualizar el estado
+    };
+};

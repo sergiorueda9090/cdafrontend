@@ -18,6 +18,22 @@ import { FilterData } from './FilterData';
 import { Avatar, Tooltip } from '@mui/material';
 import { URL } from '../../constants.js/constantGlogal';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import emptyDataTable from "../../assets/images/emptyDataTable.png"
+
+import { Chip } from "@mui/material";
+
+const getContrastColor = (hexColor) => {
+  // Convertir HEX a RGB
+  const r = parseInt(hexColor.substring(1, 3), 16);
+  const g = parseInt(hexColor.substring(3, 5), 16);
+  const b = parseInt(hexColor.substring(5, 7), 16);
+
+  // Calcular luminancia relativa
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  // Si la luminancia es baja, usar texto blanco, de lo contrario, negro
+  return luminance > 0.6 ? "#333" : "#FFF";
+};
 
 export function DataTable() {
 
@@ -82,37 +98,38 @@ export function DataTable() {
         width: 150,
         renderCell: (params) => {
           const colorFondo = params.row.color_cliente || "#ddd"; // Usa color_cliente o un color por defecto
+          const colorTexto = getContrastColor(colorFondo); // Color de texto calculado
           return (
-            <div
+            <Chip
               style={{
                 backgroundColor: colorFondo,
-                color: "#333", // Color de texto oscuro para mejor contraste
+                color: colorTexto, // Color de texto oscuro para mejor contraste
                 padding: "5px",
                 borderRadius: "5px",
                 textAlign: "center",
                 width: "100%",
               }}
-            >
-              {params.value}
-            </div>
+              label={params.value}
+              />
           );
         },
       },
       { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 170,       
           renderCell: (params) => {
           const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
+          const colorTexto = getContrastColor(colorFondoEtiqueta); // Color de texto calculado
           return (
-            <div
+            <Chip
               style={{
                 backgroundColor: colorFondoEtiqueta,
+                color: colorTexto, // Color de texto oscuro para mejor contraste
                 padding: "5px",
                 borderRadius: "5px",
                 textAlign: "center",
                 width: "100%",
               }}
-            >
-              {params.value}
-            </div>
+              label={params.value}
+              />
           );
         }, 
       },
@@ -263,7 +280,24 @@ export function DataTable() {
       },
     ];
     
-
+    const NoRowsOverlay = () => (
+      <div style={{ 
+        display: "flex", 
+        flexDirection: "column", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        height: "100%", 
+        marginTop:"10px",
+        marginBottom:"10px"
+      }}>
+        <img 
+          src={emptyDataTable} 
+          alt="No hay datos disponibles" 
+          style={{ width: "150px", opacity: 0.7 }} 
+        />
+        <p style={{ fontSize: "16px", color: "#666" }}>No hay datos disponibles</p>
+      </div>
+    );
     // Función para manejar la eliminación
     const handleDelete = (id) => {
       // Mostrar la notificación con opciones de confirmación
@@ -333,7 +367,7 @@ export function DataTable() {
 
 
   return (
-    <Paper sx={{ padding: 2 }}>
+    <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
       
         {/* Contenedor de filtros */}
         <Box display="flex" justifyContent="space-between" marginBottom={2}>
@@ -342,6 +376,7 @@ export function DataTable() {
         </Box>
 
       <DataGrid
+      
         rows={cotizadores}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
@@ -354,6 +389,10 @@ export function DataTable() {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
+        slots={{
+          noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
+        }}
+
       />
 
     </Paper>

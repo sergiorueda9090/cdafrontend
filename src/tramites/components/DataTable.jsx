@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import WarningIcon from "@mui/icons-material/Warning";
 
 import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk, updateThunks }   from '../../store/cotizadorStore/cotizadorThunks';
@@ -23,8 +24,26 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 
+import smallLoading from "../../assets/images/small_loading.gif";
+import emptyDataTable from "../../assets/images/emptyDataTable.png";
+
+
+import { Chip } from "@mui/material";
 // Habilitar el plugin de tiempo relativo
 dayjs.extend(relativeTime);
+
+const getContrastColor = (hexColor) => {
+  // Convertir HEX a RGB
+  const r = parseInt(hexColor.substring(1, 3), 16);
+  const g = parseInt(hexColor.substring(3, 5), 16);
+  const b = parseInt(hexColor.substring(5, 7), 16);
+
+  // Calcular luminancia relativa
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  // Si la luminancia es baja, usar texto blanco, de lo contrario, negro
+  return luminance > 0.6 ? "#333" : "#FFF";
+};
 
 export function DataTable() {
 
@@ -38,7 +57,10 @@ export function DataTable() {
 
     const [editingField, setEditingField] = useState("");
     const [editingValue, setEditingValue] = useState("");
-  
+
+    
+    const [loading, setLoading] = useState(false);
+
     const processRowUpdate = (newRow) => {
     
       const oldRow = cotizadores.find((row) => row.id === newRow.id); // Encuentra la fila original
@@ -87,7 +109,7 @@ export function DataTable() {
     /* ====================== */
     const mostrarToast = (id) => {
       let tiempoRestante = 180; // 3 minutos en segundos
-      console.log("mostrarToast ",id);
+      
       const idToast = toast(
         <div>
           ⏳ Tienes <span id="contador">3:00</span> minutos para confirmar el link de pago.
@@ -167,6 +189,7 @@ export function DataTable() {
         position: "bottom-right",
         autoClose: 5000,
       });
+      setLoading(false)
     };
 
 
@@ -230,81 +253,132 @@ export function DataTable() {
             );
           },
         },
-        { field: 'nombre_cliente',  headerName: 'Cliente', width: 150,        
+      {
+        field: "nombre_cliente",
+        headerName: "Cliente",
+        width: 150,
+        renderCell: (params) => {
+          const colorFondo = params.row.color_cliente || "#ddd"; // Usa color_cliente o un color por defecto
+          const colorTexto = getContrastColor(colorFondo); // Color de texto calculado
+          return (
+            <Chip
+              style={{
+                backgroundColor: colorFondo,
+                color: colorTexto, // Color de texto oscuro para mejor contraste
+                padding: "5px",
+                borderRadius: "5px",
+                textAlign: "center",
+                width: "100%",
+              }}
+              label={params.value}
+              />
+          );
+        },
+      },
+
+      { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 170,       
           renderCell: (params) => {
-              const colorFondo = params.row.color_cliente || "#ddd"; // Usa color_cliente o un color por defecto
-              return (
-                <div
-                  style={{
-                    backgroundColor: colorFondo,
-                    color: "#333", // Color de texto oscuro para mejor contraste
-                    padding: "5px",
-                    borderRadius: "5px",
-                    textAlign: "center",
-                    width: "100%",
-                  }}
-                >
-                  {params.value}
-                </div>
-              );
-            },
-          },
-          { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 150,
-            renderCell: (params) => {
-              const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
-              return (
-                <div
-                  style={{
-                    backgroundColor: colorFondoEtiqueta,
-                    padding: "5px",
-                    borderRadius: "5px",
-                    textAlign: "center",
-                    width: "100%",
-                  }}
-                >
-                  {params.value}
-                </div>
-              );
-            },
-          },
-          {
-            field: "linkPago",
-            headerName: "link",
-            width: 80,
-            renderCell: (params) => (
-              <>
-                {params.value && (
+          const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
+          const colorTexto = getContrastColor(colorFondoEtiqueta); // Color de texto calculado
+          return (
+            <Chip
+              style={{
+                backgroundColor: colorFondoEtiqueta,
+                color: colorTexto, // Color de texto oscuro para mejor contraste
+                padding: "5px",
+                borderRadius: "5px",
+                textAlign: "center",
+                width: "100%",
+              }}
+              label={params.value}
+              />
+          );
+        }, 
+      },
+      {
+        field: "linkPago",
+        headerName: "Link de Pago",
+        renderCell: (params) => {
+          const handleCopy = () => {
+            setLoading(true); // Muestra la imagen de carga
+            handleCopyToClipboard(params, params.id);
+            setTimeout(() => setLoading(false), 180000); // Simula un tiempo de espera
+          };
+    
+          return (
+            <>
+              {params.value && (
+                <>
+                {!loading ? (
                   <Tooltip title="Copiar link de pago">
                     <IconButton
                       aria-label="Copiar link de pago"
-                      onClick={() => handleCopyToClipboard(params, params.id)}
+                      onClick={handleCopy}
                       color="success"
                       size="small"
                     >
                       <ContentCopyIcon />
                     </IconButton>
-                  </Tooltip>
-                )}
-              </>
-            ),
-          },
-          { field: 'placa',           headerName: 'Placa',              width: 130, editable: true,  
-            renderCell: (params) => (
-              <>
-                <Tooltip title="Copiar Placa">
-                  <IconButton
-                    aria-label="Copiar Placa"
-                    onClick={() => handleCopyToClipboard(params.value)}
-                    color="primary"
-                    size="small"
-                  >
-                    <ContentCopyIcon />
-                  </IconButton>
-                </Tooltip>
-                {params.value}
-              </>
-            ), 
-          },
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title="link de pago copiado">
+                    <img
+                      src={smallLoading}
+                      alt="Cargando"
+                      style={{ width: 24, height: 24 }}
+                    />
+                    </Tooltip>
+                  )}
+                </>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        field: "correo",
+        headerName: "Email",
+        width: 200,
+        editable: true,
+        renderCell: (params) => (
+          <>
+            {params.value ? (
+              <Tooltip title="Copiar Email">
+                <IconButton
+                  aria-label="Copiar Email"
+                  onClick={() => handleCopyToClipboard(params.value)}
+                  color="primary"
+                  size="small"
+                >
+                  <ContentCopyIcon />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Correo no disponible">
+                <WarningIcon color="error" fontSize="small" />
+              </Tooltip>
+            )}
+            {params.value || "No disponible"}
+          </>
+        ),
+      },
+      { field: 'placa',           headerName: 'Placa',              width: 130, editable: true,  
+        renderCell: (params) => (
+          <>
+            <Tooltip title="Copiar Placa">
+              <IconButton
+                aria-label="Copiar Placa"
+                onClick={() => handleCopyToClipboard(params.value)}
+                color="primary"
+                size="small"
+              >
+                <ContentCopyIcon />
+              </IconButton>
+            </Tooltip>
+            {params.value}
+          </>
+        ), 
+      },
           { field: 'cilindraje',      headerName: 'Cilindraje',         width: 130, editable: true,  
             renderCell: (params) => (
               <>
@@ -405,6 +479,23 @@ export function DataTable() {
               </>
             ), 
           },
+          { field: 'telefono',  headerName: 'Teléfono',  width: 130, editable: true,  
+            renderCell: (params) => (
+              <>
+                <Tooltip title="Copiar Teléfono">
+                  <IconButton
+                    aria-label="Copiar Teléfono"
+                    onClick={() => handleCopyToClipboard(params.value)}
+                    color="primary"
+                    size="small"
+                  >
+                    <ContentCopyIcon />
+                  </IconButton>
+                </Tooltip>
+                {params.value}
+              </>
+            ), 
+          },
       {
         field: 'actions',
         headerName: 'Actions',
@@ -456,13 +547,32 @@ export function DataTable() {
 
     const handleConfirmEmitido = async(id) => {
 
-      dispatch(updateThunks({ id, confirmacionPreciosModulo: 1, pdfsModulo:1, tramiteModulo:0 }, 'tramite'));
+      await dispatch(updateThunks({ id, confirmacionPreciosModulo: 1, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0 }, 'confirmarprecio'));
       
-      navigate('/confirmacionprecios')
+      //navigate('/confirmacionprecios')
     
     }
     
     const paginationModel = { page: 0, pageSize: 15 };
+    
+    const NoRowsOverlay = () => (
+      <div style={{ 
+        display: "flex", 
+        flexDirection: "column", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        height: "100%", 
+        marginTop:"10px",
+        marginBottom:"10px"
+      }}>
+        <img 
+          src={emptyDataTable} 
+          alt="No hay datos disponibles" 
+          style={{ width: "150px", opacity: 0.7 }} 
+        />
+        <p style={{ fontSize: "16px", color: "#666" }}>No hay datos disponibles</p>
+      </div>
+    );
 
     // Función para manejar la edición
     const handleEdit = async (row) => {
@@ -471,9 +581,8 @@ export function DataTable() {
 
 
   return (
-    <Paper sx={{ padding: 2 }}>
+    <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
           
-          <button onClick={mostrarToast}>Mostrar Toast</button>
           <ToastContainer />
 
           {/* Contenedor de filtros */}
@@ -496,6 +605,9 @@ export function DataTable() {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
+        slots={{
+          noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
+        }}
         //onCellEditCommit={handleEditCellCommit}
       />
     </Paper>

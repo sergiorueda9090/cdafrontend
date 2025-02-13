@@ -10,7 +10,8 @@ import { logsTramitesStore }  from './logsTramitesStore/logsTramitesStore';
 import { logsCotizadorStore } from './logsCotizadorStore/logsCotizadorStore';
 import { confirmacionPreciosStore } from './confirmacionPreciosStore/confirmacionPreciosStore';
 import { etiquetasStore }   from './etiquetasStore/etiquetasStore';
-
+import { registroTarjetasStore } from './registroTarjetasStore/registroTarjetasStore';
+import {cuentasBancariasStore} from './cuentasBancariasStore/cuentasBancariasStore';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,8 @@ export const store = configureStore({
     cotizadorStore    : cotizadorStore.reducer,
     logsCotizadorStore: logsCotizadorStore.reducer,
     confirmacionPreciosStore: confirmacionPreciosStore.reducer,
-    etiquetasStore    : etiquetasStore.reducer
+    etiquetasStore    : etiquetasStore.reducer,
+    cuentasBancariasStore: cuentasBancariasStore.reducer,
+    registroTarjetasStore: registroTarjetasStore.reducer,
   }
 })

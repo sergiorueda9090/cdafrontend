@@ -9,12 +9,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk } from '../../store/clientesStore/clientesThunks';
 import { toast } from 'react-toastify';
 
+import { Chip } from "@mui/material";
+
 export function DataTable() {
 
     const dispatch = useDispatch();
     
     let { clientesMain } = useSelector(state => state.clientesStore);
-  console.log("clientesMain ",clientesMain)
+
     const columns = [
       { field: 'id',          headerName: 'ID',         width: 100 },
       { field: 'nombre',      headerName: 'Nombres',    width: 230 },
@@ -25,17 +27,20 @@ export function DataTable() {
         field: "color",
         headerName: "Color",
         width: 90,
-        renderCell: (params) => (
-          <div
-            style={{
-              width: "100%", // Ancho del cuadro de color
-              height: "100%", // Alto del cuadro de color
-              backgroundColor: params.value, // Color desde el valor de la celda
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-            }}
-          ></div>
-        ),
+        renderCell: (params) => {
+          const colorFondo = params.value || "#ddd"; // Usa color_cliente o un color por defecto
+          return (
+            <Chip
+              style={{
+                backgroundColor: colorFondo,
+                padding: "5px",
+                borderRadius: "5px",
+                textAlign: "center",
+                width: "100%",
+              }}
+              />
+          );
+        },
       },
       {
         field: 'actions',
@@ -120,7 +125,7 @@ export function DataTable() {
 
 
   return (
-    <Paper sx={{ height: 700, width: '100%' }}>
+    <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
       <DataGrid
         rows={clientesMain}
         columns={columns}

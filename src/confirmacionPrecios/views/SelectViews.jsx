@@ -10,9 +10,9 @@ import { FormDialogUser }               from '../components/Modal';
 
 import { useSelector, useDispatch }     from 'react-redux';
 
-import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
+import { SimpleBackdrop }                           from "../../components/Backdrop/BackDrop";
 import { getAllCotizadorConfirmacionPreciosThunks } from '../../store/cotizadorStore/cotizadorThunks';                           
-import { ToastContainer, toast }        from 'react-toastify';
+import { ToastContainer, toast }                    from 'react-toastify';
 
 export const SelectViews = () => {
 

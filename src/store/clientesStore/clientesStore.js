@@ -10,7 +10,7 @@ export const clientesStore = createSlice({
     telefono          : '',
     direccion         : '',
     fecha_creacion    : '',
-    color             : '',
+    color             : '#000000',
     preciosLey        : [],
     clientes          : [],
     clientesMain      : [],
@@ -44,9 +44,14 @@ export const clientesStore = createSlice({
     },
     addPreciosLeyStore:(state, action) => {
       state.preciosLey = action.payload
+    },
+    handleFormStore:(state , action) => {
+      const { name, value } = action.payload; // Obtener el nombre y el valor
+      console.log( name, value )
+      state[name] = value; // Actualizar dinámicamente la propiedad en el estado
     }
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listStore, resetFormularioStore, listStoreMain, addPreciosLeyStore } = clientesStore.actions;
+export const { showStore, listStore, resetFormularioStore, listStoreMain, addPreciosLeyStore, handleFormStore } = clientesStore.actions;

@@ -46,6 +46,16 @@ export const DateRange = ({cotizador}) => {
 
             dispatch(getAllCotizadorPdfsThunks());
 
+        }else if(cotizador == "cuentasbancarias"){
+            
+            alert("EN PROCESO DE DESARROLLO....");
+            return;
+
+        }else if(cotizador == "fichacliente"){
+            
+            alert("EN PROCESO DE DESARROLLO....");
+            return;
+
         }else{
         
             dispatch(getAllThunks());

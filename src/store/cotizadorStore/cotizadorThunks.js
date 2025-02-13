@@ -217,16 +217,14 @@ export const showThunk= (id = "") => {
 }
 
 export const updateThunks = (data, modulo="") => {
-
+    
     return async (dispatch, getState) => {
 
         const {authStore} = getState();
         const token       = authStore.token
-        
-        console.log("modulo ",modulo);
-
+    
         await dispatch(showBackDropStore());
-  
+
         const options = {
             method: 'PUT',
             url: `${URL}/${urlPatter}/api/${data.id}/update/`,
@@ -258,7 +256,8 @@ export const updateThunks = (data, modulo="") => {
 
                 }else if(modulo == "confirmarprecio"){
 
-                    await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
+                    //Before await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
+                    await dispatch( getAllCotizadorTramitesThunks() );
 
                 }else if(modulo == "pdf"){
 

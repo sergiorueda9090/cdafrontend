@@ -4,30 +4,31 @@ import * as XLSX from "xlsx";
 import DeleteIcon from "@mui/icons-material/Delete"; // Icono para eliminar
 
 import { addPreciosLeyThunks } from "../../store/clientesStore/clientesThunks";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const ExcelUploader = () => {
-
+  
+  const { preciosLey: percio_ley } = useSelector((state) => state.clientesStore);
+  
   const dispatch = useDispatch()
   
-  const [preciosLey, setPreciosLey] = useState([]);
+  const [preciosLey, setPreciosLey] = useState(percio_ley);
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null); // Referencia para limpiar el input file
 
-  console.log("preciosLey ",preciosLey);
 
   useEffect(() => {
     dispatch(addPreciosLeyThunks(preciosLey))
   },[preciosLey])
 
-  // 📌 Función para formatear valores como moneda colombiana
+  //Función para formatear valores como moneda colombiana
   const formatCurrency = (value) => {
     if (!value) return "";
     const number = value.toString().replace(/\./g, ""); // Elimina puntos existentes
     return new Intl.NumberFormat("es-CO").format(number); // Aplica formato de moneda
   };
 
-  // 📌 Función para actualizar valores en la lista con formato de moneda
+  //Función para actualizar valores en la lista con formato de moneda
   const handlePrecioLeyChange = (index, field, value) => {
     const formattedValue = field !== "descripcion" ? formatCurrency(value) : value;
     const updatedPreciosLey = preciosLey.map((precio, i) =>
@@ -36,7 +37,7 @@ const ExcelUploader = () => {
     setPreciosLey(updatedPreciosLey);
   };
 
-  // 📌 Función para manejar la subida del archivo Excel
+  //Función para manejar la subida del archivo Excel
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -71,7 +72,7 @@ const ExcelUploader = () => {
     };
   };
 
-  // 📌 Función para eliminar el archivo seleccionado
+  //Función para eliminar el archivo seleccionado
   const handleRemoveFile = () => {
     setSelectedFile(null);
     setPreciosLey([]); // Opcional: Elimina los datos cargados al remover el archivo
@@ -80,7 +81,7 @@ const ExcelUploader = () => {
     }
   };
 
-  // 📌 Función para agregar un nuevo precio manualmente
+  //Función para agregar un nuevo precio manualmente
   const handleAddPrecioLey = () => {
     setPreciosLey([
       ...preciosLey,
@@ -88,7 +89,7 @@ const ExcelUploader = () => {
     ]);
   };
 
-  // 📌 Función para eliminar un precio de la lista
+  //Función para eliminar un precio de la lista
   const removePrecioLey = (index) => {
     setPreciosLey(preciosLey.filter((_, i) => i !== index));
   };

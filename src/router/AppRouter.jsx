@@ -12,7 +12,16 @@ import { RoutesCotizador }              from '../cotizador/routes/Routes';
 import { RoutesConfirmacionPrecios }    from '../confirmacionPrecios/routes/Routes';
 import { RoutesPdfs }                   from '../cargarPdfs/routes/Routes';
 import { PageMain as BancosMain }       from '../bancos/pages/PageMain';
+import { PageMain as RegistroTarjetas } from '../registroTarjetas/pages/PageMain';
 import { PageMain as FichaCliente }     from '../fichaClientes/pages/PageMain';
+
+
+import { PageMain as RecepcionPago } from '../recepcionPago/pages/PageMain';
+import { PageMain as Devoliciones }     from '../devoliciones/pages/PageMain';
+import { PageMain as AjusteSaldo }      from '../ajusteSaldo/pages/PageMain';
+import { PageMain as GastosGenerales }  from '../gastosGenerales/pages/PageMain';
+import { PageMain as UtilidadOcasional } from '../utilidadOcasional/pages/PageMain';
+
 
 export const AppRouter = () => {
  
@@ -30,9 +39,16 @@ export const AppRouter = () => {
                 <Route path="/cotizador/*"            element={ <RoutesCotizador />} />
                 <Route path="/confirmacionprecios/*"  element={ <RoutesConfirmacionPrecios />} />
                 <Route path="/cargarpdfs/*"           element={ <RoutesPdfs />} />
+                <Route path="/registroTarjetas"       element={ <RegistroTarjetas />} />
                 <Route path="/bancos"                 element={ <BancosMain /> } />
                 <Route path="/fichaCliente"           element={ <FichaCliente /> } />
                 <Route path="/verify"                 element={ <Verify /> }    />
+
+                <Route path="/recepcionpago"          element={ <RecepcionPago />} />
+                <Route path="/devolucion"             element={ <Devoliciones />} />
+                <Route path="/ajustesaldo"            element={ <AjusteSaldo />} />
+                <Route path="/gastosgenerales"        element={ <GastosGenerales />} />
+                <Route path="/utilidadocasional"      element={ <UtilidadOcasional />} />
               </>
               ) : (
                 <>

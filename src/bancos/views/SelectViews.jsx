@@ -11,7 +11,7 @@ import { FormDialogUser }               from '../components/Modal';
 import { useSelector, useDispatch }     from 'react-redux';
 
 import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
-import { getAllThunks }                 from '../../store/etiquetasStore/etiquetasThunks';
+import { getAllThunks }                 from '../../store/cuentasBancariasStore/cuentasBancariasThunks';
 
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -48,12 +48,12 @@ export const SelectViews = () => {
             <Typography fontSize={39} fontWeight="light"> </Typography>
         </Grid>
 
-        <Grid item>
+        {/*<Grid item>
             <Button color="primary" variant="outlined" onClick={ (e) => handleOpenModal() }>
                 <PersonAddAltIcon sx={{ fontSize:30, mr:1 }}/>
-                 Crear Cuenta Bancaria
+                 Crear Tarjeta Bancaria
             </Button>
-        </Grid>
+        </Grid>*/}
 
         <Grid container sx={{ mt:2, width:"99.99%" }}>
             < DataTable/>

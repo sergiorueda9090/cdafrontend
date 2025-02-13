@@ -162,35 +162,42 @@ export const EtapaUno = () => {
 
         if(id){
 
-          let data = {id, tramiteModulo:1, cotizadorModulo:0}
+          let data = {id, cotizadorModulo:0, tramiteModulo:1, confirmacionPreciosModulo:0, pdfsModulo:0}
           
           dispatch(updateThunks(data, "tramite"));
 
         }else{
 
-              let data = { 
-                            idCliente, 
-                            precioDeLey, 
-                            comisionPrecioLey, 
-                            etiquetaDos, 
-                            placa, 
-                            cilindraje,
-                            modelo, 
-                            chasis, 
-                            telefono, 
-                            nombreCompleto,
-                            numeroDocumento,
-                            tipoDocumento,
-                            correo, 
-                            direccion,
-                            total,
-                            tramiteModulo:1,
-                            cotizadorModulo:1
-              }
-              dispatch(createThunks(data, "tramite"));
+            let data = { 
+                          idCliente, 
+                          precioDeLey, 
+                          comisionPrecioLey, 
+                          etiquetaDos,
+                          idEtiqueta,
+                          placa, 
+                          cilindraje,
+                          modelo, 
+                          chasis, 
+                          telefono, 
+                          nombreCompleto,
+                          numeroDocumento,
+                          tipoDocumento,
+                          correo, 
+                          direccion,
+                          total,
+                          cotizadorModulo:0,
+                          tramiteModulo:1,
+                          confirmacionPreciosModulo:0,
+                          pdfsModulo:0,
+            }
+            
+            dispatch(createThunks(data, "tramite"));
+        
         }
+
         navigate(`/tramites`);
-    }
+    
+      }
 
     return (
       <form onSubmit={handleSubmit}>

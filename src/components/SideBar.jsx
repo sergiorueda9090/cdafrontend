@@ -1,8 +1,8 @@
-import React from 'react';
-import { Box, Divider, Drawer, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, IconButton } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, IconButton, Collapse } from '@mui/material';
 import { useLocation, Link } from 'react-router-dom';
 import { styled } from '@mui/system';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'; // Icono para cerrar
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import PeopleIcon from '@mui/icons-material/People';
 import Face6Icon from '@mui/icons-material/Face6';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
@@ -13,6 +13,16 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import SecurityIcon from '@mui/icons-material/Security';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'; // Icono para Gestión de Movimientos
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';  // Recepción de Pago
+import ReplayIcon from '@mui/icons-material/Replay';                 // Devolución
+import ReceiptIcon from '@mui/icons-material/Receipt';               // Gastos Generales
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';         // Utilidad Ocasional
+
 
 const StyledLink = styled(Link)({
     textDecoration: 'none',
@@ -22,21 +32,33 @@ const StyledLink = styled(Link)({
 
 export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isSidebarOpen }) => {
     const location = useLocation(); 
+    const [openMovements, setOpenMovements] = useState(false); // Estado para el submenú
+
+    const handleToggleMovements = () => {
+        setOpenMovements(!openMovements);
+    };
 
     const items = [
-        { text: 'Usuarios',                 icon: <PeopleIcon />,                       route: '/users' },
-        { text: 'Clientes',                 icon: <Face6Icon />,                        route: '/clientes' },
-        { text: 'Etiquetas',                icon: <LabelIcon />,                        route: '/etiquetas' },
-        { text: 'Cotizador',                icon: <RequestQuoteIcon />,                 route: '/cotizador' },
-        { text: 'Trámites',                 icon: <ReceiptLongIcon />,                  route: '/tramites' },
-        { text: 'Confirmación de Precios',  icon: <AttachMoneyIcon />,                  route: '/confirmacionprecios' },
-        { text: 'Cargar PDFs',              icon: <PictureAsPdfIcon />,                 route: '/cargarpdfs' },
-        { text: 'Cuentas Bancarias',        icon: <AccountBalanceIcon />,               route: '/bancos' },
-        { text: 'Ficha del Cliente',        icon: <ContactPageIcon />,                  route: '/fichaCliente' },
-        { text: 'Verificación de Código',   icon: <SecurityIcon />,                     route: '/verify' },
-        
+        { text: 'Usuarios', icon: <PeopleIcon />, route: '/users' },
+        { text: 'Clientes', icon: <Face6Icon />, route: '/clientes' },
+        { text: 'Etiquetas', icon: <LabelIcon />, route: '/etiquetas' },
+        { text: 'Cotizador', icon: <RequestQuoteIcon />, route: '/cotizador' },
+        { text: 'Trámites', icon: <ReceiptLongIcon />, route: '/tramites' },
+        { text: 'Confirmación de Precios', icon: <AttachMoneyIcon />, route: '/confirmacionprecios' },
+        { text: 'Cargar PDFs', icon: <PictureAsPdfIcon />, route: '/cargarpdfs' },
+        { text: 'Registro Tarjetas Bancarias', icon: <CreditCardIcon />, route: '/registroTarjetas' },
+        { text: 'Cuentas Bancarias', icon: <AccountBalanceIcon />, route: '/bancos' },
+        { text: 'Ficha del Cliente', icon: <ContactPageIcon />, route: '/fichaCliente' },
+        { text: 'Verificación de Código', icon: <SecurityIcon />, route: '/verify' },
     ];
 
+    const gestionMovimientos = [
+        { text: 'Recepción de Pago',    icon: <MonetizationOnIcon />,       route: '/recepcionpago' },
+        { text: 'Devolución',           icon: <ReplayIcon />,               route: '/devolucion' },
+        { text: 'Ajuste de Saldo',      icon: <AccountBalanceWalletIcon />, route: '/ajustesaldo' },
+        { text: 'Gastos Generales',     icon: <ReceiptIcon />,              route: '/gastosgenerales' },
+        { text: 'Utilidad Ocasional',   icon: <TrendingUpIcon />,           route: '/utilidadocasional' },
+    ];
     return (
         <Box component='nav' sx={{ width: isSidebarOpen ? drawerWidth : 0, flexShrink: { sm: 0 } }}>
             {/* Drawer en móviles */}
@@ -64,6 +86,31 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                             </StyledLink>
                         </ListItem>
                     ))}
+
+                    {/* Gestión de Movimientos con submenú */}
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={handleToggleMovements}>
+                            <ListItemIcon>
+                                <AccountBalanceWalletIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Gestión de Movimientos" />
+                            {openMovements ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+                    </ListItem>
+
+                    <Collapse in={openMovements} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                            {gestionMovimientos.map(({ text, route }) => (
+                                <ListItem key={text} disablePadding>
+                                    <StyledLink to={route} onClick={handleDrawerToggle}>
+                                        <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
+                                            <ListItemText primary={text} />
+                                        </ListItemButton>
+                                    </StyledLink>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Collapse>
                 </List>
             </Drawer>
 
@@ -98,7 +145,34 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                             </StyledLink>
                         </ListItem>
                     ))}
+
+                    {/* Gestión de Movimientos con submenú */}
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={handleToggleMovements}>
+                            <ListItemIcon>
+                                <AccountBalanceWalletIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Gestión de Movimientos" />
+                            {openMovements ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+                    </ListItem>
+
+                    <Collapse in={openMovements} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                            {gestionMovimientos.map(({ text,icon, route }) => (
+                                <ListItem key={text} disablePadding>
+                                    <StyledLink to={route}>
+                                        <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
+                                        <ListItemIcon>{icon}</ListItemIcon>
+                                            <ListItemText primary={text} />
+                                        </ListItemButton>
+                                    </StyledLink>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Collapse>
                 </List>
+                <Divider />
             </Drawer>
         </Box>
     );

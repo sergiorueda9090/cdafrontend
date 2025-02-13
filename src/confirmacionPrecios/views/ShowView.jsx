@@ -3,9 +3,9 @@ import { DataGrid, GridToolbar }      from "@mui/x-data-grid";
 import { Grid, Typography, Box }      from "@mui/material";
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch }   from "react-redux";
-import { getAllThunks } from '../../store/logsTramitesStore/logsTramitesThunks';
-import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
-import { useNavigate }              from 'react-router-dom';
+import { getAllThunks }               from '../../store/logsTramitesStore/logsTramitesThunks';
+import KeyboardReturnIcon             from '@mui/icons-material/KeyboardReturn';
+import { useNavigate }                from 'react-router-dom';
 
 export const ShowView = () => {
 
@@ -19,7 +19,6 @@ export const ShowView = () => {
   const params = useParams();
 
   const { logsTramites } = useSelector(state => state.logsTramitesStore);
-  console.log("")
   useEffect(() => {
      dispatch(getAllThunks(params.id));
   },[])

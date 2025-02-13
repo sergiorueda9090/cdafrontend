@@ -7,6 +7,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk } from '../../store/etiquetasStore/etiquetasThunks';
 import { toast } from 'react-toastify';
+import { FilterData } from '../../cotizador/components/FilterData';
+import { DateRange } from '../../cotizador/components/DateRange';
+import { Box } from '@mui/material';
 
 export function DataTable() {
 
@@ -116,9 +119,16 @@ export function DataTable() {
 
 
   return (
-    <Paper sx={{ height: 700, width: '100%' }}>
+    <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
+
+      
+      <Box display="flex" justifyContent="space-between" marginBottom={2}>
+          <FilterData  cotizador="fichacliente"/>  {/* Componente de filtros adicionales */}
+          <DateRange   cotizador="fichacliente"/>  {/* Componente para selección de rango de fechas */}
+      </Box>
+
       <DataGrid
-        rows={etiquetas}
+        rows={[]}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
