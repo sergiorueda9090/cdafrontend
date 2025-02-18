@@ -12,21 +12,25 @@ import { confirmacionPreciosStore } from './confirmacionPreciosStore/confirmacio
 import { etiquetasStore }   from './etiquetasStore/etiquetasStore';
 import { registroTarjetasStore } from './registroTarjetasStore/registroTarjetasStore';
 import {cuentasBancariasStore} from './cuentasBancariasStore/cuentasBancariasStore';
+import { recepcionPagoStore } from './recepcionPagoStore/recepcionPagoStore';
+import { devolucionesStore } from './devolucionesStore/devolucionesStore';
 
 export const store = configureStore({
   reducer: {
-    counter           : counterSlice.reducer,
-    authStore         : authStore.reducer,
-    globalStore       : globalStore.reducer,
-    usersStore        : usersStore.reducer,
-    clientesStore     : clientesStore.reducer,
-    tramitesStore     : tramitesStore.reducer,
-    logsTramitesStore : logsTramitesStore.reducer,
-    cotizadorStore    : cotizadorStore.reducer,
-    logsCotizadorStore: logsCotizadorStore.reducer,
+    counter               : counterSlice.reducer,
+    authStore             : authStore.reducer,
+    globalStore           : globalStore.reducer,
+    usersStore            : usersStore.reducer,
+    clientesStore         : clientesStore.reducer,
+    tramitesStore         : tramitesStore.reducer,
+    logsTramitesStore     : logsTramitesStore.reducer,
+    cotizadorStore        : cotizadorStore.reducer,
+    logsCotizadorStore    : logsCotizadorStore.reducer,
     confirmacionPreciosStore: confirmacionPreciosStore.reducer,
-    etiquetasStore    : etiquetasStore.reducer,
-    cuentasBancariasStore: cuentasBancariasStore.reducer,
-    registroTarjetasStore: registroTarjetasStore.reducer,
+    etiquetasStore        : etiquetasStore.reducer,
+    cuentasBancariasStore : cuentasBancariasStore.reducer,
+    registroTarjetasStore : registroTarjetasStore.reducer,
+    recepcionPagoStore    : recepcionPagoStore.reducer,
+    devolucionesStore     : devolucionesStore.reducer
   }
 })

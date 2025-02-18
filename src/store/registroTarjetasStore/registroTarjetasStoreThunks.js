@@ -62,7 +62,7 @@ export const getAllThunks = () => {
             // Manejar errores
             console.error(error);
             
-            await dispatch ( loginFail() );
+            //await dispatch ( loginFail() );
             
             await dispatch( hideBackDropStore() );
 
@@ -257,7 +257,7 @@ export const updateThunks = (data) => {
             //await dispatch ( loginFail() );
             await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
             
-            await dispatch ( loginFail() );
+            //await dispatch ( loginFail() );
 
             await dispatch( closeModalShared() );
 

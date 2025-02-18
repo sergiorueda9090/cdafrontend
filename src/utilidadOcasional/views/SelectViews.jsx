@@ -33,7 +33,7 @@ export const SelectViews = () => {
     }, [alert]);
 
     useEffect(() => {
-        dispatch(getAllThunks());
+        //dispatch(getAllThunks());
       },[])
 
     const handleOpenModal = async () => {

@@ -52,7 +52,7 @@ export function DataTable() {
     const dispatch = useDispatch();
     
     let { cotizadores } = useSelector(state => state.cotizadorStore);
-
+   
     const [rows, setRows] = useState(cotizadores);
 
     const [editingField, setEditingField] = useState("");
@@ -93,7 +93,7 @@ export function DataTable() {
     };
     
     const handleCopyToClipboard = (text, id="") => {
-      console.log("id ",id)
+
       navigator.clipboard.writeText(text).then(() => {
         if(id != ""){
           mostrarToast(id)
@@ -299,10 +299,32 @@ export function DataTable() {
         field: "linkPago",
         headerName: "Link de Pago",
         renderCell: (params) => {
+
           const handleCopy = () => {
+
+            console.log("params ",params.row.correo)
+
+            if (!params.row.correo || params.row.correo.trim() === "") {
+              toast.error("❌ El correo es obligatorio para confirmar el pago.", {
+                position: "bottom-right",
+                autoClose: 5000,
+              });
+              return; // Detiene la ejecución si el correo es inválido
+            }
+
             setLoading(true); // Muestra la imagen de carga
+
             handleCopyToClipboard(params, params.id);
+
             setTimeout(() => setLoading(false), 180000); // Simula un tiempo de espera
+
+            navigator.clipboard.writeText(params.value).then(() => {
+              window.open(`https://${params.value}`, "_blank");
+            }).catch(err => {
+              console.error("Error al copiar:", err);
+              setLoading(false);
+            });
+
           };
     
           return (
@@ -502,6 +524,7 @@ export function DataTable() {
         width: 200,
         sortable: false,
         renderCell: (params) => (
+          
           <>
           {/* Botón de Editar */}
           <Tooltip title="Editar" arrow>
@@ -526,7 +549,10 @@ export function DataTable() {
           </Tooltip>
     
           {/* Botón de Emitido */}
-          <Tooltip title="Emitido" arrow>
+          { 
+          params.row.correo != "" && params.row.etiquetaDos != "LINK DE PAGO"? 
+          <>
+            <Tooltip title="Emitido" arrow>
             <IconButton
               aria-label="emitido"
               onClick={() => handleConfirmEmitido(params.row.id)}
@@ -535,6 +561,8 @@ export function DataTable() {
               <AssignmentTurnedInIcon />
             </IconButton>
           </Tooltip>
+          </>:''
+          }
         </>
         ),
       },
