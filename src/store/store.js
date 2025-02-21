@@ -6,14 +6,17 @@ import { usersStore }     from './usersStore/usersStore';
 import { clientesStore }  from './clientesStore/clientesStore';
 import { cotizadorStore } from './cotizadorStore/cotizadorStore';
 import { tramitesStore }  from './tramitesStore/tramitesStore';
-import { logsTramitesStore }  from './logsTramitesStore/logsTramitesStore';
-import { logsCotizadorStore } from './logsCotizadorStore/logsCotizadorStore';
-import { confirmacionPreciosStore } from './confirmacionPreciosStore/confirmacionPreciosStore';
-import { etiquetasStore }   from './etiquetasStore/etiquetasStore';
-import { registroTarjetasStore } from './registroTarjetasStore/registroTarjetasStore';
-import {cuentasBancariasStore} from './cuentasBancariasStore/cuentasBancariasStore';
-import { recepcionPagoStore } from './recepcionPagoStore/recepcionPagoStore';
-import { devolucionesStore } from './devolucionesStore/devolucionesStore';
+import { logsTramitesStore }          from './logsTramitesStore/logsTramitesStore';
+import { logsCotizadorStore }         from './logsCotizadorStore/logsCotizadorStore';
+import { confirmacionPreciosStore }   from './confirmacionPreciosStore/confirmacionPreciosStore';
+import { etiquetasStore }             from './etiquetasStore/etiquetasStore';
+import { registroTarjetasStore }      from './registroTarjetasStore/registroTarjetasStore';
+import {cuentasBancariasStore}        from './cuentasBancariasStore/cuentasBancariasStore';
+import { recepcionPagoStore }         from './recepcionPagoStore/recepcionPagoStore';
+import { devolucionesStore }          from './devolucionesStore/devolucionesStore';
+import { ajustesSaldoStore }          from './ajustesSaldoStore/ajustesSaldoStore';
+import { gastosStore }                from './gastosStore/gastosStore';
+import { gastosGeneralesStore }       from './gastosGeneralesStore/gastosGeneralesStore';
 
 export const store = configureStore({
   reducer: {
@@ -31,6 +34,9 @@ export const store = configureStore({
     cuentasBancariasStore : cuentasBancariasStore.reducer,
     registroTarjetasStore : registroTarjetasStore.reducer,
     recepcionPagoStore    : recepcionPagoStore.reducer,
-    devolucionesStore     : devolucionesStore.reducer
+    devolucionesStore     : devolucionesStore.reducer,
+    ajustesSaldoStore     : ajustesSaldoStore.reducer,
+    gastosStore           : gastosStore.reducer,
+    gastosGeneralesStore  : gastosGeneralesStore.reducer
   }
 })

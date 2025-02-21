@@ -4,14 +4,15 @@ import Button               from '@mui/material/Button';
 import PersonAddAltIcon     from '@mui/icons-material/PersonAddAlt';
 
 import { DataTable }                    from '../components/DataTable';
-import { resetFormularioStore }         from '../../store/clientesStore/clientesStore';
+import { resetFormularioStore }         from '../../store/ajustesSaldoStore/ajustesSaldoStore';
 import { openModalShared, clearAlert }  from '../../store/globalStore/globalStore';
 import { FormDialogUser }               from '../components/Modal';
 
 import { useSelector, useDispatch }     from 'react-redux';
 
 import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
-import { getAllThunks }                 from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
+import { getAllThunks }                 from '../../store/ajustesSaldoStore/ajustesSaldoStoreThunks';
+import { getAllThunksTramites }         from '../../store/clientesStore/clientesThunks';         
 
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -33,11 +34,12 @@ export const SelectViews = () => {
     }, [alert]);
 
     useEffect(() => {
-        //dispatch(getAllThunks());
+        dispatch(getAllThunks());
       },[])
 
     const handleOpenModal = async () => {
         await dispatch(resetFormularioStore());
+        await dispatch(getAllThunksTramites());
         await dispatch(openModalShared())
     }
   
@@ -51,7 +53,7 @@ export const SelectViews = () => {
         <Grid item>
             <Button color="primary" variant="outlined" onClick={ (e) => handleOpenModal() }>
                 <PersonAddAltIcon sx={{ fontSize:30, mr:1 }}/>
-                 Crear Ajueste de saldo
+                 Crear Ajuste de saldo
             </Button>
         </Grid>
 

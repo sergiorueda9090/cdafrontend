@@ -122,7 +122,7 @@ export function DataTable() {
             <button 
               onClick={() => noPuedePagar(idToast)} 
               style={{ background: "red", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
-              ❌ No Puedo Pagar
+              ❌ No Puedo Pagar RRR
             </button>
           </div>
         </div>,
@@ -158,11 +158,12 @@ export function DataTable() {
                 <button 
                   onClick={() => noPuedePagar(idToast)} 
                   style={{ background: "red", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
-                  ❌ No Puedo Pagar
+                  ❌ No Puedo Pagar 1
                 </button>
               </div>
             </div>
           ),
+          closeButton: false,
         });
   
         if (tiempoRestante <= 0) {
@@ -172,24 +173,24 @@ export function DataTable() {
     };
   
     const confirmarPago = async (idToast, id="") => {
-      toast.dismiss(idToast);
+      await toast.dismiss(idToast);
     
       await handleConfirmEmitido(id)
       
-      toast.success("✅ Pago confirmado con éxito.", {
+      await toast.success("✅ Pago confirmado con éxito.", {
         position: "bottom-right",
         autoClose: 5000,
       });
     
     };
   
-    const noPuedePagar = (idToast) => {
-      toast.dismiss(idToast);
-      toast.error("❌ No pudiste realizar el pago.", {
+    const noPuedePagar = async (idToast) => {
+      await toast.dismiss(idToast);
+      await setLoading(false)
+      await toast.error("❌ No pudiste realizar el pago.", {
         position: "bottom-right",
-        autoClose: 5000,
+        autoClose: 1500,
       });
-      setLoading(false)
     };
 
 
@@ -299,7 +300,7 @@ export function DataTable() {
         field: "linkPago",
         headerName: "Link de Pago",
         renderCell: (params) => {
-
+          console.log("params.value ",params.value)
           const handleCopy = () => {
 
             console.log("params ",params.row.correo)
@@ -312,6 +313,14 @@ export function DataTable() {
               return; // Detiene la ejecución si el correo es inválido
             }
 
+            let url = params.value;
+
+            // Check if the URL starts with "https://", if not, prepend it
+            if (!url.startsWith("https://")) {
+                url = `https://${url}`;
+            }
+
+
             setLoading(true); // Muestra la imagen de carga
 
             handleCopyToClipboard(params, params.id);
@@ -319,7 +328,7 @@ export function DataTable() {
             setTimeout(() => setLoading(false), 180000); // Simula un tiempo de espera
 
             navigator.clipboard.writeText(params.value).then(() => {
-              window.open(`https://${params.value}`, "_blank");
+              window.open(`${url}`, "_blank");
             }).catch(err => {
               console.error("Error al copiar:", err);
               setLoading(false);

@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
+import { showThunk, deleteThunk } from '../../store/ajustesSaldoStore/ajustesSaldoStoreThunks';
 import { toast } from 'react-toastify';
 import emptyDataTable from "../../assets/images/emptyDataTable.png"
 import { Box } from '@mui/material';
@@ -15,7 +15,7 @@ export function DataTable() {
 
     const dispatch = useDispatch();
     
-    let { tarjetasBancarias }    = useSelector(state => state.registroTarjetasStore);
+    let { ajuestesSaldo }    = useSelector(state => state.ajustesSaldoStore);
     
     const NoRowsOverlay = () => (
       <div style={{ 
@@ -38,12 +38,11 @@ export function DataTable() {
 
     const columns = [
       { field: 'id',                   headerName: 'ID',                    width: 100 },
-      { field: 'numero_cuenta',        headerName: 'Fecha de Ingreso',   width: 200 },
-      { field: 'nombre_cuenta',        headerName: 'Fecha de Transacción',   width: 200 },
-      { field: 'descripcion',          headerName: 'Descripción',           width: 200 },
-      { field: 'Valor',                headerName: 'Valor',                 width: 160 },
-      { field: 'Cilindraje',                headerName: 'Cilindraje',                 width: 160 },
-      { field: 'Cliente',                headerName: 'Cliente',                 width: 160 },
+      { field: 'fecha_ingreso',        headerName: 'Fecha de Ingreso',      width: 200 },
+      { field: 'fecha_transaccion',    headerName: 'Fecha de Transaccion',  width: 200 },
+      { field: 'observacion',          headerName: 'Observacion',            width: 160 },
+      { field: 'valor',                headerName: 'Valor',                 width: 160 },
+      { field: 'nombre_cliente',       headerName: 'Cliente',               width: 160 },
       {
         field: 'actions',
         headerName: 'Actions',
@@ -135,7 +134,7 @@ export function DataTable() {
       </Box>
 
       <DataGrid
-        rows={[]}
+        rows={ajuestesSaldo}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}

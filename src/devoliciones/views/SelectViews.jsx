@@ -10,7 +10,7 @@ import { useSelector, useDispatch }     from 'react-redux';
 import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
 import { ToastContainer, toast } from 'react-toastify';
 
-import { resetFormularioStore }         from '../../store/recepcionPagoStore/recepcionPagoStore';
+import { resetFormularioStore }         from '../../store/devolucionesStore/devolucionesStore';
 import { getAllThunks }                 from '../../store/devolucionesStore/devolucionesStoreThunks';
 import { getAllThunksTramites }         from '../../store/clientesStore/clientesThunks';
 import { getAllThunks as listTarjetas } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';

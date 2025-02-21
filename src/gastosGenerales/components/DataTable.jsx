@@ -5,17 +5,22 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
+
+import { showThunk, deleteThunk } from '../../store/gastosGeneralesStore/gastosGeneralesStoreThunks';
+import { getAllThunks as listGastos }    from '../../store/gastosStore/gastosStoreThunks';
+import { getAllThunks as listTarjetas } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
+
 import { toast } from 'react-toastify';
 import emptyDataTable from "../../assets/images/emptyDataTable.png"
 import { Box } from '@mui/material';
 import { FilterData } from '../../cotizador/components/FilterData';
 import { DateRange } from '../../cotizador/components/DateRange';
+
 export function DataTable() {
 
     const dispatch = useDispatch();
     
-    let { tarjetasBancarias }    = useSelector(state => state.registroTarjetasStore);
+    let { gastosGenerales }    = useSelector(state => state.gastosGeneralesStore);
     
     const NoRowsOverlay = () => (
       <div style={{ 
@@ -38,13 +43,12 @@ export function DataTable() {
 
     const columns = [
       { field: 'id',                   headerName: 'ID',                    width: 100 },
-      { field: 'numero_cuenta',        headerName: 'Fecha de Ingreso',   width: 200 },
-      { field: 'nombre_cuenta',        headerName: 'Fecha de Transacción',   width: 200 },
-      { field: 'descripcion',          headerName: 'Descripción',           width: 200 },
-      { field: 'Valor',                headerName: 'Valor',                 width: 160 },
-      { field: 'Cilindraje',                headerName: 'Cilindraje',                 width: 160 },
-      { field: 'Cliente',                headerName: 'Cliente',                 width: 160 },
-      /*{ field: 'imagen',               headerName: 'Image',                 width: 130 },*/
+      { field: 'fecha_ingreso',        headerName: 'Fecha de Ingreso',      width: 200 },
+      { field: 'fecha_transaccion',    headerName: 'Fecha de Transacción',  width: 200 },
+      { field: 'observacion',          headerName: 'Descripción',           width: 200 },
+      { field: 'valor',                headerName: 'Valor',                 width: 160 },
+      { field: 'nombre_gasto',         headerName: 'Gasto',                 width: 160 },
+      { field: 'nombre_tarjeta',       headerName: 'Tarjeta',               width: 160 },
       {
         field: 'actions',
         headerName: 'Actions',
@@ -79,7 +83,7 @@ export function DataTable() {
       toast(
         ({ closeToast }) => (
           <div>
-            <p>¿Estás seguro de que deseas eliminar esta tarjeta?</p>
+            <p>¿Estás seguro de que deseas eliminar esta registro?</p>
             <button
               onClick={() => {
                 confirmDelete(id, closeToast); // Confirmar eliminación
@@ -123,6 +127,8 @@ export function DataTable() {
 
   // Función para manejar la edición
   const handleEdit = async (row) => {
+    await dispatch(listGastos());
+    await dispatch(listTarjetas());
     await dispatch(showThunk(row.id));
   };
 
@@ -136,7 +142,7 @@ export function DataTable() {
       </Box>
 
       <DataGrid
-        rows={[]}
+        rows={gastosGenerales}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}

@@ -35,10 +35,6 @@ export const FormDialogUser = () => {
       newErrors.nombre = "El nombre es obligatorio";
     }
 
-    if (!apellidos.trim()) {
-      newErrors.apellidos = "El Apellido es obligatorio";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -55,7 +51,6 @@ export const FormDialogUser = () => {
 
       const dataSend = {
         nombre      : nombre.trim(),
-        apellidos   : apellidos.trim(),
         direccion   : direccion?.trim() || '',
         telefono    : telefono?.trim() || '',
         color       : color,
@@ -69,7 +64,6 @@ export const FormDialogUser = () => {
       const dataSend = {
         id          : id,
         nombre      : nombre.trim(),
-        apellidos   : apellidos.trim(),
         direccion   : direccion?.trim() || '',
         telefono    : telefono?.trim() || '',
         color       : color,
@@ -95,11 +89,11 @@ export const FormDialogUser = () => {
             Completa la información del cliente y agrega sus precios de ley si es necesario.
           </DialogContentText>
           <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 name="nombre"
-                label="👤 Nombre"
+                label="👤 Nombre Completo"
                 value={nombre}
                 onChange={handleInputChange}
                 error={!!errors.nombre}
@@ -107,18 +101,7 @@ export const FormDialogUser = () => {
                 type="text"
               />
             </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                name="apellidos"
-                label="👤 Apellidos"
-                value={apellidos}
-                onChange={handleInputChange}
-                error={!!errors.apellidos}
-                helperText={errors.apellidos}
-                type="text"
-              />
-            </Grid>
+
             <Grid item xs={4}>
               <TextField
                 fullWidth

@@ -19,6 +19,7 @@ import { PageMain as FichaCliente }     from '../fichaClientes/pages/PageMain';
 import { PageMain as RecepcionPago } from '../recepcionPago/pages/PageMain';
 import { PageMain as Devoliciones }     from '../devoliciones/pages/PageMain';
 import { PageMain as AjusteSaldo }      from '../ajusteSaldo/pages/PageMain';
+import { PageMain as Gastos }           from '../gastos/pages/PageMain';
 import { PageMain as GastosGenerales }  from '../gastosGenerales/pages/PageMain';
 import { PageMain as UtilidadOcasional } from '../utilidadOcasional/pages/PageMain';
 
@@ -47,6 +48,7 @@ export const AppRouter = () => {
                 <Route path="/recepcionpago"          element={ <RecepcionPago />} />
                 <Route path="/devolucion"             element={ <Devoliciones />} />
                 <Route path="/ajustesaldo"            element={ <AjusteSaldo />} />
+                <Route path="/gastos"                 element={ <Gastos />} />
                 <Route path="/gastosgenerales"        element={ <GastosGenerales />} />
                 <Route path="/utilidadocasional"      element={ <UtilidadOcasional />} />
               </>

@@ -22,7 +22,7 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';  // Recepci
 import ReplayIcon from '@mui/icons-material/Replay';                 // Devolución
 import ReceiptIcon from '@mui/icons-material/Receipt';               // Gastos Generales
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';         // Utilidad Ocasional
-
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 
 const StyledLink = styled(Link)({
     textDecoration: 'none',
@@ -56,6 +56,7 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Recepción de Pago',    icon: <MonetizationOnIcon />,       route: '/recepcionpago' },
         { text: 'Devolución',           icon: <ReplayIcon />,               route: '/devolucion' },
         { text: 'Ajuste de Saldo',      icon: <AccountBalanceWalletIcon />, route: '/ajustesaldo' },
+        { text: 'Gastos',               icon: <ShoppingBagIcon />,          route: '/gastos' },
         { text: 'Gastos Generales',     icon: <ReceiptIcon />,              route: '/gastosgenerales' },
         { text: 'Utilidad Ocasional',   icon: <TrendingUpIcon />,           route: '/utilidadocasional' },
     ];

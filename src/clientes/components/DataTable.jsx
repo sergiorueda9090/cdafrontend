@@ -19,8 +19,7 @@ export function DataTable() {
 
     const columns = [
       { field: 'id',          headerName: 'ID',         width: 100 },
-      { field: 'nombre',      headerName: 'Nombres',    width: 230 },
-      { field: 'apellidos',   headerName: 'Apellidos',  width: 230 },
+      { field: 'nombre',      headerName: 'Nombre completo',    width: 230 },
       { field: 'telefono',    headerName: 'Telefono',   width: 230 },
       { field: 'direccion',   headerName: 'Direccion',  width: 230 },
       {
