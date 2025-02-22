@@ -4,14 +4,16 @@ import Button               from '@mui/material/Button';
 import PersonAddAltIcon     from '@mui/icons-material/PersonAddAlt';
 
 import { DataTable }                    from '../components/DataTable';
-import { resetFormularioStore }         from '../../store/clientesStore/clientesStore';
+import { resetFormularioStore }         from '../../store/utilidadOcacionalStore/utilidadOcacionalStore';
 import { openModalShared, clearAlert }  from '../../store/globalStore/globalStore';
 import { FormDialogUser }               from '../components/Modal';
 
 import { useSelector, useDispatch }     from 'react-redux';
 
 import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
-import { getAllThunks }                 from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
+
+import { getAllThunks as listTarjetas } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
+import { getAllThunks }                 from '../../store/utilidadOcacionalStore/utilidadOcacionalStoreThunks';
 
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -33,10 +35,11 @@ export const SelectViews = () => {
     }, [alert]);
 
     useEffect(() => {
-        //dispatch(getAllThunks());
+        dispatch(getAllThunks());
       },[])
 
     const handleOpenModal = async () => {
+        await dispatch(listTarjetas());
         await dispatch(resetFormularioStore());
         await dispatch(openModalShared())
     }
