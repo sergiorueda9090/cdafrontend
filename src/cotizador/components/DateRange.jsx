@@ -5,10 +5,18 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useDispatch } from 'react-redux';
 import { Button, Box  } from '@mui/material';
-import { getAllFilterDateThunks, getAllThunks, getAllCotizadorTramitesThunks, getAllCotizadorConfirmacionPreciosThunks, getAllCotizadorPdfsThunks } from '../../store/cotizadorStore/cotizadorThunks';
+
+import { getAllFilterDateThunks, getAllThunks, 
+         getAllCotizadorTramitesThunks, 
+         getAllCotizadorConfirmacionPreciosThunks, 
+         getAllCotizadorPdfsThunks }      from '../../store/cotizadorStore/cotizadorThunks';
+
+import { dashboard_obtener_datos_cuenta, 
+         dashboard_obtener_datos_cuenta_dates } from '../../store/cuentasBancariasStore/cuentasBancariasThunks';
+
 import dayjs from "dayjs";
 
-export const DateRange = ({cotizador}) => {
+export const DateRange = ({cotizador,id=''}) => {
 
     const dispatch = useDispatch();
     const [startDate, setStartDate] = useState(null);
@@ -21,9 +29,18 @@ export const DateRange = ({cotizador}) => {
         }
 
         const formattedStartDate = dayjs(startDate).format("YYYY-MM-DD");
-        const formattedEndDate = dayjs(endDate).format("YYYY-MM-DD");
+        const formattedEndDate   = dayjs(endDate).format("YYYY-MM-DD");
 
-        dispatch(getAllFilterDateThunks(formattedStartDate, formattedEndDate));
+        if(cotizador == "dashBoard"){
+
+            console.log("id ",id);
+            console.log("formattedStartDate ",formattedStartDate);
+            console.log("formattedEndDate ",formattedEndDate);
+            dispatch(dashboard_obtener_datos_cuenta_dates(id, formattedStartDate, formattedEndDate));
+
+        }else{
+            dispatch(getAllFilterDateThunks(formattedStartDate, formattedEndDate));
+        }
     };
 
     const handleClearDates = () => {
@@ -54,6 +71,11 @@ export const DateRange = ({cotizador}) => {
         }else if(cotizador == "fichacliente"){
             
             alert("EN PROCESO DE DESARROLLO....");
+            return;
+
+        }else if(cotizador == "dashBoard"){
+
+            dispatch(dashboard_obtener_datos_cuenta(id));
             return;
 
         }else{

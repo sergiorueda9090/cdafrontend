@@ -15,6 +15,17 @@ export const cuentasBancariasStore = createSlice({
     image             : '',
     archivo           : '',
     cuentasBancarias : [],
+    dashboardData    : [],
+    total_cuenta_bancaria   : 0,
+    total_devoluciones      : 0,
+    total_gastos_generales  : 0,
+    total_utilidad_ocacional: 0,
+    total_recepcionDePagos  : 0,
+    total                   : 0,
+    nombre_cuenta     : '',
+    descripcion_cuenta: '',
+    numero_cuenta     : '',
+    banco             : '',
   },
   reducers: {
     showStore:(state,action) => {
@@ -32,6 +43,19 @@ export const cuentasBancariasStore = createSlice({
     },
     listStore:(state, action) => {
       state.cuentasBancarias = action.payload.cuentasBancarias
+    },
+    listDashboard:(state, action) => {
+      state.dashboardData           = action.payload.dashboardData;
+      state.total_cuenta_bancaria   = action.payload.total_cuenta_bancaria;
+      state.total_devoluciones      = action.payload.total_devoluciones;
+      state.total_gastos_generales  = action.payload.total_gastos_generales;
+      state.total_utilidad_ocacional= action.payload.total_utilidad_ocacional;
+      state.total_recepcionDePagos  = action.payload.total_recepcionDePagos;
+      state.total                   = action.payload.total;
+      state.nombre_cuenta           = action.payload.nombre_cuenta;
+      state.descripcion_cuenta      = action.payload.descripcion;
+      state.numero_cuenta           = action.payload.numero_cuenta;
+      state.banco                   = action.payload.banco;
     },
     resetFormularioStore:(state) => {
       state.id              = '';
@@ -55,4 +79,4 @@ export const cuentasBancariasStore = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listStore, resetFormularioStore, handleFormStore } = cuentasBancariasStore.actions;
+export const { showStore, listStore, resetFormularioStore, handleFormStore, listDashboard } = cuentasBancariasStore.actions;

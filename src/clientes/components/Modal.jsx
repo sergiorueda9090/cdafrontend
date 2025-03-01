@@ -91,6 +91,7 @@ export const FormDialogUser = () => {
           <Grid container spacing={2} sx={{ marginTop: 2 }}>
             <Grid item xs={12}>
               <TextField
+                autoComplete="off"
                 fullWidth
                 name="nombre"
                 label="👤 Nombre Completo"
@@ -104,6 +105,7 @@ export const FormDialogUser = () => {
 
             <Grid item xs={4}>
               <TextField
+                autoComplete="off"
                 fullWidth
                 name="telefono"
                 label="📞 Teléfono"
@@ -125,6 +127,7 @@ export const FormDialogUser = () => {
 
             <Grid item xs={4}>
               <TextField
+                autoComplete="off"
                 fullWidth
                 name="color"
                 label="🎨 Seleccionar Color"

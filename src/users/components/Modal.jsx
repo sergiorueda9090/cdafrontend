@@ -237,6 +237,7 @@ export const FormDialogUser = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <TextField
+                                autoComplete="off"
                                 fullWidth
                                 id="username"
                                 name="username"
@@ -252,6 +253,7 @@ export const FormDialogUser = () => {
 
                         <Grid item xs={6}>
                             <TextField
+                                autoComplete="off"
                                 fullWidth
                                 id="email"
                                 name="email"
@@ -267,6 +269,7 @@ export const FormDialogUser = () => {
 
                         <Grid item xs={6}>
                             <TextField
+                                autoComplete="off"
                                 fullWidth
                                 id="first_name"
                                 name="first_name"
@@ -282,6 +285,7 @@ export const FormDialogUser = () => {
 
                         <Grid item xs={6}>
                             <TextField
+                                autoComplete="off"
                                 fullWidth
                                 id="last_name"
                                 name="last_name"
@@ -297,6 +301,7 @@ export const FormDialogUser = () => {
 
                         <Grid item xs={6}>
                             <TextField
+                                autoComplete="off"
                                 fullWidth
                                 id="password"
                                 name="password"
@@ -312,6 +317,7 @@ export const FormDialogUser = () => {
 
                         <Grid item xs={6}>
                             <TextField
+                                autoComplete="off"
                                 fullWidth
                                 id="passwordRepit"
                                 name="repetirPassword"
@@ -328,6 +334,7 @@ export const FormDialogUser = () => {
                         <Grid item xs={6}>
                             <Stack spacing={2} alignItems="flex-start">
                                 <TextField
+                                    autoComplete="off"
                                     id="upload-image"
                                     type="file"
                                     variant="outlined"
@@ -370,6 +377,7 @@ export const FormDialogUser = () => {
 
                         <Grid item xs={6}>
                             <TextField
+                                autoComplete="off"
                                 fullWidth
                                 id="estado"
                                 name="estado"

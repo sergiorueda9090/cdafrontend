@@ -300,7 +300,7 @@ export function DataTable() {
         field: "linkPago",
         headerName: "Link de Pago",
         renderCell: (params) => {
-          console.log("params.value ",params.value)
+
           const handleCopy = () => {
 
             console.log("params ",params.row.correo)

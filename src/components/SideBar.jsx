@@ -24,6 +24,8 @@ import ReceiptIcon from '@mui/icons-material/Receipt';               // Gastos G
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';         // Utilidad Ocasional
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+
 const StyledLink = styled(Link)({
     textDecoration: 'none',
     color: 'inherit',
@@ -59,6 +61,7 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Gastos',               icon: <ShoppingBagIcon />,          route: '/gastos' },
         { text: 'Gastos Generales',     icon: <ReceiptIcon />,              route: '/gastosgenerales' },
         { text: 'Utilidad Ocasional',   icon: <TrendingUpIcon />,           route: '/utilidadocasional' },
+        { text: 'Dashboard',            icon: <SpaceDashboardIcon />,       route: '/dashboard' },
     ];
     return (
         <Box component='nav' sx={{ width: isSidebarOpen ? drawerWidth : 0, flexShrink: { sm: 0 } }}>

@@ -42,7 +42,7 @@ export function DataTable() {
       { field: 'fecha_ingreso',        headerName: 'Fecha de Ingreso',      width: 200 },
       { field: 'fecha_transaccion',    headerName: 'Fecha de Transacción',  width: 200 },
       { field: 'observacion',          headerName: 'Descripción',           width: 200 },
-      { field: 'valor',                headerName: 'Valor',                 width: 160 },
+      { field: 'valor',                headerName: 'Valor',                 width: 160, align: "right", headerAlign: "right" },
       { field: 'nombre_tarjeta',       headerName: 'Tarjeta',               width: 160 },
       {
         field: 'actions',

@@ -170,6 +170,7 @@ export const FormDialogUser = () => {
 
               <Grid item xs={6}>
                 <TextField
+                  autoComplete="off"
                   fullWidth
                   name="fecha_transaccion"
                   label="📅 Fecha de Transacción"
@@ -184,6 +185,7 @@ export const FormDialogUser = () => {
 
               <Grid item xs={6}>
                 <TextField
+                  autoComplete="off"
                   fullWidth
                   name="valor"
                   label="💸 Valor"
@@ -197,6 +199,7 @@ export const FormDialogUser = () => {
 
               <Grid item xs={12}>
                 <TextField
+                  autoComplete="off"
                   fullWidth
                   name="observacion"
                   label="📄 Observacion"

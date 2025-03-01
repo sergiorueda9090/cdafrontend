@@ -18,24 +18,13 @@ export function DataTable() {
     let { etiquetas }    = useSelector(state => state.etiquetasStore);
 
     const columns = [
-      { field: 'id',          headerName: 'ID',         width: 100 },
-      { field: 'nombre',      headerName: 'Nombres',    width: 530 },
-      {
-        field: "color",
-        headerName: "Color",
-        width: 90,
-        renderCell: (params) => (
-          <div
-            style={{
-              width: "100%", // Ancho del cuadro de color
-              height: "100%", // Alto del cuadro de color
-              backgroundColor: params.value, // Color desde el valor de la celda
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-            }}
-          ></div>
-        ),
-      },
+      { field: 'id',                   headerName: 'ID',         width: 100 },
+      { field: 'Fecha de Transaccion', headerName: 'Fecha de Transaccion',    width: 200 },
+      { field: 'Descripcion',         headerName: 'Descripcion',    width: 200 },
+      { field: 'Valor', headerName: 'Nombres',    width: 200 },
+      { field: 'Observacion', headerName: 'Nombres',    width: 200 },
+      { field: 'Soporte', headerName: 'Soporte',    width: 200 },
+      { field: 'Fecha de ingreso (Auto)', headerName: 'Fecha de ingreso (Auto)',    width: 200 },
       {
         field: 'actions',
         headerName: 'Actions',

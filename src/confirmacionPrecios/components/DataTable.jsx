@@ -192,6 +192,7 @@ export function DataTable() {
       { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 170,       
           renderCell: (params) => {
           const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
+          console.log("colorFondoEtiqueta ",params.row.color_etiqueta)
           const colorTexto = getContrastColor(colorFondoEtiqueta); // Color de texto calculado
           return (
             <Chip
@@ -213,12 +214,13 @@ export function DataTable() {
       { field: 'nombreCompleto',        headerName: 'Nombre',          width: 130 },*/
       { field: 'cilindraje',            headerName: 'Cilindraje',      width: 150 },
       { field: 'modelo',                headerName: 'Modelo',          width: 130 },
-      { field: 'precioDeLey',           headerName: 'Precio de ley',   width: 130 },
-      { field: 'comisionPrecioLey',     headerName: 'Comision',        width: 130 },
+      { field: 'precioDeLey',           headerName: 'Precio de ley',   width: 130, align: "right", headerAlign: "right" },
+      { field: 'comisionPrecioLey',     headerName: 'Comision',        width: 130, align: "right", headerAlign: "right" },
       {
         field: 'total',
         headerName: 'Total',
         width: 130,
+        align: "right", headerAlign: "right",
         valueFormatter: (params) => {
           console.log("params ",params)
           if (params == null) return ''; // Manejo de valores nulos
@@ -484,7 +486,7 @@ export function DataTable() {
     await dispatch(showThunk(row.id));
   };
 
-
+  console.log("cotizadores ",cotizadores)
   return (
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
 

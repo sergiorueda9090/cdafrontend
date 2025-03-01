@@ -93,6 +93,7 @@ export const FormDialogUser = () => {
           <Grid container spacing={2} sx={{ marginTop: 2 }}>
               <Grid item xs={6}>
                 <TextField
+                  autoComplete="off"
                   fullWidth
                   name="name"
                   label="Nombre"
@@ -105,6 +106,7 @@ export const FormDialogUser = () => {
 
               <Grid item xs={6}>
                 <TextField
+                  autoComplete="off"
                   fullWidth
                   name="observacion"
                   label="📄 Observacion"

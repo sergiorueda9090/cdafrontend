@@ -4,22 +4,26 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
+import { useNavigate }              from 'react-router-dom';
+
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk } from '../../store/cuentasBancariasStore/cuentasBancariasThunks';
+import { showThunk, deleteThunk, dashboard_obtener_datos_cuenta } from '../../store/cuentasBancariasStore/cuentasBancariasThunks';
 import { toast } from 'react-toastify';
 import emptyDataTable from "../../assets/images/emptyDataTable.png"
 import { Box, Tooltip } from '@mui/material';
 import { FilterData } from '../../cotizador/components/FilterData';
 import { DateRange } from '../../cotizador/components/DateRange';
+
 export function DataTable() {
 
     const dispatch = useDispatch();
     
     let { cuentasBancarias }    = useSelector(state => state.cuentasBancariasStore);
+    const navigate              = useNavigate();
     
-    console.log("cuentasBancarias ",cuentasBancarias);
 
     const NoRowsOverlay = () => (
       <div style={{ 
@@ -43,7 +47,7 @@ export function DataTable() {
     const columns = [
       { field: 'id',                    headerName: 'ID',                    width: 100 },
       {
-        field: 'fechaIngreso',
+        field: 'fi',
         headerName: 'Fecha de Ingreso',
         width: 130,
         valueFormatter: (params) => {
@@ -56,29 +60,20 @@ export function DataTable() {
           }).replace(',', ''); // Ajustar formato y quitar la coma
         }
       },
-      { field: 'fechaTransaccion',      headerName: 'Fecha de Transacción',  width: 130 },
-      { field: 'descripcion',           headerName: 'Descripción',           width: 230 },
+      { field: 'ft',      headerName: 'Fecha de Transacción',  width: 130 },
+      { field: 'desc_alias',           headerName: 'Descripción',           width: 230 },
       {
-        field: 'valor',
+        field: 'valor_alias',
         headerName: 'Valor',
         width: 130,
-        valueFormatter: (params) => {
-          if (params.value == null) return ''; // Manejo de valores nulos
-          return new Intl.NumberFormat('es-CO', { 
-            minimumFractionDigits: 0, 
-            maximumFractionDigits: 0 
-          }).format(params.value);
-        },
+        align: "right", headerAlign: "right",
         renderCell: (params) => {
           const valor = params.value || 0;
           const color = valor < 0 ? 'red' : 'green';
     
           return (
             <span style={{ color, fontWeight: 'bold' }}>
-              {new Intl.NumberFormat('es-CO', { 
-                minimumFractionDigits: 0, 
-                maximumFractionDigits: 0 
-              }).format(valor)}
+              { valor }
             </span>
           );
         }
@@ -100,6 +95,16 @@ export function DataTable() {
                   color="primary"
                 >
                   <VisibilityIcon />
+                </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Ver Tarjeta">
+                <IconButton
+                  aria-label="edit"
+                  onClick={() => handleShow(params.row.id_tarjeta)}
+                  color="primary"
+                >
+                  <CreditCardIcon />
                 </IconButton>
             </Tooltip>
           </>
@@ -162,6 +167,13 @@ export function DataTable() {
     await dispatch(showThunk(row.id));
   };
 
+
+  const handleShow = async(id) => {
+    await dispatch(dashboard_obtener_datos_cuenta(id));
+    navigate(`/bancos/PageShow/${id}`);
+  };
+
+  console.log("cuentasBancarias ",cuentasBancarias)
 
   return (
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
