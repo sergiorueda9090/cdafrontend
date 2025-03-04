@@ -14,13 +14,18 @@ import { getAllFilterDateThunks, getAllThunks,
 import { dashboard_obtener_datos_cuenta, 
          dashboard_obtener_datos_cuenta_dates } from '../../store/cuentasBancariasStore/cuentasBancariasThunks';
 
+import { startDateGlobalStore, endDateGlobalStore } from '../../store/globalStore/globalStore';
+
 import dayjs from "dayjs";
+
+
 
 export const DateRange = ({cotizador,id=''}) => {
 
     const dispatch = useDispatch();
     const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate]     = useState(null);
+    const [endDate,   setEndDate]   = useState(null);
+
 
     const handleFilter = () => {
         if (!startDate || !endDate) {
@@ -32,10 +37,8 @@ export const DateRange = ({cotizador,id=''}) => {
         const formattedEndDate   = dayjs(endDate).format("YYYY-MM-DD");
 
         if(cotizador == "dashBoard"){
-
-            console.log("id ",id);
-            console.log("formattedStartDate ",formattedStartDate);
-            console.log("formattedEndDate ",formattedEndDate);
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) )
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) )
             dispatch(dashboard_obtener_datos_cuenta_dates(id, formattedStartDate, formattedEndDate));
 
         }else{
@@ -46,6 +49,9 @@ export const DateRange = ({cotizador,id=''}) => {
     const handleClearDates = () => {
         setStartDate(null);
         setEndDate(null);
+        
+        dispatch( startDateGlobalStore({'startDate':''}) )
+        dispatch( endDateGlobalStore({'endDate':''}) )
 
         if(cotizador == "cotizador"){
 

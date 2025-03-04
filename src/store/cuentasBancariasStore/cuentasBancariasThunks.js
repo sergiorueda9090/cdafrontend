@@ -339,7 +339,7 @@ export const dashboard_obtener_datos_cuenta = (id = "") => {
         
         const {authStore} = getState();
         const token       = authStore.token
-
+        
         await dispatch(showBackDropStore());
         
         const options = {
@@ -518,7 +518,7 @@ export const dashboard_obtener_datos_cuenta_dates = (id, fechaInicio="", fechaFi
     };
 }
 
-export const downloadExcelThunk = (id) => {
+export const downloadExcelThunk = (id,startDate, endDate) => {
     return async (dispatch, getState) => {
         const { authStore } = getState();
         const token = authStore.token;
@@ -527,7 +527,7 @@ export const downloadExcelThunk = (id) => {
 
         const options = {
             method: "GET",
-            url: `${URL}/cuentasbancarias/api/cuenta/${id}/download_report_excel/`,
+            url: `${URL}/cuentasbancarias/api/cuenta/${id}/download_report_excel/?fechaInicio=${startDate}&fechaFin=${endDate}`,
             headers: {
                 Authorization: `Bearer ${token}`,
             },

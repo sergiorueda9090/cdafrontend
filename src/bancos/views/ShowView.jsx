@@ -19,10 +19,12 @@ import { DateRange } from "../../cotizador/components/DateRange";
 import { downloadExcelThunk } from "../../store/cuentasBancariasStore/cuentasBancariasThunks";
 
 import dayjs from "dayjs";
+import { v4 as uuidv4 } from 'uuid';
 
+import { URL } from "../../constants.js/constantGlogal";
   // Definir las columnas para el DataGrid
   const columns = [
-    { field: "id",          headerName: "ID",             width: 90 },
+    { field: "id",          headerName: "ID",             width: 90, hide: true },
     {
       field: "fi",
       headerName: "Fecha Ingreso",
@@ -47,6 +49,8 @@ export const ShowView = () => {
         nombre_cuenta, descripcion_cuenta, 
         numero_cuenta, total_recepcionDePagos, banco }    = useSelector(state => state.cuentasBancariasStore);
 
+  const { startDate, endDate } = useSelector(state => state.globalStore);
+
 
   const data = [
     { name: "Cuenta Bancaria",    value: total_cuenta_bancaria, color: "#2196F3" }, // Azul fuerte
@@ -67,17 +71,21 @@ export const ShowView = () => {
   };
 
 
-  const handleDownloadPDF = () => {
-    console.log("Descargando PDF...");
-    // Implementar lógica para exportar PDF
-  };
 
+  function handleDownloadPDF() {
+    const url = `${ URL }/downloadpdf/downloadpdf/${id}/?fechaInicio=${startDate}&fechaFin=${endDate}`;
+    window.open(url, '_blank'); // Abre el PDF en una nueva pestaña
+  }
 
   const handleDownloadExcel = async () => {
-    console.log("id ",id)
-    dispatch(downloadExcelThunk(id));
+    dispatch(downloadExcelThunk(id,startDate, endDate));
   };
 
+  const enhancedDashboardData = dashboardData.map(row => ({
+    ...row,
+    id: uuidv4() // Usa el ID existente o genera uno nuevo
+  }));
+  
 
   return (
     <Box sx={{ height: 500, width: "100%", p: 3 }}>
@@ -323,7 +331,7 @@ export const ShowView = () => {
       </Box>
 
               <DataGrid
-                rows={dashboardData}
+                rows={enhancedDashboardData}
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5, 10]}
