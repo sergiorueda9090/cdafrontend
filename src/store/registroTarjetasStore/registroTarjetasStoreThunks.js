@@ -323,6 +323,11 @@ export const deleteThunk = (idUser = "") => {
 
 }
 
+export const handleDisplayAllTarjetasThunk = () => {
+    return async (dispatch) => {
+        await dispatch(listStore({'tarjetasBancarias':[]}))
+      };
+}
 
 export const handleFormStoreThunk = (data) => {
     return async (dispatch) => {

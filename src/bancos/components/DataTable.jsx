@@ -16,6 +16,7 @@ import emptyDataTable from "../../assets/images/emptyDataTable.png"
 import { Box, Tooltip } from '@mui/material';
 import { FilterData } from '../../cotizador/components/FilterData';
 import { DateRange } from '../../cotizador/components/DateRange';
+import { v4 as uuidv4 } from 'uuid';
 
 export function DataTable() {
 
@@ -175,6 +176,11 @@ export function DataTable() {
 
   console.log("cuentasBancarias ",cuentasBancarias)
 
+    const enhancedDashboardData = cuentasBancarias.map(row => ({
+      ...row,
+      id: uuidv4() // Usa el ID existente o genera uno nuevo
+    }));
+
   return (
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
 
@@ -184,7 +190,7 @@ export function DataTable() {
       </Box>
 
       <DataGrid
-        rows={cuentasBancarias}
+        rows={enhancedDashboardData}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}

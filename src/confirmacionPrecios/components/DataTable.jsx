@@ -19,7 +19,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import { showThunk, updateThunks } from '../../store/cotizadorStore/cotizadorThunks';
-import { getAllThunks as getAllTarjetas, handleFormStoreThunk } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
+import { getAllThunks as getAllTarjetas, handleFormStoreThunk, handleDisplayAllTarjetasThunk } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
 import { handleFormStoreThunk as handleFormStoreThunkCotizador } from '../../store/cotizadorStore/cotizadorThunks';
 
 import { useNavigate }              from 'react-router-dom';
@@ -157,11 +157,26 @@ export function DataTable() {
       dispatch(getAllTarjetas())
     }
 
+    const handleDisplayAllTarjetas = () => {
+      dispatch(handleDisplayAllTarjetasThunk())
+    }
+
   
     const handleSelectionChange = (id, newValue) => {
       dispatch(handleFormStoreThunk({name: 'banco', value:newValue.banco }));
       dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:id }));
     };
+
+    const [activeRow, setActiveRow] = useState(null); // Guarda la fila activa
+
+    const handleCellClick = (rowId) => {
+      setActiveRow(rowId); // Activa solo la celda seleccionada
+    };
+
+    const handleBlur = () => {
+      setActiveRow(null); // Cierra el Autocomplete al hacer clic afuera
+    };
+
 
     
     const columns = [
@@ -236,15 +251,25 @@ export function DataTable() {
         width: 250,
         editable: true,
         renderCell: (params) => {
+          const isActive = activeRow === params.id; // Verifica si esta celda está activa
+          console.log("isActive ",isActive)
+          console.log("activeRow ",activeRow)
+          console.log("params.id ",params.id)
           return (
-            <Box width="100%">
-            {tarjetasBancarias.length > 0 ? (
+            <Box width="100%"  onClick={() => handleCellClick(params.id)}>
+            {isActive && tarjetasBancarias.length > 0 ? (
               <Autocomplete
                 options={tarjetasBancarias}
                 getOptionLabel={(option) => option.banco}
                 isOptionEqualToValue={(option, value) => option.id === value?.id}
                 value={tarjetasBancarias.find((option) => option.banco === banco) || null} // Encuentra el objeto correspondiente
-                onChange={(_, newValue) => handleSelectionChange(newValue.id, newValue)}
+                onChange={(_, newValue) => {
+                  if (newValue) {
+                    handleSelectionChange(newValue.id, newValue);
+                  } else {
+                    handleDisplayAllTarjetas(); // Manejo cuando se borra la selección
+                  }
+                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}
