@@ -17,7 +17,7 @@ import { RoutesPdfs }                   from '../cargarPdfs/routes/Routes';
 import { PageMain as BancosMain }       from '../bancos/pages/PageMain';
 import { RoutesBancos }                 from '../bancos/routes/Routes';
 
-import { PageMain as RegistroTarjetas } from '../registroTarjetas/pages/PageMain';
+import { RoutesTarjetas }               from '../registroTarjetas/routes/Routes';
 import { PageMain as FichaCliente }     from '../fichaClientes/pages/PageMain';
 
 
@@ -46,7 +46,8 @@ export const AppRouter = () => {
                 <Route path="/cotizador/*"            element={ <RoutesCotizador />} />
                 <Route path="/confirmacionprecios/*"  element={ <RoutesConfirmacionPrecios />} />
                 <Route path="/cargarpdfs/*"           element={ <RoutesPdfs />} />
-                <Route path="/registroTarjetas"       element={ <RegistroTarjetas />} />
+                
+                <Route path="/registroTarjetas/*"     element={ <RoutesTarjetas />} />
 
                 <Route path="/bancos/*"               element={ <RoutesBancos /> } />
 

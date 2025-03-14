@@ -75,11 +75,11 @@ export const FormDialogUser = () => {
 
   return (
     <Dialog open={openModalStore} onClose={handleClose} fullWidth maxWidth="lg">
-      <DialogTitle>{id ? "Editar Cliente" : "Crear Cliente"}</DialogTitle>
+      <DialogTitle>{id ? "Editar Etiqueta" : "Crear Etiqueta"}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <DialogContentText>
-            Completa la información del cliente y agrega sus precios de ley si es necesario.
+            Completa la información de la Etiqueta.
           </DialogContentText>
           <Grid container spacing={2} sx={{ marginTop: 2 }}>
             <Grid item xs={6}>
@@ -116,7 +116,7 @@ export const FormDialogUser = () => {
             Cancelar
           </Button>
           <Button type="submit" variant="outlined" color="primary">
-            {id ? "Editar Cliente" : "Crear Cliente"}
+            {id ? "Editar Etiqueta" : "Crear Etiqueta"}
           </Button>
         </DialogActions>
       </form>

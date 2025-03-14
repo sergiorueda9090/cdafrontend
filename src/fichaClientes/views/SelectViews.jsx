@@ -11,7 +11,7 @@ import { FormDialogUser }               from '../components/Modal';
 import { useSelector, useDispatch }     from 'react-redux';
 
 import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
-import { getAllThunks }                 from '../../store/etiquetasStore/etiquetasThunks';
+import { getAllThunks }                 from '../../store/fichaClienteStore/fichaClienteStoreThunks';
 
 import { ToastContainer, toast } from 'react-toastify';
 

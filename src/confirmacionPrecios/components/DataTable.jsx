@@ -260,7 +260,7 @@ export function DataTable() {
             {isActive && tarjetasBancarias.length > 0 ? (
               <Autocomplete
                 options={tarjetasBancarias}
-                getOptionLabel={(option) => option.banco}
+                getOptionLabel={(option) => option.nombre_cuenta}
                 isOptionEqualToValue={(option, value) => option.id === value?.id}
                 value={tarjetasBancarias.find((option) => option.banco === banco) || null} // Encuentra el objeto correspondiente
                 onChange={(_, newValue) => {

@@ -70,17 +70,18 @@ export function DataTable() {
         align: "right", headerAlign: "right",
         renderCell: (params) => {
           const valor = params.value || 0;
+          console.log(valor)
           const color = valor < 0 ? 'red' : 'green';
-    
           return (
             <span style={{ color, fontWeight: 'bold' }}>
-              { valor }
+             {valor.toLocaleString("es-CO", { style: "currency", currency: "COP" })}
             </span>
           );
         }
       },
       { field: 'cilindraje',            headerName: 'Cilindraje',            width: 130 },
       { field: 'placa',                 headerName: 'Placa',            width: 130 },
+      { field: 'origen',                 headerName: 'Origen',            width: 130 },
       { field: 'nombreTitular',         headerName: 'Nombre del Titular',    width: 230 },
       {
         field: 'actions',
@@ -89,15 +90,20 @@ export function DataTable() {
         sortable: false,
         renderCell: (params) => (
           <>
-            <Tooltip title="Ver Registro">
-                <IconButton
-                  aria-label="edit"
-                  onClick={() => handleEdit(params.row)}
-                  color="primary"
-                >
-                  <VisibilityIcon />
-                </IconButton>
-            </Tooltip>
+
+            {
+              params.row.archivo && ( // Verifica si existe archivo
+                <Tooltip title="Ver Registro">
+                  <IconButton
+                    aria-label="edit"
+                    onClick={() => handleEdit(params.row.idCuentaBancaria)}
+                    color="primary"
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                </Tooltip>
+              )
+            }
 
             <Tooltip title="Ver Tarjeta">
                 <IconButton
@@ -164,8 +170,8 @@ export function DataTable() {
     const paginationModel = { page: 0, pageSize: 15 };
 
   // Función para manejar la edición
-  const handleEdit = async (row) => {
-    await dispatch(showThunk(row.id));
+  const handleEdit = async (id_cotizador) => {
+    await dispatch(showThunk(id_cotizador));
   };
 
 
@@ -178,14 +184,16 @@ export function DataTable() {
 
     const enhancedDashboardData = cuentasBancarias.map(row => ({
       ...row,
+      idCuentaBancaria:row.id,
       id: uuidv4() // Usa el ID existente o genera uno nuevo
     }));
 
+    console.log("enhancedDashboardData ",enhancedDashboardData)
   return (
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
 
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          <FilterData  cotizador="cuentasbancarias"/>  {/* Componente de filtros adicionales */}
+            {/* <FilterData  cotizador="cuentasbancarias"/> Componente de filtros adicionales */}
           <DateRange   cotizador="cuentasbancarias"/>  {/* Componente para selección de rango de fechas */}
       </Box>
 

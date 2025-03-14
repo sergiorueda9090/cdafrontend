@@ -1,5 +1,5 @@
-export const URL  = 'https://cda.sergiodevsolutions.com';
-
+//export const URL  = 'https://cda.sergiodevsolutions.com';
+export const URL  = 'http://52.3.57.37';
 //export const URL = 'http://127.0.0.1:8000';
 
 export const TOKEN = (() => {

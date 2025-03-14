@@ -18,6 +18,7 @@ import { ajustesSaldoStore }          from './ajustesSaldoStore/ajustesSaldoStor
 import { gastosStore }                from './gastosStore/gastosStore';
 import { gastosGeneralesStore }       from './gastosGeneralesStore/gastosGeneralesStore';
 import { utilidadOcacionalStore }     from './utilidadOcacionalStore/utilidadOcacionalStore';
+import { fichaClienteStore }          from './fichaClienteStore/fichaClienteStore';
 
 export const store = configureStore({
   reducer: {
@@ -39,6 +40,7 @@ export const store = configureStore({
     ajustesSaldoStore     : ajustesSaldoStore.reducer,
     gastosStore           : gastosStore.reducer,
     gastosGeneralesStore  : gastosGeneralesStore.reducer,
-    utilidadOcacionalStore: utilidadOcacionalStore.reducer
+    utilidadOcacionalStore: utilidadOcacionalStore.reducer,
+    fichaClienteStore     : fichaClienteStore.reducer
   }
 })

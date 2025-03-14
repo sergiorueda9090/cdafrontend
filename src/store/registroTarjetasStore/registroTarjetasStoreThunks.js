@@ -3,7 +3,7 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { loginFail } from "../authStore/authStore.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { showStore, listStore, resetFormularioStore, handleFormStore  } from "./registroTarjetasStore.js";
+import { showStore, listStore, resetFormularioStore, handleFormStore , listTotalStore } from "./registroTarjetasStore.js";
 
 // Función asincrónica para obtener los Pokemons
 const parametersURL = 'registrotarjetas/api/';
@@ -333,5 +333,67 @@ export const handleFormStoreThunk = (data) => {
     return async (dispatch) => {
       const { name, value } = data; // Extraer el nombre y el valor del evento
       dispatch(handleFormStore({ name, value })); // Despachar la acción para actualizar el estado
+    };
+};
+
+export const getTotalAllThunks = () => {
+
+    return async (dispatch, getState) => {
+        
+        await dispatch(showBackDropStore());
+        
+        const {authStore} = getState();
+        const token = authStore.token
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${ URL}/${parametersURL}obtener_tarjetas_total/`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+
+                if(data.length > 0){
+                    
+                    await dispatch(listTotalStore({'getTotalTarjetas':data}))
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    await dispatch(listStore({'getTotalTarjetas':[]}))
+
+                    await dispatch(listTotalStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+
+        } catch (error) {
+            
+            await dispatch(hideBackDropStore());
+
+            // Manejar errores
+            console.error(error);
+            
+            //await dispatch ( loginFail() );
+            
+            await dispatch( hideBackDropStore() );
+
+        }
     };
 };

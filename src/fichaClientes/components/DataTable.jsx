@@ -10,45 +10,38 @@ import { toast } from 'react-toastify';
 import { FilterData } from '../../cotizador/components/FilterData';
 import { DateRange } from '../../cotizador/components/DateRange';
 import { Box } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
 
 export function DataTable() {
 
     const dispatch = useDispatch();
     
-    let { etiquetas }    = useSelector(state => state.etiquetasStore);
-
+    let { fichasCliente }    = useSelector(state => state.fichaClienteStore);
+    console.log("fichasCliente ",fichasCliente)
     const columns = [
-      { field: 'id',                   headerName: 'ID',         width: 100 },
-      { field: 'Fecha de Transaccion', headerName: 'Fecha de Transaccion',    width: 200 },
-      { field: 'Descripcion',         headerName: 'Descripcion',    width: 200 },
-      { field: 'Valor', headerName: 'Nombres',    width: 200 },
-      { field: 'Observacion', headerName: 'Nombres',    width: 200 },
-      { field: 'Soporte', headerName: 'Soporte',    width: 200 },
-      { field: 'Fecha de ingreso (Auto)', headerName: 'Fecha de ingreso (Auto)',    width: 200 },
+      { field: 'id',                      headerName: 'ID',                         width: 100 },
+      { field: 'fi',                      headerName: 'Fecha de Transaccion',       width: 200 , 
+        valueFormatter: (params) => {
+          if (!params) return "";
+          // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
+          return params.slice(0, 16).replace("T", " ");
+        }
+      },
+      { field: 'desc_alias',              headerName: 'Descripcion',                width: 200 },
       {
-        field: 'actions',
-        headerName: 'Actions',
-        width: 150,
-        sortable: false,
+        field: 'valor_alias',
+        headerName: 'Valor',
+        width: 200,
         renderCell: (params) => (
-          <>
-            <IconButton
-              aria-label="edit"
-              onClick={() => handleEdit(params.row)}
-              color="primary"
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              onClick={() => handleDelete(params.row.id)}
-              color="error"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </>
+          <span style={{ color: params.value < 0 ? 'red' : 'green' }}>
+            {params.value}
+          </span>
         ),
       },
+      { field: 'desc_alias',              headerName: 'Observacion',                width: 200 },
+      { field: 'Soporte',                 headerName: 'Soporte',                    width: 200 },
+      { field: 'Fecha de ingreso (Auto)', headerName: 'Fecha de ingreso (Auto)',    width: 200 },
+      { field: 'origen',                  headerName: 'Origen',                     width: 200 },
     ];
     
     
@@ -106,7 +99,10 @@ export function DataTable() {
     await dispatch(showThunk(row.id));
   };
 
-
+  const fichasClienteData = fichasCliente.map(row => ({
+    ...row,
+    id: uuidv4() // Usa el ID existente o genera uno nuevo
+  }));
   return (
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
 
@@ -117,7 +113,7 @@ export function DataTable() {
       </Box>
 
       <DataGrid
-        rows={[]}
+        rows={fichasClienteData}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}

@@ -40,6 +40,13 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         setOpenMovements(!openMovements);
     };
 
+
+    const [openMovementsTarjeta, setOpenMovementsTarjeta] = useState(false); // Estado para el submenú
+
+    const handleToggleMovementsTarjeta = () => {
+        setOpenMovementsTarjeta(!openMovements);
+    };
+
     const items = [
         { text: 'Usuarios', icon: <PeopleIcon />, route: '/users' },
         { text: 'Clientes', icon: <Face6Icon />, route: '/clientes' },
@@ -48,10 +55,14 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Trámites', icon: <ReceiptLongIcon />, route: '/tramites' },
         { text: 'Confirmación de Precios', icon: <AttachMoneyIcon />, route: '/confirmacionprecios' },
         { text: 'Cargar PDFs', icon: <PictureAsPdfIcon />, route: '/cargarpdfs' },
-        { text: 'Registro Tarjetas Bancarias', icon: <CreditCardIcon />, route: '/registroTarjetas' },
         { text: 'Cuentas Bancarias', icon: <AccountBalanceIcon />, route: '/bancos' },
         { text: 'Ficha del Cliente', icon: <ContactPageIcon />, route: '/fichaCliente' },
         { text: 'Verificación de Código', icon: <SecurityIcon />, route: '/verify' },
+    ];
+
+    const tarjetasSideBar = [
+        { text: 'Registro Tarjetas Bancarias', icon: <CreditCardIcon />, route: '/registroTarjetas' },
+        { text: 'Total de cada tarjeta',       icon: <CreditCardIcon />, route: '/registroTarjetas/totaldecadatarjeta' },
     ];
 
     const gestionMovimientos = [
@@ -90,6 +101,31 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                             </StyledLink>
                         </ListItem>
                     ))}
+
+                    {/* Informacion tarjetas bancarias */}
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={handleToggleMovements}>
+                            <ListItemIcon>
+                                <CreditCardIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Información de tarjetas bancarias" />
+                            {openMovements ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+                    </ListItem>
+
+                    <Collapse in={openMovements} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                            {tarjetasSideBar.map(({ text, route }) => (
+                                <ListItem key={text} disablePadding>
+                                    <StyledLink to={route} onClick={handleDrawerToggle}>
+                                        <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
+                                            <ListItemText primary={text} />
+                                        </ListItemButton>
+                                    </StyledLink>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Collapse>
 
                     {/* Gestión de Movimientos con submenú */}
                     <ListItem disablePadding>
@@ -149,6 +185,33 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                             </StyledLink>
                         </ListItem>
                     ))}
+
+                    {/* Informacion tarjetas bancarias */}
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={handleToggleMovementsTarjeta}>
+                            <ListItemIcon>
+                                <CreditCardIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Información de tarjetas bancarias" />
+                            {openMovementsTarjeta ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+                    </ListItem>
+
+
+                    <Collapse in={openMovementsTarjeta} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                            {tarjetasSideBar.map(({ text,icon, route }) => (
+                                <ListItem key={text} disablePadding>
+                                    <StyledLink to={route}>
+                                        <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
+                                        <ListItemIcon>{icon}</ListItemIcon>
+                                            <ListItemText primary={text} />
+                                        </ListItemButton>
+                                    </StyledLink>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Collapse>
 
                     {/* Gestión de Movimientos con submenú */}
                     <ListItem disablePadding>

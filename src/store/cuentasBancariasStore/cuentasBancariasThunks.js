@@ -555,3 +555,76 @@ export const downloadExcelThunk = (id,startDate, endDate) => {
         }
     };
 };
+
+export const getAllThunksFilter = (fechaInicio="", fechaFin="") => {
+
+    return async (dispatch, getState) => {
+        
+        await dispatch(showBackDropStore());
+        
+        const {authStore} = getState();
+        const token = authStore.token
+
+        // Iniciar la carga
+        let url = `${URL}/cuentasbancarias/api/cuentas/obtener_cuentas_filtradas/`;
+
+        // Agregar las fechas a los parámetros de la URL si existen
+        if (fechaInicio || fechaFin) {
+            const params = new URLSearchParams();
+            if (fechaInicio) params.append("fechaInicio", fechaInicio);
+            if (fechaFin) params.append("fechaFin", fechaFin);
+            url += `?${params.toString()}`;
+        }
+        console.log("url ",url)
+    
+        const options = {
+            method: "GET",
+            url: url,
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+                console.log("data ",data)
+                if(data.length > 0){
+                    
+                    await dispatch(listStore({'cuentasBancarias':data}))
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    await dispatch(listStore({'cuentasBancarias':[]}))
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+
+        } catch (error) {
+            
+            await dispatch(hideBackDropStore());
+
+            // Manejar errores
+            console.error(error);
+            
+            //await dispatch ( loginFail() );
+            
+            await dispatch( hideBackDropStore() );
+
+        }
+    };
+};

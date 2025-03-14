@@ -12,7 +12,9 @@ import { getAllFilterDateThunks, getAllThunks,
          getAllCotizadorPdfsThunks }      from '../../store/cotizadorStore/cotizadorThunks';
 
 import { dashboard_obtener_datos_cuenta, 
-         dashboard_obtener_datos_cuenta_dates } from '../../store/cuentasBancariasStore/cuentasBancariasThunks';
+         dashboard_obtener_datos_cuenta_dates, 
+         getAllThunksFilter,
+         getAllThunks as getAllThunksCuentasBancarias } from '../../store/cuentasBancariasStore/cuentasBancariasThunks';
 
 import { startDateGlobalStore, endDateGlobalStore } from '../../store/globalStore/globalStore';
 
@@ -28,6 +30,7 @@ export const DateRange = ({cotizador,id=''}) => {
 
 
     const handleFilter = () => {
+
         if (!startDate || !endDate) {
             alert("Debes seleccionar ambas fechas para filtrar.");
             return;
@@ -37,9 +40,16 @@ export const DateRange = ({cotizador,id=''}) => {
         const formattedEndDate   = dayjs(endDate).format("YYYY-MM-DD");
 
         if(cotizador == "dashBoard"){
+
             dispatch( startDateGlobalStore({'startDate':formattedStartDate}) )
             dispatch( endDateGlobalStore({'endDate':formattedEndDate}) )
             dispatch(dashboard_obtener_datos_cuenta_dates(id, formattedStartDate, formattedEndDate));
+
+        }else if(cotizador == "cuentasbancarias"){
+
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) )
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) )
+            dispatch(getAllThunksFilter(formattedStartDate, formattedEndDate));
 
         }else{
             dispatch(getAllFilterDateThunks(formattedStartDate, formattedEndDate));
@@ -71,9 +81,8 @@ export const DateRange = ({cotizador,id=''}) => {
 
         }else if(cotizador == "cuentasbancarias"){
             
-            alert("EN PROCESO DE DESARROLLO....");
-            return;
-
+            dispatch(getAllThunksCuentasBancarias());
+     
         }else if(cotizador == "fichacliente"){
             
             alert("EN PROCESO DE DESARROLLO....");

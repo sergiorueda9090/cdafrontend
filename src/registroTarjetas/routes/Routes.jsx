@@ -1,11 +1,13 @@
 import { Navigate, Route, Routes } from "react-router-dom"
-import { Page }                    from "../pages/PageMain"
+import { PageMain }                from "../pages/PageMain"
+import { PageShow }                from "../pages/PageShow";
 
-export const Routes = () => {
+export const RoutesTarjetas = () => {
   return (
     <Routes>
-        <Route path="/clientes" element={ <Page /> } />
-        <Route path="/*"       element={ <Navigate to="/" /> } />
+        <Route path="/"                   element={ <PageMain /> } />
+        <Route path="totaldecadatarjeta"  element={  <PageShow />} />
+        <Route path="/*"                  element={ <Navigate to="/" /> } />
     </Routes>
   )
 }

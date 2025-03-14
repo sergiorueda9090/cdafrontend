@@ -58,7 +58,8 @@ export function DataTable() {
     const [editingField, setEditingField] = useState("");
     const [editingValue, setEditingValue] = useState("");
 
-    
+    const [idRow, setIdRow] = useState('');
+
     const [loading, setLoading] = useState(false);
 
     const processRowUpdate = (newRow) => {
@@ -158,7 +159,7 @@ export function DataTable() {
                 <button 
                   onClick={() => noPuedePagar(idToast)} 
                   style={{ background: "red", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
-                  ❌ No Puedo Pagar 1
+                  ❌ No Puedo Pagar
                 </button>
               </div>
             </div>
@@ -303,7 +304,7 @@ export function DataTable() {
 
           const handleCopy = () => {
 
-            console.log("params ",params.row.correo)
+            console.log("params ",params.row.id)
 
             if (!params.row.correo || params.row.correo.trim() === "") {
               toast.error("❌ El correo es obligatorio para confirmar el pago.", {
@@ -320,6 +321,7 @@ export function DataTable() {
                 url = `https://${url}`;
             }
 
+            setIdRow(params.row.id);
 
             setLoading(true); // Muestra la imagen de carga
 
@@ -340,8 +342,26 @@ export function DataTable() {
             <>
               {params.value && (
                 <>
-                {!loading ? (
-                  <Tooltip title="Copiar link de pago">
+                  {!loading ? (
+                    <Tooltip title="Copiar link de pago">
+                      <IconButton
+                        aria-label="Copiar link de pago"
+                        onClick={handleCopy}
+                        color="success"
+                        size="small"
+                      >
+                        <ContentCopyIcon />
+                      </IconButton>
+                    </Tooltip>
+                  ) : idRow === params.row.id ? (
+                    <Tooltip title="Link de pago copiado">
+                      <img
+                        src={smallLoading}
+                        alt="Cargando"
+                        style={{ width: 24, height: 24 }}
+                      />
+                    </Tooltip>
+                  ) : (<Tooltip title="Copiar link de pago">
                     <IconButton
                       aria-label="Copiar link de pago"
                       onClick={handleCopy}
@@ -350,16 +370,7 @@ export function DataTable() {
                     >
                       <ContentCopyIcon />
                     </IconButton>
-                    </Tooltip>
-                  ) : (
-                    <Tooltip title="link de pago copiado">
-                    <img
-                      src={smallLoading}
-                      alt="Cargando"
-                      style={{ width: 24, height: 24 }}
-                    />
-                    </Tooltip>
-                  )}
+                  </Tooltip>)}
                 </>
               )}
             </>

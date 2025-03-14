@@ -11,6 +11,7 @@ export const registroTarjetasStore = createSlice({
     imagen            : '',
     banco             : '',
     tarjetasBancarias : [],
+    getTotalTarjetas  : [],
   },
   reducers: {
     showStore:(state,action) => {
@@ -24,6 +25,9 @@ export const registroTarjetasStore = createSlice({
     },
     listStore:(state, action) => {
       state.tarjetasBancarias = action.payload.tarjetasBancarias
+    },
+    listTotalStore:(state, action) => {
+      state.getTotalTarjetas  = action.payload.getTotalTarjetas
     },
     resetFormularioStore:(state) => {
       state.id            = '';
@@ -43,4 +47,4 @@ export const registroTarjetasStore = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listStore, resetFormularioStore, handleFormStore } = registroTarjetasStore.actions;
+export const { showStore, listStore, resetFormularioStore, handleFormStore, listTotalStore } = registroTarjetasStore.actions;
