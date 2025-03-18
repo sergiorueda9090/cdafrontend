@@ -43,7 +43,6 @@ export function DataTable() {
         headerName: 'Fecha de Ingreso',
         width: 200,
         valueFormatter: (params) => {
-          console.log("params ",params)
           if (!params) return "";
           // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
           return params.slice(0, 16).replace("T", " ");
@@ -139,8 +138,8 @@ export function DataTable() {
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
 
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          <FilterData  cotizador="registroTarjetas"/>  {/* Componente de filtros adicionales */}
-          <DateRange   cotizador="registroTarjetas"/>  {/* Componente para selección de rango de fechas */}
+          {/*<FilterData  cotizador="registroTarjetas"/>   Componente de filtros adicionales */}
+          <DateRange   cotizador="ajustesdesaldo"/>  {/* Componente para selección de rango de fechas */}
       </Box>
 
       <DataGrid

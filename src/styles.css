@@ -1,31 +1,32 @@
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-      monospace;
-  }
-  
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
-  .recepcion {
-    background-color: #1e90ff; /* Azul */
-    color: white;
-  }
-  .validacion {
-    background-color: #ffd700; /* Amarillo */
-    color: black;
-  }
-  .ejecucion {
-    background-color: #ffa500; /* Naranja */
-    color: white;
-  }
-  .finalizacion {
-    background-color: #32cd32; /* Verde */
-    color: white;
-  }
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.recepcion {
+  background-color: #1e90ff; /* Azul */
+  color: white;
+}
+
+.validacion {
+  background-color: #ffd700; /* Amarillo */
+  color: black;
+}
+
+.ejecucion {
+  background-color: #ffa500; /* Naranja */
+  color: white;
+}
+
+.finalizacion {
+  background-color: #32cd32; /* Verde */
+  color: white;
+}

@@ -57,7 +57,7 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Cargar PDFs', icon: <PictureAsPdfIcon />, route: '/cargarpdfs' },
         { text: 'Cuentas Bancarias', icon: <AccountBalanceIcon />, route: '/bancos' },
         { text: 'Ficha del Cliente', icon: <ContactPageIcon />, route: '/fichaCliente' },
-        { text: 'Verificación de Código', icon: <SecurityIcon />, route: '/verify' },
+        //{ text: 'Verificación de Código', icon: <SecurityIcon />, route: '/verify' },
     ];
 
     const tarjetasSideBar = [

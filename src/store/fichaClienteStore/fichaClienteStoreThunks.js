@@ -22,7 +22,7 @@ export const getAllThunks = () => {
             method: 'GET',
             url: `${ URL}/${parametersURL}fichaclientes/`,
             headers: {
-              //Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${token}`
             }
           };
           

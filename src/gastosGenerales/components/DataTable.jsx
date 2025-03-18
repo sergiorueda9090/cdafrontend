@@ -147,8 +147,8 @@ export function DataTable() {
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
 
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          <FilterData  cotizador="registroTarjetas"/>  {/* Componente de filtros adicionales */}
-          <DateRange   cotizador="registroTarjetas"/>  {/* Componente para selección de rango de fechas */}
+          <FilterData  cotizador="gastosGenerales"/>  {/* Componente de filtros adicionales */}
+          <DateRange   cotizador="gastosGenerales"/>  {/* Componente para selección de rango de fechas */}
       </Box>
 
       <DataGrid

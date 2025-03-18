@@ -40,6 +40,14 @@ export function DataTable() {
       { field: 'id',                headerName: 'ID',                    width: 100 },
       { field: 'name',              headerName: 'Nombre',   width: 200 },
       { field: 'observacion',       headerName: 'Observacion',   width: 200 },
+      { field: 'fecha_ingreso',     headerName: 'Fecha Ingreso',   width: 200,        
+        valueFormatter: (params) => {
+          console.log("params ",params)
+          if (!params) return "";
+          // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
+          return params.slice(0, 16).replace("T", " ");
+        } 
+      },
       {
         field: 'actions',
         headerName: 'Actions',
@@ -126,8 +134,8 @@ export function DataTable() {
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
 
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          <FilterData  cotizador="registroTarjetas"/>  {/* Componente de filtros adicionales */}
-          <DateRange   cotizador="registroTarjetas"/>  {/* Componente para selección de rango de fechas */}
+          {/*<FilterData  cotizador="gastos"/>   Componente de filtros adicionales */}
+          <DateRange   cotizador="gastos"/>  {/* Componente para selección de rango de fechas */}
       </Box>
 
       <DataGrid

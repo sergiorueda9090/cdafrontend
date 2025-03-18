@@ -52,7 +52,7 @@ export const AppRouter = () => {
                 <Route path="/bancos/*"               element={ <RoutesBancos /> } />
 
                 <Route path="/fichaCliente"           element={ <FichaCliente /> } />
-                <Route path="/verify"                 element={ <Verify /> }    />
+                {/*<Route path="/verify"                 element={ <Verify /> }    />*/}
 
                 <Route path="/recepcionpago"          element={ <RecepcionPago />} />
                 <Route path="/devolucion"             element={ <Devoliciones />} />

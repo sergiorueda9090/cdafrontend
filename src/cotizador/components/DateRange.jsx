@@ -16,7 +16,25 @@ import { dashboard_obtener_datos_cuenta,
          getAllThunksFilter,
          getAllThunks as getAllThunksCuentasBancarias } from '../../store/cuentasBancariasStore/cuentasBancariasThunks';
 
+import { getAllThunksFilter as getAllThunksFilterUtilidadOcacional, 
+         getAllThunks       as getAllThunksUtilidadOcacional  } from '../../store/utilidadOcacionalStore/utilidadOcacionalStoreThunks';
+
+import { getAllThunksFilter as getAllThunksFilterGastosGenerales,
+         getAllThunks       as getAllThunksGastosGenerales } from '../../store/gastosGeneralesStore/gastosGeneralesStoreThunks';
+
 import { startDateGlobalStore, endDateGlobalStore } from '../../store/globalStore/globalStore';
+
+import { getAllThunksFilter as getAllThunksFilterGastos,
+         getAllThunks       as getAllThunksGastos } from '../../store/gastosStore/gastosStoreThunks';
+
+import { getAllThunksFilter as getAllThunksFilterAjustesSaldo, 
+         getAllThunks as getAllThunksAjusteSaldo } from '../../store/ajustesSaldoStore/ajustesSaldoStoreThunks';
+
+import { getAllThunksFilter as getAllThunksFilterDevoluciones, 
+         getAllThunks as getAllThunksDevoluciones } from '../../store/devolucionesStore/devolucionesStoreThunks';
+
+import { getAllThunksFilter as getAllThunksFilterRecepcionPago,
+         getAllThunks as getAllThunksRecepcionPago } from '../../store/recepcionPagoStore/recepcionPagoStoreThunks';
 
 import dayjs from "dayjs";
 
@@ -51,8 +69,46 @@ export const DateRange = ({cotizador,id=''}) => {
             dispatch( endDateGlobalStore({'endDate':formattedEndDate}) )
             dispatch(getAllThunksFilter(formattedStartDate, formattedEndDate));
 
+        }else if(cotizador == "utilidadOcacional"){
+
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch( getAllThunksFilterUtilidadOcacional(formattedStartDate, formattedEndDate)) ;
+
+        }else if(cotizador == "gastosGenerales"){
+
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch( getAllThunksFilterGastosGenerales(formattedStartDate, formattedEndDate)) ;
+
+        }else if(cotizador == "gastos"){
+
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch( getAllThunksFilterGastos(formattedStartDate, formattedEndDate)) ;
+
+        }else if(cotizador == "ajustesdesaldo"){
+
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch( getAllThunksFilterAjustesSaldo(formattedStartDate, formattedEndDate)) ;
+
+        }else if(cotizador == "devoluciones"){
+
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch( getAllThunksFilterDevoluciones(formattedStartDate, formattedEndDate)) ;
+
+        }else if(cotizador == "recepcionPago"){
+
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch( getAllThunksFilterRecepcionPago(formattedStartDate, formattedEndDate)) ;
+
         }else{
+
             dispatch(getAllFilterDateThunks(formattedStartDate, formattedEndDate));
+            
         }
     };
 
@@ -91,6 +147,36 @@ export const DateRange = ({cotizador,id=''}) => {
         }else if(cotizador == "dashBoard"){
 
             dispatch(dashboard_obtener_datos_cuenta(id));
+            return;
+
+        }else if(cotizador == "utilidadOcacional"){
+
+            dispatch(getAllThunksUtilidadOcacional());
+            return;
+
+        }else if(cotizador == "gastosGenerales"){
+
+            dispatch(getAllThunksGastosGenerales());
+            return;
+            
+        }else if(cotizador == "gastos"){
+
+            dispatch(getAllThunksGastos());
+            return;
+
+        }else if(cotizador == "ajustesdesaldo"){
+
+            dispatch(getAllThunksAjusteSaldo());
+            return;
+  
+        }else if(cotizador == "devoluciones"){
+
+            dispatch(getAllThunksDevoluciones());
+            return;
+
+        }else if(cotizador == "recepcionPago"){
+
+            dispatch(getAllThunksRecepcionPago());
             return;
 
         }else{
