@@ -22,7 +22,12 @@ export const FormDialogUser = () => {
 
   
     return (
-      <Dialog open={openModalStore} onClose={handleClose} fullWidth maxWidth="lg">
+      <Dialog open={openModalStore} onClose={handleClose} fullWidth maxWidth="lg"   PaperProps={{
+        sx: {
+          height: '450px', // Altura específica
+          maxHeight: '90vh', // Opcional: evitar que sobresalga de la ventana
+        },
+      }}>
         
         <DialogTitle>Tramite</DialogTitle>
 

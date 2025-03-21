@@ -26,7 +26,7 @@ export const EtapaUno = () => {
   
   console.log("etiquetas ",etiquetas);
 
-  const tipoDocumentoOptions    = ['Cedula', 'Pasaporte', 'Licencia'];
+  const tipoDocumentoOptions    = ['Cedula', 'Pasaporte', 'Tarjeta de Identidad', 'Número de Identificación Tributaria', 'Cédula de Extranjería', 'Permiso por Protección Temporal'];
   const prefijos                = ['319', '314', '313', '300', '301', '321', '322'];
   const etiquetaDosCondiciones  = ["LINK DE PAGO","AMALFI","AURA","CENTRO",]
 
@@ -298,6 +298,7 @@ export const EtapaUno = () => {
               name="placa"
               variant="outlined"
               value={placa.trimStart().toUpperCase()}
+              onInput={(e) => e.target.value = e.target.value.toUpperCase()}
               onChange={handleChange}
               error={!!errors.placa}
               helperText={errors.placa}
@@ -386,6 +387,7 @@ export const EtapaUno = () => {
             error={!!errors.numeroDocumento}
             helperText={errors.numeroDocumento}
             autoComplete="off"
+            inputProps={{ maxLength: 10 }}
           />
         </Grid>
 
@@ -397,6 +399,7 @@ export const EtapaUno = () => {
             name="nombreCompleto"
             variant="outlined"
             value={nombreCompleto.trimStart().toUpperCase()}
+            onInput={(e) => e.target.value = e.target.value.toUpperCase()}
             onChange={handleChange}
             error={!!errors.nombreCompleto}
             helperText={errors.nombreCompleto}
