@@ -12,8 +12,10 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import SecurityIcon from '@mui/icons-material/Security';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
+import FolderIcon from '@mui/icons-material/Folder';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'; // Icono para Gestión de Movimientos
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -57,6 +59,8 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Cargar PDFs', icon: <PictureAsPdfIcon />, route: '/cargarpdfs' },
         { text: 'Cuentas Bancarias', icon: <AccountBalanceIcon />, route: '/bancos' },
         { text: 'Ficha del Cliente', icon: <ContactPageIcon />, route: '/fichaCliente' },
+        { text: 'Archivo de cotizaciones antiguas', icon: <FolderIcon />, route: '/archivocotizacionesantiguas' },
+        { text: 'Historial Tramites emitidos', icon: <HistoryEduIcon />, route: '/historialtramitesemitidos' },
         //{ text: 'Verificación de Código', icon: <SecurityIcon />, route: '/verify' },
     ];
 
@@ -69,8 +73,8 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Recepción de Pago',    icon: <MonetizationOnIcon />,       route: '/recepcionpago' },
         { text: 'Devolución',           icon: <ReplayIcon />,               route: '/devolucion' },
         { text: 'Ajuste de Saldo',      icon: <AccountBalanceWalletIcon />, route: '/ajustesaldo' },
-        { text: 'Gastos',               icon: <ShoppingBagIcon />,          route: '/gastos' },
-        { text: 'Gastos Generales',     icon: <ReceiptIcon />,              route: '/gastosgenerales' },
+        { text: 'Lista de Gastos',      icon: <ShoppingBagIcon />,          route: '/gastos' },
+        { text: 'Relacionar Gasto',     icon: <ReceiptIcon />,              route: '/gastosgenerales' },
         { text: 'Utilidad Ocasional',   icon: <TrendingUpIcon />,           route: '/utilidadocasional' },
         { text: 'Dashboard',            icon: <SpaceDashboardIcon />,       route: '/dashboard' },
     ];

@@ -21,13 +21,16 @@ import { RoutesTarjetas }               from '../registroTarjetas/routes/Routes'
 import { PageMain as FichaCliente }     from '../fichaClientes/pages/PageMain';
 
 
-import { PageMain as RecepcionPago } from '../recepcionPago/pages/PageMain';
+import { PageMain as RecepcionPago }    from '../recepcionPago/pages/PageMain';
 import { PageMain as Devoliciones }     from '../devoliciones/pages/PageMain';
 import { PageMain as AjusteSaldo }      from '../ajusteSaldo/pages/PageMain';
 import { PageMain as Gastos }           from '../gastos/pages/PageMain';
 import { PageMain as GastosGenerales }  from '../gastosGenerales/pages/PageMain';
 import { PageMain as UtilidadOcasional } from '../utilidadOcasional/pages/PageMain';
 import { PageMain as Dashboard }        from '../dashboard/pages/PageMain';
+
+import { PageMain as ArchivoCotizacionesAntiguas }      from '../archivocotizacionesantiguas/pages/PageMain';
+import { PageMain as ImportacionDeTramitesEnMasa }      from '../importaciondetramitesenmasa/pages/PageMain';
 
 
 export const AppRouter = () => {
@@ -61,6 +64,9 @@ export const AppRouter = () => {
                 <Route path="/gastosgenerales"        element={ <GastosGenerales />} />
                 <Route path="/utilidadocasional"      element={ <UtilidadOcasional />} />
                 <Route path="/dashboard"              element={ <Dashboard />} />
+
+                <Route path="/archivocotizacionesantiguas" element={ <ArchivoCotizacionesAntiguas /> } />
+                <Route path="/historialtramitesemitidos"   element={ <ImportacionDeTramitesEnMasa /> } />
               </>
               ) : (
                 <>

@@ -54,6 +54,7 @@ export const tramitesStore = createSlice({
     clientes        : [],
     tiposDocumentos : [],
     tramites        : [],
+    etiqueta        : '',
   },
   reducers: {
     showStore:(state,action) => {
@@ -145,9 +146,15 @@ export const tramitesStore = createSlice({
       state.clientes        = [];
       state.tiposDocumentos = [];
       //state.tramites        = [];
+      state.etiqueta        = '';
     },
+    handleFormStore:(state , action) => {
+      const { name, value } = action.payload; // Obtener el nombre y el valor
+      console.log( name, value )
+      state[name] = value; // Actualizar dinámicamente la propiedad en el estado
+    }
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listStore, resetFormularioStore } = tramitesStore.actions;
+export const { showStore, listStore, resetFormularioStore,handleFormStore } = tramitesStore.actions;

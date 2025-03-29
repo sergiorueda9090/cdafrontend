@@ -3,7 +3,7 @@ import { Grid, TextField, MenuItem, FormControl, InputLabel, Button, Autocomplet
 import { useSelector, useDispatch } from 'react-redux';
 
 import { showThunk }                                        from '../../store/clientesStore/clientesThunks';
-import { createThunks, updateThunks, handleFormStoreThunk } from '../../store/cotizadorStore/cotizadorThunks';
+import { createThunks, updateThunks, handleFormStoreThunk, getAllThunks } from '../../store/cotizadorStore/cotizadorThunks';
 import { closeModalShared } from '../../store/globalStore/globalStore';
 import ContentCopyIcon  from "@mui/icons-material/ContentCopy";
 import ReplayIcon       from '@mui/icons-material/Replay';
@@ -164,7 +164,7 @@ export const EtapaUno = () => {
 
           let data = {id, cotizadorModulo:0, tramiteModulo:1, confirmacionPreciosModulo:0, pdfsModulo:0}
           
-          dispatch(updateThunks(data, "tramite"));
+          dispatch(updateThunks(data, "cotizador"));
 
         }else{
 
@@ -191,11 +191,12 @@ export const EtapaUno = () => {
                           pdfsModulo:0,
             }
             
-            dispatch(createThunks(data, "tramite"));
+            dispatch(createThunks(data, "cotizador"));
         
         }
 
-        navigate(`/tramites`);
+        //dispatch(getAllThunks())
+        //navigate(`/tramites`);
     
       }
 

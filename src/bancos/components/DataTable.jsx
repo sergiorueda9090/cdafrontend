@@ -66,22 +66,51 @@ export function DataTable() {
       {
         field: 'valor_alias',
         headerName: 'Valor',
-        width: 130,
+        width: 199,
         align: "right", headerAlign: "right",
         renderCell: (params) => {
           const valor = params.value || 0;
-          console.log(valor)
           const color = valor < 0 ? 'red' : 'green';
           return (
-            <span style={{ color, fontWeight: 'bold' }}>
-             {valor.toLocaleString("es-CO", { style: "currency", currency: "COP" })}
+            <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+             {new Intl.NumberFormat('es-CO').format(valor)}
             </span>
           );
         }
       },
       { field: 'cilindraje',            headerName: 'Cilindraje',            width: 130 },
       { field: 'placa',                 headerName: 'Placa',            width: 130 },
-      { field: 'origen',                 headerName: 'Origen',            width: 130 },
+      {
+        field: "origen",
+        headerName: "Origen",
+        width: 199,
+        renderCell: (params) => {
+          // Obtener el valor de origen
+          const origen = params.value;
+      
+          // Definir colores según el origen
+          let backgroundColor = "transparent"; // Color por defecto
+          if (origen === "Tramite") backgroundColor = "#E6F4EA"; // Verde claro
+          if (origen === "Recepcion Pago") backgroundColor = "#FFF4DE"; // Amarillo claro
+          if (origen === "Devoluciones") backgroundColor = "#F8D7DA"; // Rojo claro
+          if (origen === "Gastos generales") backgroundColor = "#D1ECF1"; // Rojo claro
+          if (origen === "Utilidad ocacional") backgroundColor = "#D6D8DB";
+          
+          return (
+            <span style={{ 
+              backgroundColor, 
+              padding: "5px 10px", 
+              borderRadius: "5px", 
+              display: "inline-block",
+              width: "100%",
+              textAlign: "center",
+              fontWeight: "bold"
+            }}>
+              {origen}
+            </span>
+          );
+        }
+      },
       { field: 'nombreTitular',         headerName: 'Nombre del Titular',    width: 230 },
       {
         field: 'actions',

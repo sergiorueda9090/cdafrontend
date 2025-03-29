@@ -59,7 +59,10 @@ export function DataTable() {
         field: 'valor',
         headerName: 'Valor',
         width: 130,
-        align: "right", headerAlign: "right"
+        align: "right", headerAlign: "right",
+        valueFormatter: (params) => {
+          return new Intl.NumberFormat('es-CO').format(params);
+        }
       },
       { field: 'observacion',             headerName: 'observacion',            width: 160 },
       { field: 'nombre_cliente',          headerName: 'Cliente',                width: 160 },

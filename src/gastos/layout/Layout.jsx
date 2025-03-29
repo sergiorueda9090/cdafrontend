@@ -5,7 +5,7 @@ import { NavBar }   from '../../components/NavBar';
 import { SideBar }  from '../../components/SideBar';
 
 const drawerWidth = 280;
-const nameModule = "Gastos";
+const nameModule = "Lista de Gastos";
 
 export const Layout = ({ children }) => {
 

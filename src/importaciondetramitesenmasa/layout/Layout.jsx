@@ -5,7 +5,7 @@ import { NavBar }   from '../../components/NavBar';
 import { SideBar }  from '../../components/SideBar';
 
 const drawerWidth = 280;
-const nameModule = "Relacionar Gasto";
+const nameModule = "Archivo de cotizaciones antiguas";
 
 export const Layout = ({ children }) => {
 

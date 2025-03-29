@@ -154,8 +154,8 @@ export function DataTable() {
       </Box>
 
       <DataGrid
-        rows={utilidadOcacionales}
-        columns={columns}
+        rows={[]}
+        columns={[]}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         //checkboxSelection

@@ -256,8 +256,8 @@ export const updateThunks = (data, modulo="") => {
 
                 }else if(modulo == "confirmarprecio"){
 
-                    //Before await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
-                    await dispatch( getAllCotizadorTramitesThunks() );
+                    await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
+                    //await dispatch( getAllCotizadorTramitesThunks() );
 
                 }else if(modulo == "pdf"){
 

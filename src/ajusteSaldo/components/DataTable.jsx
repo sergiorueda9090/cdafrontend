@@ -50,7 +50,15 @@ export function DataTable() {
       },
       { field: 'fecha_transaccion',    headerName: 'Fecha de Transaccion',  width: 200 },
       { field: 'observacion',          headerName: 'Observacion',            width: 160 },
-      { field: 'valor',                headerName: 'Valor',                 width: 160, align: "right", headerAlign: "right" },
+      { field: 'valor',                
+        headerName: 'Valor',   
+        width: 160, 
+        align: "right", 
+        headerAlign: "right",        
+        valueFormatter: (params) => {
+          return new Intl.NumberFormat('es-CO').format(params);
+        } 
+      },
       { field: 'nombre_cliente',       headerName: 'Cliente',               width: 160 },
       {
         field: 'actions',

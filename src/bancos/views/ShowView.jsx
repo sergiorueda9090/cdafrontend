@@ -36,8 +36,51 @@ import { URL } from "../../constants.js/constantGlogal";
     },
     { field: "ft",          headerName: "Fecha Tramite",  width: 250 },
     { field: "desc_alias",  headerName: "Descripción",    width: 250 },
-    { field: "valor_alias", headerName: "Valor", width: 250, align: "right", headerAlign: "right" },
-    { field: "origen",      headerName: "Origin",         width: 250 },
+    {
+      field: "valor_alias",
+      headerName: "Valor",
+      width: 250,
+      align: "right",
+      headerAlign: "right",
+      valueFormatter: (params) => new Intl.NumberFormat('es-CO').format(params.value),
+      renderCell: (params) => (
+        <span style={{ color: params.value < 0 ? "red" : "green", fontWeight: "bold", fontSize:"26px" }}>
+          {new Intl.NumberFormat('es-CO').format(params.value)}
+        </span>
+      )
+    },
+    { field: "placa",  headerName: "placa",    width: 150 },
+    {
+      field: "origen",
+      headerName: "Origen",
+      width: 250,
+      renderCell: (params) => {
+        // Obtener el valor de origen
+        const origen = params.value;
+    
+        // Definir colores según el origen
+        let backgroundColor = "transparent"; // Color por defecto
+        if (origen === "Cuenta Bancaria") backgroundColor = "#E6F4EA"; // Verde claro
+        if (origen === "Devolución") backgroundColor = "#FFF4DE"; // Amarillo claro
+        if (origen === "Gasto General") backgroundColor = "#F8D7DA";
+        if (origen === "Recepcion de Pago") backgroundColor = "#D1ECF1";
+        if (origen === "Utilidad Ocasional") backgroundColor = "#F6F0ED"; // Rojo claro
+    
+        return (
+          <span style={{ 
+            backgroundColor, 
+            padding: "5px 10px", 
+            borderRadius: "5px", 
+            display: "inline-block",
+            width: "100%",
+            textAlign: "center",
+            fontWeight: "bold"
+          }}>
+            {origen}
+          </span>
+        );
+      }
+    }
   ];
 
   const rows = [];
@@ -86,7 +129,7 @@ export const ShowView = () => {
     id: uuidv4() // Usa el ID existente o genera uno nuevo
   }));
   
-
+  console.log("enhancedDashboardData ",enhancedDashboardData)
   return (
     <Box sx={{ height: 500, width: "100%", p: 3 }}>
      

@@ -48,7 +48,6 @@ export function DataTable() {
         headerName: 'Fecha de Ingreso',
         width: 200,
         valueFormatter: (params) => {
-          console.log("params ",params)
           if (!params) return "";
           // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
           return params.slice(0, 16).replace("T", " ");
@@ -56,7 +55,10 @@ export function DataTable() {
       },
       { field: 'fecha_transaccion',    headerName: 'Fecha de Transacción',  width: 200 },
       { field: 'observacion',          headerName: 'Descripción',           width: 200 },
-      { field: 'valor',                headerName: 'Valor',                 width: 160, align: "right", headerAlign: "right" },
+      { field: 'valor',                headerName: 'Valor',                 width: 160, align: "right", headerAlign: "right",   
+        valueFormatter: (params) => {
+        return new Intl.NumberFormat('es-CO').format(params);
+      }},
       { field: 'nombre_gasto',         headerName: 'Gasto',                 width: 160 },
       { field: 'nombre_tarjeta',       headerName: 'Tarjeta',               width: 160 },
       {

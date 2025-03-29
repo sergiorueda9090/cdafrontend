@@ -252,9 +252,6 @@ export function DataTable() {
         editable: true,
         renderCell: (params) => {
           const isActive = activeRow === params.id; // Verifica si esta celda está activa
-          console.log("isActive ",isActive)
-          console.log("activeRow ",activeRow)
-          console.log("params.id ",params.id)
           return (
             <Box width="100%"  onClick={() => handleCellClick(params.id)}>
             {isActive && tarjetasBancarias.length > 0 ? (
@@ -500,8 +497,8 @@ export function DataTable() {
     }
 
     const handleUploadFileConfirmar = (id) => {
-      dispatch(updateThunks({id, 'archivo':fileUpload, 'idBanco': idBanco, confirmacionPreciosModulo: 0, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0}, 'pdf'))                             
-      navigate('/cargarpdfs');
+      dispatch(updateThunks({id, 'archivo':fileUpload, 'idBanco': idBanco, confirmacionPreciosModulo: 0, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0}, 'confirmarprecio'))                             
+      //navigate('/cargarpdfs');
     }
     
     const paginationModel = { page: 0, pageSize: 15 };

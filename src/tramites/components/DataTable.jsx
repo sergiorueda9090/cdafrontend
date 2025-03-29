@@ -11,6 +11,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import WarningIcon from "@mui/icons-material/Warning";
 
+import { Autocomplete, TextField } from '@mui/material';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk, updateThunks }   from '../../store/cotizadorStore/cotizadorThunks';
 
@@ -26,7 +28,7 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 import smallLoading from "../../assets/images/small_loading.gif";
 import emptyDataTable from "../../assets/images/emptyDataTable.png";
-
+import { getAllThunks as etiquetasAllThunks, handleFormStoreThunk, clearAllEtiquetas }  from '../../store/etiquetasStore/etiquetasThunks';
 
 import { Chip } from "@mui/material";
 // Habilitar el plugin de tiempo relativo
@@ -62,35 +64,46 @@ export function DataTable() {
 
     const [loading, setLoading] = useState(false);
 
-    const processRowUpdate = (newRow) => {
+    const processRowUpdate = async (newRow) => {
+      const oldRow = cotizadores.find((row) => row.id === newRow.id);
     
-      const oldRow = cotizadores.find((row) => row.id === newRow.id); // Encuentra la fila original
-      
-      if (!oldRow) return newRow; // Si no se encuentra, salir
+      if (!oldRow) return newRow;
     
-      // Encontrar el campo modificado comparando los valores
       const changedField = Object.keys(newRow).find((key) => oldRow[key] !== newRow[key]);
     
       if (changedField) {
-
         const newValue = newRow[changedField];
     
         console.log(`Campo modificado: ${changedField}, Nuevo Valor: ${newValue}, ID: ${newRow.id}`);
+        let respuesta = true;
     
-        // Actualizar estados
-        setEditingField(changedField);
-        
-        setEditingValue(newValue);
-      
-        let formValues = {[changedField]:newValue, 'id':newRow.id};
+        if (changedField === "escribirlink") {
+          try {
+            respuesta = await handleConfirmar(`Esta seguro que la url es: ${newValue}`);
+          } catch (error) {
+            console.error("Error al confirmar la URL:", error);
+            respuesta = false; // Manejar el error y establecer respuesta en false
+          }
+        }
+    
+        console.log("respuesta ", respuesta);
+    
+        if (respuesta) {
 
-        dispatch(updateThunks(formValues, 'tramite'));
-        
+          setEditingField(changedField);
+          setEditingValue(newValue);
+          
+          let formValues = { [changedField]: newValue, 'id': newRow.id };
+
+          if(changedField === "escribirlink"){
+             formValues = { ['linkPago']: newValue, 'id': newRow.id };
+          }
+          
+          dispatch(updateThunks(formValues, 'tramite'));
+        }
       }
-      
-      
-      return oldRow
-
+    
+      return oldRow;
     };
     
     const handleCopyToClipboard = (text, id="") => {
@@ -198,8 +211,77 @@ export function DataTable() {
     const confirmDelete = (rowId) => {
       alert("llama el endpoint de elminar el archivo");
     }
+
+    
     /* ====================== */
 
+    /* ============== PRUEBAS ========== */
+    let { etiquetas } = useSelector(state => state.etiquetasStore);
+    let { etiqueta }  = useSelector(state => state.etiquetasStore);
+    let { correo }    = useSelector(state => state.tramitesStore);
+
+    console.log("etiquetas ",etiquetas)
+    console.log("etiqueta ",etiqueta)
+    console.log("correo ",correo)
+
+    const [rowsTest,  setRowsTest] = useState("");
+    const [activeRow, setActiveRow] = useState(null);
+   
+    const handleCellClick = (id) => {
+      handleCallEtiquetas();
+      setActiveRow(id);
+    };
+    
+    const handleSelectionChange = (id, newValue) => {
+      dispatch(handleFormStoreThunk({name: 'etiqueta', value:newValue.nombre }));
+      dispatch(updateThunks({ id:id, etiquetaDos: newValue.nombre}, 'tramite'));
+      dispatch(clearAllEtiquetas())
+    };
+  
+
+    const handleCallEtiquetas = () => {
+      dispatch(etiquetasAllThunks());
+    }
+
+    const handleSaveCorreo = (correo = "") => {
+      dispatch(handleFormStoreThunk({name: 'correo', value:correo }));
+    }
+    
+
+    const EditableCell = ({ params }) => {
+      const [valor, setValor] = useState(params.value || ""); // Estado local
+    
+      const handleBlur = async () => {
+        console.log(`Nuevo valor: ${valor}`);
+    
+        // Crear el nuevo objeto de fila con el valor actualizado
+        const newRow = { ...params.row, escribirlink: valor };
+    
+        // Llamar a processRowUpdate con la nueva fila
+        await processRowUpdate(newRow);
+      };
+      console.log("params.row ",params.row.linkPago)
+      const isDisabled = !params.row.correo ||  params.row.etiquetaDos !== "LINK DE PAGO" || params.row.linkPago; 
+      
+      return isDisabled ? (
+        <div>{params.row.linkPago || "No disponible"}</div> // Muestra el link o un texto por defecto
+      ) : (
+        <input
+          type="text"
+          value={valor}
+          onChange={(e) => setValor(e.target.value)}
+          onBlur={handleBlur} // Llamar a processRowUpdate al perder el foco
+          style={{
+            width: "100%",
+            padding: "5px",
+            border: "1px solid gray",
+            backgroundColor: "white",
+          }}
+        />
+      );
+    };
+    
+    /* ============== END PRUEBAS ========== */
     const columns = [
       { field: 'id',              headerName: 'ID',                 width: 80},
       {
@@ -277,35 +359,78 @@ export function DataTable() {
           );
         },
       },
-
-      { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 170,       
-          renderCell: (params) => {
-          const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
-          const colorTexto = getContrastColor(colorFondoEtiqueta); // Color de texto calculado
+      {
+        field: 'etiquetaDos',
+        headerName: 'etiqueta SELECT',
+        width: 250,
+        renderCell: (params) => {
+          const isActive = activeRow === params.id; // Verifica si esta celda está activa
           return (
-            <Chip
-              style={{
-                backgroundColor: colorFondoEtiqueta,
-                color: colorTexto, // Color de texto oscuro para mejor contraste
-                padding: "5px",
-                borderRadius: "5px",
-                textAlign: "center",
-                width: "100%",
-              }}
-              label={params.value}
+            <Box width="100%">
+            {isActive && etiquetas.length > 0 ? (
+              <Autocomplete
+                options={etiquetas}
+                getOptionLabel={(option) => option.nombre}
+                value={etiquetas.find((option) => option.nombre == etiqueta) || null} // Encuentra el objeto correspondiente
+                onChange={(_, newValue) => {
+                  if (newValue) {
+                    handleSelectionChange(params.id, newValue);
+                  } else {
+                    handleCallEtiquetas(); // Manejo cuando se borra la selección
+                  }
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    placeholder="Seleccione una Etiqueta"
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                    autoFocus
+                  />
+                )}
+                fullWidth
               />
+            ) : (
+              <Chip
+                onClick={params.value == "LINK DE PAGO" ? undefined : () => handleCellClick(params.id)}
+                label={params.value ? params.value : "Seleccionar Etiqueta"}
+                style={{
+                  backgroundColor: "#262254",
+                  color: "#ffffff",
+                  padding: "5px",
+                  borderRadius: "5px",
+                  textAlign: "center",
+                  width: "100%",
+                  cursor: params.value == "LINK DE PAGO" ? "default" : "pointer",
+                  opacity: params.value == "LINK DE PAGO" ? 0.6 : 1, // Opcional: Reduce la opacidad si está deshabilitado
+                }}
+              />
+            )}
+          </Box>
           );
-        }, 
+        },
+      },
+      {
+        field: "escribirlink",
+        headerName: "Escribir link",
+        width: 200,
+        editable: false, // Manejo manual con el input
+        renderCell: (params) => <EditableCell params={params} />,
       },
       {
         field: "linkPago",
         headerName: "Link de Pago",
+        width: 200,
         renderCell: (params) => {
-
+        
           const handleCopy = () => {
-
-            console.log("params ",params.row.id)
-
             if (!params.row.correo || params.row.correo.trim() === "") {
               toast.error("❌ El correo es obligatorio para confirmar el pago.", {
                 position: "bottom-right",
@@ -477,14 +602,37 @@ export function DataTable() {
             headerName: "Tipo Documento",
             width: 150,
             renderCell: (params) => {
-              const mapDocumentTypes = {
-                "Cedula": "CC",
-                "Pasaporte": "PPT",
-                "Licencia": "LIC"
-              };
-        
-              // Si existe en el diccionario, se reemplaza, si no, se muestra el valor original
-              return mapDocumentTypes[params.value] || params.value;
+              const tipoDocumentoOptions = [
+                { value: "Cedula", label: "Cédula", abbr: "CC" },
+                { value: "Pasaporte", label: "Pasaporte", abbr: "PP" },
+                { value: "Tarjeta de Identidad", label: "Tarjeta de Identidad", abbr: "TI" },
+                { value: "Número de Identificación Tributaria", label: "NIT", abbr: "NIT" },
+                { value: "Cédula de Extranjería", label: "Cédula de Extranjería", abbr: "CE" },
+                { value: "Permiso por Protección Temporal", label: "Permiso P. Temporal", abbr: "PPT" }
+              ];
+          
+              // Buscar la abreviatura correspondiente al valor de `params.value`
+              const documento = tipoDocumentoOptions.find(doc => doc.value === params.value);
+              const abbr = documento ? documento.abbr : params.value; // Si no encuentra, usa el valor original
+          
+              const isNotCC = abbr !== "CC"; // Mostrar punto rojo si NO es "CC"
+          
+              return (
+                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <span>{abbr}</span>
+                  {isNotCC && (
+                    <span
+                      style={{
+                        width: "14px",
+                        height: "14px",
+                        borderRadius: "50%",
+                        backgroundColor: "red",
+                        display: "inline-block",
+                      }}
+                    ></span>
+                  )}
+                </div>
+              );
             }
           },
           { field: 'numeroDocumento', headerName: 'Documento',          width: 150, editable: true,  
@@ -546,7 +694,7 @@ export function DataTable() {
         renderCell: (params) => (
           
           <>
-          {/* Botón de Editar */}
+          {/* Botón de Editar 
           <Tooltip title="Editar" arrow>
             <IconButton
               aria-label="edit"
@@ -555,7 +703,7 @@ export function DataTable() {
             >
               <EditIcon />
             </IconButton>
-          </Tooltip>
+          </Tooltip>*/}
     
           {/* Botón de Logs (Mostrar detalles) */}
           <Tooltip title="Ver detalles" arrow>
@@ -595,7 +743,7 @@ export function DataTable() {
 
     const handleConfirmEmitido = async(id) => {
 
-      await dispatch(updateThunks({ id, confirmacionPreciosModulo: 1, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0 }, 'confirmarprecio'));
+      await dispatch(updateThunks({ id, confirmacionPreciosModulo: 1, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0 }, 'tramite'));
       
       //navigate('/confirmacionprecios')
     
@@ -627,6 +775,50 @@ export function DataTable() {
       await dispatch(showThunk(row.id));
     };
 
+    const handleConfirmar = (txt="") => {
+      return new Promise((resolve) => {
+        // Mostrar la notificación con opciones de confirmación
+        toast(
+          ({ closeToast }) => (
+            <div>
+              <p>{txt}</p>
+              <button
+                onClick={() => {
+                  resolve(true); // Confirmar eliminación y resolver la promesa con true
+                  closeToast(); // Cierra el toast
+                }}
+                style={{
+                  marginRight: '10px',
+                  backgroundColor: 'red',
+                  color: 'white',
+                  border: 'none',
+                  padding: '5px 10px',
+                  cursor: 'pointer',
+                }}
+              >
+                Sí, Confirmar.
+              </button>
+              <button
+                onClick={() => {
+                  resolve(false); // Cancelar eliminación y resolver la promesa con false
+                  closeToast(); // Cierra el toast
+                }}
+                style={{
+                  backgroundColor: 'gray',
+                  color: 'white',
+                  border: 'none',
+                  padding: '5px 10px',
+                  cursor: 'pointer',
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          ),
+          { autoClose: false } // Evitar cierre automático
+        );
+      });
+    };
 
   return (
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>

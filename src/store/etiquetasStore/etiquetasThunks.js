@@ -329,3 +329,11 @@ export const handleFormStoreThunk = (data) => {
       dispatch(handleFormStore({ name, value })); // Despachar la acción para actualizar el estado
     };
 };
+
+export const clearAllEtiquetas = () => {
+    return async (dispatch, getState) => {
+        await dispatch(showBackDropStore());
+        await dispatch(listStore({'etiquetas':[]}))
+        await dispatch(hideBackDropStore());
+    };
+};

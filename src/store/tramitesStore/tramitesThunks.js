@@ -4,7 +4,7 @@ import { loginFail } from "../authStore/authStore.js";
 import { showThunk as precioClientesShow } from "../clientesStore/clientesThunks.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { showStore, listStore, resetFormularioStore  } from "./tramitesStore.js";
+import { showStore, listStore, resetFormularioStore, handleFormStore  } from "./tramitesStore.js";
 
 // Función asincrónica para obtener los Pokemons
 export const getAllThunks = () => {
@@ -331,9 +331,6 @@ export const deleteThunk = (idUser = "") => {
 
 }
 
-
-
-
 export const getAllCotizadorTramitesThunks = () => {
 
     return async (dispatch, getState) => {
@@ -395,5 +392,12 @@ export const getAllCotizadorTramitesThunks = () => {
             await dispatch( hideBackDropStore() );
 
         }
+    };
+};
+
+export const handleFormStoreThunk = (data) => {
+    return async (dispatch) => {
+      const { name, value } = data; // Extraer el nombre y el valor del evento
+      dispatch(handleFormStore({ name, value })); // Despachar la acción para actualizar el estado
     };
 };
