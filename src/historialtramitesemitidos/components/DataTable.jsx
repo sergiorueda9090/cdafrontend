@@ -8,10 +8,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useSelector, useDispatch }     from 'react-redux';
-import { sendToThunk, showThunk }  from '../../store/archivocotizacionesantiguasStore/archivocotizacionesantiguasStoreThunks';
+import { sendToThunk, showThunk }  from '../../store/historialtramitesemitidosStore/historialtramitesemitidosStoreThunks';
 
 import Tooltip from "@mui/material/Tooltip";
-
 
 import { toast } from 'react-toastify';
 import emptyDataTable from "../../assets/images/emptyDataTable.png"
@@ -23,7 +22,7 @@ export function DataTable() {
 
     const dispatch = useDispatch();
     
-    let { cotizadores }    = useSelector(state => state.archivocotizacionesantiguasStore);
+    let { historial }    = useSelector(state => state.historialtramitesemitidosStore);
       
     const NoRowsOverlay = () => (
       <div style={{ 
@@ -43,6 +42,7 @@ export function DataTable() {
         <p style={{ fontSize: "16px", color: "#666" }}>No hay datos disponibles</p>
       </div>
     );
+
     const handleCopy = (text) => {
       navigator.clipboard.writeText(text).then(() => {
       }).catch(err => console.error("Error al copiar: ", err));
@@ -131,17 +131,12 @@ export function DataTable() {
             >
               <VisibilityIcon />
             </IconButton>
-            <IconButton
-              aria-label="delete"
-              onClick={() => handleSentToTramite(params.row.id)}
-              color="success"
-            >
-              <PublishedWithChangesIcon />
-            </IconButton>
+
           </>
         ),
       },
     ];
+    
     
     
     
@@ -203,12 +198,12 @@ export function DataTable() {
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
 
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          <FilterData  cotizador="archivocotizacionesantiguasStore"/>  {/* Componente de filtros adicionales */}
-          <DateRange   cotizador="archivocotizacionesantiguasStore"/>  {/* Componente para selección de rango de fechas */}
+          <FilterData  cotizador="historialtramitesemitidos"/>  {/* Componente de filtros adicionales */}
+          <DateRange   cotizador="historialtramitesemitidos"/>  {/* Componente para selección de rango de fechas */}
       </Box>
 
       <DataGrid
-        rows={cotizadores}
+        rows={historial}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}

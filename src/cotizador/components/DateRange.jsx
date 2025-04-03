@@ -36,6 +36,9 @@ import { getAllThunksFilter as getAllThunksFilterDevoluciones,
 import { getAllThunksFilter as getAllThunksFilterRecepcionPago,
          getAllThunks as getAllThunksRecepcionPago } from '../../store/recepcionPagoStore/recepcionPagoStoreThunks';
 
+import { getAllThunks as getAllThunksArchivo } from '../../store/archivocotizacionesantiguasStore/archivocotizacionesantiguasStoreThunks';
+import { getAllThunks as getAllThunksHistorial } from '../../store/historialtramitesemitidosStore/historialtramitesemitidosStoreThunks';
+
 import dayjs from "dayjs";
 
 
@@ -104,6 +107,18 @@ export const DateRange = ({cotizador,id=''}) => {
             dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
             dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
             dispatch( getAllThunksFilterRecepcionPago(formattedStartDate, formattedEndDate)) ;
+
+        }else if(cotizador == "archivocotizacionesantiguasStore"){
+            
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch( getAllThunksArchivo(formattedStartDate, formattedEndDate)) ;
+
+        }else if(cotizador == "historialtramitesemitidos"){
+            
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch( getAllThunksHistorial(formattedStartDate, formattedEndDate)) ;
 
         }else{
 
@@ -178,6 +193,16 @@ export const DateRange = ({cotizador,id=''}) => {
 
             dispatch(getAllThunksRecepcionPago());
             return;
+
+        }else if(cotizador == "archivocotizacionesantiguasStore"){
+            
+
+            dispatch( getAllThunksArchivo()) ;
+            return;
+
+        }else if(cotizador == "historialtramitesemitidos"){
+            
+            dispatch( getAllThunksHistorial()) ;
 
         }else{
         

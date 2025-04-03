@@ -55,7 +55,7 @@ export const FormDialogUser = () => {
     nombre_cliente,
     color_cliente,
     color_etiqueta
-  } = useSelector(state => state.archivocotizacionesantiguasStore);
+  } = useSelector(state => state.historialtramitesemitidosStore);
   
   const [errors, setErrors]   = useState({});
 
@@ -140,11 +140,11 @@ export const FormDialogUser = () => {
 
   return (
     <Dialog open={openModalStore} onClose={handleClose} fullWidth maxWidth="lg">
-      <DialogTitle>Archivo de cotizaciones antiguas</DialogTitle>
+      <DialogTitle>Historial Tramites Emitidos</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <DialogContentText>
-            Ver la información Archivo de cotizaciones antiguas.
+            Ver la información Historial Tramites Emitidos.
           </DialogContentText>
             <Grid container spacing={2} sx={{ marginTop: 2 }}>
 

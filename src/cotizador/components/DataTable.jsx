@@ -5,10 +5,11 @@ import { Box } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import { useSelector, useDispatch } from 'react-redux';
 import { resetFormularioStore }     from '../../store/cotizadorStore/cotizadorStore'
-import { showThunk, deleteThunk }   from '../../store/cotizadorStore/cotizadorThunks';
+import { showThunk, deleteThunk, updateThunks }   from '../../store/cotizadorStore/cotizadorThunks';
 
 import { toast } from 'react-toastify';
 
@@ -35,11 +36,20 @@ const getContrastColor = (hexColor) => {
   return luminance > 0.6 ? "#333" : "#FFF";
 };
 
+
+
 export function DataTable() {
 
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
+
+    const handleShowUserSelect = (row) => {
+      if(row.id){
+        let data = {id:row.id, cotizadorModulo:0, tramiteModulo:1, confirmacionPreciosModulo:0, pdfsModulo:0}
+        dispatch(updateThunks(data, "cotizador"));
+      }
+    }
     
     let { cotizadores, dateFilter } = useSelector(state => state.cotizadorStore);
 
@@ -263,6 +273,17 @@ export function DataTable() {
                   <EditIcon />
                 </IconButton>
             </Tooltip>
+            
+            <Tooltip title="Pasar a Emision" arrow>
+                <IconButton
+                  aria-label="Pasar a Emision"
+                  onClick={() => handleShowUserSelect(params.row)}
+                  color="warning"
+                >
+                  <DoubleArrowIcon />
+                </IconButton>
+            </Tooltip>
+            
             {!dateFilter ? <>
                <Tooltip title="Historia de registros" arrow>
                   <IconButton

@@ -11,7 +11,7 @@ import { FormDialogUser }               from '../components/Modal';
 import { useSelector, useDispatch }     from 'react-redux';
 
 import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
-import { getAllThunks }                 from '../../store/archivocotizacionesantiguasStore/archivocotizacionesantiguasStoreThunks';
+import { getAllThunks }                 from '../../store/historialtramitesemitidosStore/historialtramitesemitidosStoreThunks';
 
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -47,6 +47,8 @@ export const SelectViews = () => {
         <Grid item>
             <Typography fontSize={39} fontWeight="light"> </Typography>
         </Grid>
+
+
 
         <Grid container sx={{ mt:2, width:"99.99%" }}>
             < DataTable/>

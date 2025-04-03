@@ -30,7 +30,7 @@ import { PageMain as UtilidadOcasional } from '../utilidadOcasional/pages/PageMa
 import { PageMain as Dashboard }        from '../dashboard/pages/PageMain';
 
 import { PageMain as ArchivoCotizacionesAntiguas }      from '../archivocotizacionesantiguas/pages/PageMain';
-import { PageMain as ImportacionDeTramitesEnMasa }      from '../importaciondetramitesenmasa/pages/PageMain';
+import { PageMain as Historialtramitesemitidos }        from '../historialtramitesemitidos/pages/PageMain';
 
 
 export const AppRouter = () => {
@@ -66,7 +66,7 @@ export const AppRouter = () => {
                 <Route path="/dashboard"              element={ <Dashboard />} />
 
                 <Route path="/archivocotizacionesantiguas" element={ <ArchivoCotizacionesAntiguas /> } />
-                <Route path="/historialtramitesemitidos"   element={ <ImportacionDeTramitesEnMasa /> } />
+                <Route path="/historialtramitesemitidos"   element={ <Historialtramitesemitidos /> } />
               </>
               ) : (
                 <>

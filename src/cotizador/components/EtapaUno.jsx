@@ -38,6 +38,18 @@ export const EtapaUno = () => {
     dispatch(handleFormStoreThunk({ name: 'idCliente', value:value.value }));
   };
 
+  const validarEntrada = (valor, tipo) => {
+    let nuevoValor = valor
+      .replace(/[`!\[\].]/g, "") // Elimina acento grave, exclamación, punto y corchetes
+      .replace(/^\s+/, ""); // Elimina espacios iniciales
+    
+    if (tipo === "placa") {
+      nuevoValor = nuevoValor.replace(/\s+/g, ""); // Elimina todos los espacios
+    }
+    
+    return nuevoValor;
+  };
+
   // Generar número aleatorio
   const generarNumeroAleatorio = () => {
     const prefijo = prefijos[Math.floor(Math.random() * prefijos.length)];
@@ -63,7 +75,8 @@ export const EtapaUno = () => {
   // Manejar cambios en los campos
   const handleChange = (e) => {
     const { name, value } = e.target;
-    dispatch(handleFormStoreThunk({ name, value }));
+    //dispatch(handleFormStoreThunk({ name, value }));
+    dispatch(handleFormStoreThunk({ name, value: validarEntrada(value, name) }));
   };
 
   // Manejar selección de clientes
@@ -356,114 +369,115 @@ export const EtapaUno = () => {
               />
           </Grid>
 
-        {/* Tipo de documento */}
-        <Grid item xs={6}>
-           <FormControl fullWidth>
-              <Autocomplete
-                disablePortal
-                options={tipoDocumentoOptions}
-                value={tipoDocumento} // Establecer el valor seleccionado del store
-                onChange={(event, value) => handleTypeDocumentChange(value)} // Pasar el valor seleccionado
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Tipo de documento"
-                    error={!!errors.tipoDocumento}
-                    helperText={errors.tipoDocumento}
-                  />
-                )}
+          {/* Tipo de documento */}
+          <Grid item xs={6}>
+            <FormControl fullWidth>
+                <Autocomplete
+                  disablePortal
+                  options={tipoDocumentoOptions}
+                  value={tipoDocumento} // Establecer el valor seleccionado del store
+                  onChange={(event, value) => handleTypeDocumentChange(value)} // Pasar el valor seleccionado
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Tipo de documento"
+                      error={!!errors.tipoDocumento}
+                      helperText={errors.tipoDocumento}
+                    />
+                  )}
+                />
+            </FormControl>
+          </Grid>
+
+          {/* Número de documento */}
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="👤 Número de documento"
+              name="numeroDocumento"
+              variant="outlined"
+              value={numeroDocumento.trimStart()}
+              onChange={handleChange}
+              error={!!errors.numeroDocumento}
+              helperText={errors.numeroDocumento}
+              autoComplete="off"
+              inputProps={{ maxLength: 10 }}
+            />
+          </Grid>
+
+          {/* Nombre completo */}
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="👤 Nombre completo"
+              name="nombreCompleto"
+              variant="outlined"
+              value={nombreCompleto.trimStart().toUpperCase()}
+              onInput={(e) => e.target.value = e.target.value.toUpperCase()}
+              onChange={handleChange}
+              error={!!errors.nombreCompleto}
+              helperText={errors.nombreCompleto}
+              autoComplete="off"
+            />
+          </Grid>
+
+          {/* Teléfono */}
+          <Grid item xs={6}>
+            <div style={{ display: "flex", width: "100%", gap: "10px" }}>
+              <TextField
+                fullWidth
+                label="📞 Teléfono"
+                name="telefono"
+                variant="outlined"
+                value={telefono.trimStart()}
+                onChange={handleChange}
+                autoComplete="off"
+                inputProps={{ maxLength: 10 }}
               />
-          </FormControl>
-        </Grid>
-
-        {/* Número de documento */}
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            label="👤 Número de documento"
-            name="numeroDocumento"
-            variant="outlined"
-            value={numeroDocumento.trimStart()}
-            onChange={handleChange}
-            error={!!errors.numeroDocumento}
-            helperText={errors.numeroDocumento}
-            autoComplete="off"
-            inputProps={{ maxLength: 10 }}
-          />
-        </Grid>
-
-        {/* Nombre completo */}
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            label="👤 Nombre completo"
-            name="nombreCompleto"
-            variant="outlined"
-            value={nombreCompleto.trimStart().toUpperCase()}
-            onInput={(e) => e.target.value = e.target.value.toUpperCase()}
-            onChange={handleChange}
-            error={!!errors.nombreCompleto}
-            helperText={errors.nombreCompleto}
-            autoComplete="off"
-          />
-        </Grid>
-
-        {/* Teléfono */}
-        <Grid item xs={6}>
-          <div style={{ display: "flex", width: "100%", gap: "10px" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={generarNumeroAleatorio}
+              >
+                <ReplayIcon />
+              </Button>
+            </div>
+          </Grid>
+            
+          {/* Correo */}
+          <Grid item xs={6}>
             <TextField
               fullWidth
-              label="📞 Teléfono"
-              name="telefono"
+              label="📧 Correo"
+              name="correo"
               variant="outlined"
-              value={telefono.trimStart()}
+              value={correo.trimStart()}
               onChange={handleChange}
               autoComplete="off"
             />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={generarNumeroAleatorio}
-            >
-              <ReplayIcon />
-            </Button>
-          </div>
-        </Grid>
-          
-        {/* Correo */}
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            label="📧 Correo"
-            name="correo"
-            variant="outlined"
-            value={correo.trimStart()}
-            onChange={handleChange}
-            autoComplete="off"
-          />
-        </Grid>
+          </Grid>
 
-        {/* Dirección */}
-        <Grid item xs={6}>
-          <div style={{ display: "flex", width: "100%", gap: "10px" }}>
-            <TextField
-              fullWidth
-              label="🏠 Dirección"
-              name="direccion"
-              variant="outlined"
-              value={direccion}
-              onChange={handleChange}
-              autoComplete="off"
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={generarDireccionAleatoria}
-            >
-              <ReplayIcon />
-            </Button>
-          </div>
-        </Grid>
+          {/* Dirección */}
+          <Grid item xs={6}>
+            <div style={{ display: "flex", width: "100%", gap: "10px" }}>
+              <TextField
+                fullWidth
+                label="🏠 Dirección"
+                name="direccion"
+                variant="outlined"
+                value={direccion}
+                onChange={handleChange}
+                autoComplete="off"
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={generarDireccionAleatoria}
+              >
+                <ReplayIcon />
+              </Button>
+            </div>
+          </Grid>
 
         <Grid item xs={12}>
             <Alert severity="success" sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
@@ -480,14 +494,14 @@ export const EtapaUno = () => {
               </IconButton>
             </Alert>
         </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               {
                 formValues.id != "" ? (<Button disabled={dateFilter} variant="contained" color="primary" fullWidth type="submit">Editar</Button>) : (<Button variant="contained" color="primary" fullWidth type="submit">Guardar</Button>)
               }
             </Grid>
-            <Grid item xs={6}>
+            {/*<Grid item xs={6}>
               <Button disabled={!disableBtn} variant="contained" color="warning" fullWidth type="button" onClick={handleShowUserSelect}>PASAR A EMISION</Button>
-            </Grid>
+            </Grid>*/}
 
               {/* NOTIFICACION WHATSAPP USUARIOS */}
               {showSelectUser ? <UsersSelect/> : ""}

@@ -52,7 +52,7 @@ export function DataTable() {
     let { cotizadores, archivo, idBanco }  = useSelector(state => state.cotizadorStore);
     let { tarjetasBancarias, banco }     = useSelector(state => state.registroTarjetasStore);
 
-    console.log("idBanco ",idBanco);
+
     const [selectedRow, setSelectedRow]     = useState(null);
     const [uploadedFiles, setUploadedFiles] = useState({}); // Estado para archivos subidos
 
@@ -310,6 +310,7 @@ export function DataTable() {
         width: 250,
         sortable: false,
         renderCell: (params) => {
+          console.log("params ",params.row.precioDeLey)
           const isFileUploaded = uploadedFiles[params.row.id];
           const archivoFile = params.row.archivo;
 
@@ -368,7 +369,7 @@ export function DataTable() {
                     </IconButton>
                   </Tooltip>
 
-                  {banco != "" && !archivoFile && isFileUploaded &&
+                  {params.row.precioDeLey != "" && banco != "" && !archivoFile && isFileUploaded &&
                   <Tooltip title="Confirmar">
                     <IconButton
                       aria-label="delete-file"

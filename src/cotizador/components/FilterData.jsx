@@ -5,7 +5,8 @@ import { Paper, InputBase, IconButton, Divider } from "@mui/material";
 import { useDispatch } from "react-redux";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
-import { search_cotizadores, getAllThunks, getAllCotizadorTramitesThunks, getAllCotizadorConfirmacionPreciosThunks, getAllCotizadorPdfsThunks } from "../../store/cotizadorStore/cotizadorThunks";
+import { search_cotizadores, getAllThunks, getAllCotizadorTramitesThunks, 
+        getAllCotizadorConfirmacionPreciosThunks, getAllCotizadorPdfsThunks } from "../../store/cotizadorStore/cotizadorThunks";
 
 export const FilterData = ({cotizador}) => {
     
