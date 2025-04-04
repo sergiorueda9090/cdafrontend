@@ -46,7 +46,23 @@ export function DataTable() {
 
     const handleShowUserSelect = (row) => {
       if(row.id){
-        let data = {id:row.id, cotizadorModulo:0, tramiteModulo:1, confirmacionPreciosModulo:0, pdfsModulo:0}
+        const now = new Date();
+        // Convertir a la zona horaria de Bogotá
+        const bogotaTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Bogota" }));
+
+        // Obtener componentes de la fecha
+        const year = bogotaTime.getFullYear();
+        const month = String(bogotaTime.getMonth() + 1).padStart(2, "0");
+        const day = String(bogotaTime.getDate()).padStart(2, "0");
+        const hours = String(bogotaTime.getHours()).padStart(2, "0");
+        const minutes = String(bogotaTime.getMinutes()).padStart(2, "0");
+        const seconds = String(bogotaTime.getSeconds()).padStart(2, "0");
+        const milliseconds = String(bogotaTime.getMilliseconds()).padStart(3, "0") + "000"; // Agrega tres ceros extras
+
+        // Formatear la fecha
+        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+
+        let data = {id:row.id, cotizadorModulo:0, tramiteModulo:1, confirmacionPreciosModulo:0, pdfsModulo:0, fechaTramite:formattedDate}
         dispatch(updateThunks(data, "cotizador"));
       }
     }

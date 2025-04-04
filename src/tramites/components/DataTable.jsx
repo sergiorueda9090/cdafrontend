@@ -285,7 +285,7 @@ export function DataTable() {
     const columns = [
       { field: 'id',              headerName: 'ID',                 width: 80},
       {
-        field: 'fechaCreacion',
+        field: 'fechaTramite',
         headerName: 'Hace',
         width: 150,
         valueGetter: (params) => {
