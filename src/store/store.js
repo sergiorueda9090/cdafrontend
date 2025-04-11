@@ -21,6 +21,8 @@ import { utilidadOcacionalStore }     from './utilidadOcacionalStore/utilidadOca
 import { fichaClienteStore }          from './fichaClienteStore/fichaClienteStore';
 import { archivocotizacionesantiguasStore } from './archivocotizacionesantiguasStore/archivocotizacionesantiguasStore';
 import { historialtramitesemitidosStore } from './historialtramitesemitidosStore/historialtramitesemitidosStore';
+import { proveedoresStore }           from './proveedoresStore/proveedoresStore';
+import { fichaProveedoresStore }      from './fichaProveedoresStore/fichaProveedoresStore';
 
 export const store = configureStore({
   reducer: {
@@ -45,6 +47,8 @@ export const store = configureStore({
     utilidadOcacionalStore: utilidadOcacionalStore.reducer,
     fichaClienteStore     : fichaClienteStore.reducer,
     archivocotizacionesantiguasStore: archivocotizacionesantiguasStore.reducer,
-    historialtramitesemitidosStore: historialtramitesemitidosStore.reducer
+    historialtramitesemitidosStore: historialtramitesemitidosStore.reducer,
+    proveedoresStore      : proveedoresStore.reducer,
+    fichaProveedoresStore : fichaProveedoresStore.reducer
   }
 })

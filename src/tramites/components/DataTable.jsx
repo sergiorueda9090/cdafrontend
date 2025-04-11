@@ -81,12 +81,10 @@ export function DataTable() {
           try {
             respuesta = await handleConfirmar(`Esta seguro que la url es: ${newValue}`);
           } catch (error) {
-            console.error("Error al confirmar la URL:", error);
             respuesta = false; // Manejar el error y establecer respuesta en false
           }
         }
     
-        console.log("respuesta ", respuesta);
     
         if (respuesta) {
 
@@ -251,16 +249,14 @@ export function DataTable() {
     const EditableCell = ({ params }) => {
       const [valor, setValor] = useState(params.value || ""); // Estado local
     
-      const handleBlur = async () => {
-        console.log(`Nuevo valor: ${valor}`);
-    
+      const handleBlur = async () => {    
         // Crear el nuevo objeto de fila con el valor actualizado
         const newRow = { ...params.row, escribirlink: valor };
     
         // Llamar a processRowUpdate con la nueva fila
         await processRowUpdate(newRow);
       };
-      console.log("params.row ",params.row.linkPago)
+      
       const isDisabled = !params.row.correo ||  params.row.etiquetaDos !== "LINK DE PAGO" || params.row.linkPago; 
       
       return isDisabled ? (

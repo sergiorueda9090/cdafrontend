@@ -21,6 +21,7 @@ import { toast } from 'react-toastify';
 import { showThunk, updateThunks } from '../../store/cotizadorStore/cotizadorThunks';
 import { getAllThunks as getAllTarjetas, handleFormStoreThunk, handleDisplayAllTarjetasThunk } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
 import { handleFormStoreThunk as handleFormStoreThunkCotizador } from '../../store/cotizadorStore/cotizadorThunks';
+import { clearAllProveedores, handleFormStoreThunk as handleFormStoreThunkProveedores, getAllThunks as getAllProveedores } from '../../store/proveedoresStore/proveedoresThunks';
 
 import { useNavigate }              from 'react-router-dom';
 import { FilterData } from '../../cotizador/components/FilterData';
@@ -49,9 +50,22 @@ export function DataTable() {
 
     const dispatch = useDispatch();
     
-    let { cotizadores, archivo, idBanco }  = useSelector(state => state.cotizadorStore);
-    let { tarjetasBancarias, banco }     = useSelector(state => state.registroTarjetasStore);
+    let { cotizadores, archivo, idBanco } = useSelector(state => state.cotizadorStore);
+    let { tarjetasBancarias, banco }      = useSelector(state => state.registroTarjetasStore);
+    let { proveedores, nombre, etiqueta, id: idProveedor } = useSelector( state => state.proveedoresStore);
 
+    const [comisiones, setComisiones] = useState({});
+
+    const handleComisionChange = (event, id) => {
+      let value = event.target.value.replace(/\D/g, ''); // Permite solo números
+      value = Number(value).toLocaleString('es-CO'); // Formato moneda COP
+    
+      setComisiones((prev) => ({
+        ...prev,
+        [id]: value, // Solo actualiza la fila seleccionada
+      }));
+    };
+    
 
     const [selectedRow, setSelectedRow]     = useState(null);
     const [uploadedFiles, setUploadedFiles] = useState({}); // Estado para archivos subidos
@@ -146,11 +160,7 @@ export function DataTable() {
         }
     }
 
-  
 
-
-    
-    console.log("tarjetasBancarias ",tarjetasBancarias);
     const [editingRowId, setEditingRowId] = useState(null);
   
     const handleShowAllTarjetas = () => {
@@ -161,10 +171,21 @@ export function DataTable() {
       dispatch(handleDisplayAllTarjetasThunk())
     }
 
+    const handleShowAllProveedores = () => {
+      dispatch(clearAllProveedores())
+    }
+
   
     const handleSelectionChange = (id, newValue) => {
       dispatch(handleFormStoreThunk({name: 'banco', value:newValue.banco }));
       dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:id }));
+    };
+
+    const handleProveedorSelectionChange = (id, newValue) => {
+      console.log("newValue ",newValue)
+      dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:newValue.nombre }));
+      dispatch(handleFormStoreThunkProveedores({name: 'etiqueta',  value:newValue.etiqueta_nombre }));
+      dispatch(handleFormStoreThunkProveedores({name: 'id',         value:id }));
     };
 
     const [activeRow, setActiveRow] = useState(null); // Guarda la fila activa
@@ -177,6 +198,7 @@ export function DataTable() {
       setActiveRow(null); // Cierra el Autocomplete al hacer clic afuera
     };
 
+    const esEditable = etiqueta?.toUpperCase() === 'AMALFI' || etiqueta?.toUpperCase() === 'ELVIN';
 
     
     const columns = [
@@ -207,7 +229,7 @@ export function DataTable() {
       { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 170,       
           renderCell: (params) => {
           const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
-          console.log("colorFondoEtiqueta ",params.row.color_etiqueta)
+
           const colorTexto = getContrastColor(colorFondoEtiqueta); // Color de texto calculado
           return (
             <Chip
@@ -229,7 +251,90 @@ export function DataTable() {
       { field: 'nombreCompleto',        headerName: 'Nombre',          width: 130 },*/
       { field: 'cilindraje',            headerName: 'Cilindraje',      width: 150 },
       { field: 'modelo',                headerName: 'Modelo',          width: 130 },
-      { field: 'precioDeLey',           headerName: 'Precio de ley',   width: 130, align: "right", headerAlign: "right" },
+      { 
+        field: 'proveedores',           
+        headerName: 'Proveedores',     
+        width: 200,        
+        editable: true,
+        renderCell: (params) => {
+          const isActive = activeRow === params.id;
+          return (
+            <Box width="100%" onClick={() => handleCellClick(params.id)}>
+              {isActive && proveedores.length > 0 ? (
+                <Autocomplete
+                  options={proveedores}
+                  getOptionLabel={(option) => option.nombre}
+                  isOptionEqualToValue={(option, value) => option.id === value?.id}
+                  defaultValue={{id: 0, nombre: "Seguros Generales"}}
+                  value={proveedores.find((option) => option.nombre === nombre) || {id: 0, nombre: "Seguros Generales"}}
+                  onChange={(_, newValue) => {
+                    if (newValue) {
+                      handleProveedorSelectionChange(newValue.id, newValue);
+                      // Habilitar edición de comisionProveedor si es link de pago
+                      const comisionColumn = columns.find(col => col.field === 'comisionProveedor');
+                      if(comisionColumn) {
+                        comisionColumn.editable = newValue.nombre === 'Link de Pago';
+                      }
+                    } else {
+                      handleShowAllProveedores();
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="standard" 
+                      placeholder="Seleccione una Proveedor"
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <>
+                            {params.InputProps.endAdornment}
+                          </>
+                        ),
+                      }}
+                      autoFocus
+                    />
+                  )}
+                  fullWidth
+                />
+              ) : (
+                <Chip
+                  label={params.value ? params.value.etiqueta_nombre : "Seguros Generales"}
+                  style={{
+                    backgroundColor: "#262254",
+                    color: "#ffffff", 
+                    padding: "5px",
+                    borderRadius: "5px",
+                    textAlign: "center",
+                    width: "100%",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => dispatch(getAllProveedores())}
+                />
+              )}
+            </Box>
+          );
+        },
+      },     
+      {
+        field: 'comisionProveedor',
+        headerName: 'Comisión Proveedor',
+        width: 180,
+        renderCell: (params) => {
+          return esEditable ? (
+            <input 
+              type="text"
+              value={comisiones[params.id] || ''}
+              onChange={(event) => handleComisionChange(event, params.id)}
+              placeholder="Ingrese la comisión"
+              style={{ width: '100%', textAlign: 'right', border: 'none', background: 'transparent' }}
+            />
+          ) : (
+            <span>0</span> // Si no es editable, muestra "0"
+          );
+        },
+      },
+    { field: 'precioDeLey',           headerName: 'Precio de ley',   width: 130, align: "right", headerAlign: "right" },
       { field: 'comisionPrecioLey',     headerName: 'Comision',        width: 130, align: "right", headerAlign: "right" },
       {
         field: 'total',
@@ -237,7 +342,6 @@ export function DataTable() {
         width: 130,
         align: "right", headerAlign: "right",
         valueFormatter: (params) => {
-          console.log("params ",params)
           if (params == null) return ''; // Manejo de valores nulos
           return new Intl.NumberFormat('es-CO', { 
             minimumFractionDigits: 0, 
@@ -310,7 +414,6 @@ export function DataTable() {
         width: 250,
         sortable: false,
         renderCell: (params) => {
-          console.log("params ",params.row.precioDeLey)
           const isFileUploaded = uploadedFiles[params.row.id];
           const archivoFile = params.row.archivo;
 
@@ -498,7 +601,44 @@ export function DataTable() {
     }
 
     const handleUploadFileConfirmar = (id) => {
-      dispatch(updateThunks({id, 'archivo':fileUpload, 'idBanco': idBanco, confirmacionPreciosModulo: 0, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0}, 'confirmarprecio'))                             
+      
+      let comisionproveedor = Object.values(comisiones);
+
+      // Si no existe o es vacío, asignar "0"
+      let comisionRaw = comisionproveedor[0] ? comisionproveedor[0] : "0";
+      
+      // Eliminar separadores de miles y convertir a número
+      let comision = parseFloat(comisionRaw.replace(/\./g, ''));
+     
+      if (etiqueta.toLowerCase() === "elvin" || etiqueta.toLowerCase() === "amalfi"){
+          comision = -Math.abs(comision); // Asegura que sea negativo
+      }
+
+      dispatch(updateThunks(
+                              {
+                                  id,
+                                  archivo: fileUpload,
+                                  idBanco: idBanco,
+                                  confirmacionPreciosModulo: 0,
+                                  cotizadorModulo: 0,
+                                  pdfsModulo: 1,
+                                  tramiteModulo: 0,
+                                  idProveedor: idProveedor,
+                                  comisionproveedor: comision
+                              },
+                              'confirmarprecio'
+                          ));
+
+     /* dispatch(updateThunks({id,  
+                              'archivo'                 : fileUpload, 
+                              'idBanco'                 : idBanco, 
+                              confirmacionPreciosModulo : 0, 
+                              cotizadorModulo           : 0, 
+                              pdfsModulo                : 1, 
+                              tramiteModulo             : 0,
+                              idProveedor               : idProveedor,
+                              comisionproveedor         : comisionproveedor[0]
+                            }, 'confirmarprecio'))  */                           
       //navigate('/cargarpdfs');
     }
     
@@ -509,7 +649,7 @@ export function DataTable() {
     await dispatch(showThunk(row.id));
   };
 
-  console.log("cotizadores ",cotizadores)
+
   return (
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
 

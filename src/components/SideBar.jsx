@@ -28,6 +28,8 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 
+import GroupsIcon from '@mui/icons-material/Groups';
+
 const StyledLink = styled(Link)({
     textDecoration: 'none',
     color: 'inherit',
@@ -53,6 +55,8 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Usuarios', icon: <PeopleIcon />, route: '/users' },
         { text: 'Clientes', icon: <Face6Icon />, route: '/clientes' },
         { text: 'Etiquetas', icon: <LabelIcon />, route: '/etiquetas' },
+        { text: 'Proveedores', icon: <GroupsIcon />, route: '/proveedores' },
+        { text: 'Ficha Proveedores', icon: <GroupsIcon />, route: '/fichaproveedores' },
         { text: 'Cotizador', icon: <RequestQuoteIcon />, route: '/cotizador' },
         { text: 'Trámites', icon: <ReceiptLongIcon />, route: '/tramites' },
         { text: 'Confirmación de Precios', icon: <AttachMoneyIcon />, route: '/confirmacionprecios' },

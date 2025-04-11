@@ -2,6 +2,8 @@ import { Route, Routes, Navigate }          from 'react-router-dom';
 import { AuthRoutes }                   from '../auth/routes/AuthRoutes';
 import { JournalRoutes }                from '../journal/routes/JournalRoutes';
 import { UsersPage }                    from '../users/pages/UsersPage';  
+import { PageMain as Proveedores}       from '../proveedores/pages/PageMain';
+import { PageMain as FichaProveedores}   from '../fichaproveedores/pages/PageMain';
 import { PageMain as ClientePage }      from '../clientes/pages/PageMain';
 import { PageMain as EtiquetaPage }     from '../etiquetas/pages/PageMain';
 import { PageMain as TramitePage }      from '../tramites/pages/PageMain';
@@ -43,6 +45,8 @@ export const AppRouter = () => {
               <>
                 <Route path="/*"                      element={ <JournalRoutes /> } />
                 <Route path="/users"                  element={ <UsersPage /> } />
+                <Route path="/proveedores"            element={ <Proveedores /> } />
+                <Route path="/fichaproveedores"       element={ <FichaProveedores /> } />
                 <Route path="/clientes"               element={ <ClientePage /> } />
                 <Route path="/etiquetas"              element={ <EtiquetaPage /> } />
                 <Route path="/tramites/*"             element={ <RoutesTramites />} />
