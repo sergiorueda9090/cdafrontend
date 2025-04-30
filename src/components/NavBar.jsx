@@ -29,6 +29,7 @@ export const NavBar = ({ drawerWidth = 240, nameModule = 'JournalApp', handleDra
 
     const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
     const handleMenuClose = () => setAnchorEl(null);
+    
     const handleLogout = () => {
         handleMenuClose();
         dispatch(loginFail());

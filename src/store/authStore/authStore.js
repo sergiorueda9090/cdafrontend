@@ -8,6 +8,7 @@ export const authStore = createSlice({
     infoUser  : {},
     isLogin   : savedInfoUser.isLogin == true ? true : false,
     token     : savedInfoUser.access,
+    idrol     : savedInfoUser.idrol,
     name_user : '',
     email     : '',
   },
@@ -25,16 +26,20 @@ export const authStore = createSlice({
         state.token     = "";
         state.name_user = "";
         state.email     = "";
+        state.idrol     = "";
       },
       setAuthenticated:(state, action) => {
           state.token     = action.payload.access
-
-          let local = {"access": action.payload.access, 
-                       "isLogin": action.payload.islogin};
+          console.log(" action.payload ", action.payload.idrol)
+          
+          let local = {"access"  : action.payload.access, 
+                       "isLogin" : action.payload.islogin,
+                       "idrol"   : action.payload.idrol};
 
           localStorage.setItem("infoUser",JSON.stringify(local));
 
-          state.isLogin   = action.payload.islogin === true ? true : false;
+          state.isLogin = action.payload.islogin === true ? true : false;
+          state.idrol   = action.payload.idrol;
 
       }
   }

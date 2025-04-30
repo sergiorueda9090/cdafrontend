@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, IconButton, Collapse } from '@mui/material';
+import {
+    Box, Divider, Drawer, List, ListItem, ListItemButton,
+    ListItemIcon, ListItemText, Toolbar, Typography, IconButton, Collapse
+} from '@mui/material';
 import { useLocation, Link } from 'react-router-dom';
 import { styled } from '@mui/system';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -10,25 +13,22 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import LabelIcon from '@mui/icons-material/Label';
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import SecurityIcon from '@mui/icons-material/Security';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import FolderIcon from '@mui/icons-material/Folder';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'; // Icono para Gestión de Movimientos
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';  // Recepción de Pago
-import ReplayIcon from '@mui/icons-material/Replay';                 // Devolución
-import ReceiptIcon from '@mui/icons-material/Receipt';               // Gastos Generales
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';         // Utilidad Ocasional
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import ReplayIcon from '@mui/icons-material/Replay';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
-
 import GroupsIcon from '@mui/icons-material/Groups';
+import { useSelector } from 'react-redux';
 
 const StyledLink = styled(Link)({
     textDecoration: 'none',
@@ -37,19 +37,14 @@ const StyledLink = styled(Link)({
 });
 
 export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isSidebarOpen }) => {
-    const location = useLocation(); 
-    const [openMovements, setOpenMovements] = useState(false); // Estado para el submenú
+    const { idrol } = useSelector(state => state.authStore);
+    console.log("idrol ",idrol)
+    const location = useLocation();
+    const [openMovements, setOpenMovements] = useState(false);
+    const [openMovementsTarjeta, setOpenMovementsTarjeta] = useState(false);
 
-    const handleToggleMovements = () => {
-        setOpenMovements(!openMovements);
-    };
-
-
-    const [openMovementsTarjeta, setOpenMovementsTarjeta] = useState(false); // Estado para el submenú
-
-    const handleToggleMovementsTarjeta = () => {
-        setOpenMovementsTarjeta(!openMovements);
-    };
+    const handleToggleMovements = () => setOpenMovements(!openMovements);
+    const handleToggleMovementsTarjeta = () => setOpenMovementsTarjeta(!openMovementsTarjeta);
 
     const items = [
         { text: 'Usuarios', icon: <PeopleIcon />, route: '/users' },
@@ -65,26 +60,36 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Ficha del Cliente', icon: <ContactPageIcon />, route: '/fichaCliente' },
         { text: 'Archivo de cotizaciones antiguas', icon: <FolderIcon />, route: '/archivocotizacionesantiguas' },
         { text: 'Historial Tramites emitidos', icon: <HistoryEduIcon />, route: '/historialtramitesemitidos' },
-        //{ text: 'Verificación de Código', icon: <SecurityIcon />, route: '/verify' },
     ];
+
+    const filteredItems = items.filter(item => {
+        if (idrol == 1) return true;
+        if (idrol == 2) return ['Ficha Proveedores', 'Cotizador', 'Trámites', 
+                               'Confirmación de Precios', 'Cargar PDFs', 
+                               'Cuentas Bancarias', 'Ficha del Cliente', 'Archivo de cotizaciones antiguas', 
+                               'Historial Tramites emitidos'].includes(item.text);
+        if (idrol == 3) return ['Cotizador','Trámites','Cargar PDFs'].includes(item.text);
+        return false;
+    });
 
     const tarjetasSideBar = [
         { text: 'Registro Tarjetas Bancarias', icon: <CreditCardIcon />, route: '/registroTarjetas' },
-        { text: 'Total de cada tarjeta',       icon: <CreditCardIcon />, route: '/registroTarjetas/totaldecadatarjeta' },
+        { text: 'Total de cada tarjeta', icon: <CreditCardIcon />, route: '/registroTarjetas/totaldecadatarjeta' },
     ];
 
     const gestionMovimientos = [
-        { text: 'Recepción de Pago',    icon: <MonetizationOnIcon />,       route: '/recepcionpago' },
-        { text: 'Devolución',           icon: <ReplayIcon />,               route: '/devolucion' },
-        { text: 'Ajuste de Saldo',      icon: <AccountBalanceWalletIcon />, route: '/ajustesaldo' },
-        { text: 'Lista de Gastos',      icon: <ShoppingBagIcon />,          route: '/gastos' },
-        { text: 'Relacionar Gasto',     icon: <ReceiptIcon />,              route: '/gastosgenerales' },
-        { text: 'Utilidad Ocasional',   icon: <TrendingUpIcon />,           route: '/utilidadocasional' },
-        { text: 'Dashboard',            icon: <SpaceDashboardIcon />,       route: '/dashboard' },
+        { text: 'Recepción de Pago', icon: <MonetizationOnIcon />, route: '/recepcionpago' },
+        { text: 'Devolución', icon: <ReplayIcon />, route: '/devolucion' },
+        { text: 'Ajuste de Saldo', icon: <AccountBalanceWalletIcon />, route: '/ajustesaldo' },
+        { text: 'Lista de Gastos', icon: <ShoppingBagIcon />, route: '/gastos' },
+        { text: 'Relacionar Gasto', icon: <ReceiptIcon />, route: '/gastosgenerales' },
+        { text: 'Utilidad Ocasional', icon: <TrendingUpIcon />, route: '/utilidadocasional' },
+        { text: 'Dashboard', icon: <SpaceDashboardIcon />, route: '/dashboard' },
     ];
+
     return (
         <Box component='nav' sx={{ width: isSidebarOpen ? drawerWidth : 0, flexShrink: { sm: 0 } }}>
-            {/* Drawer en móviles */}
+            {/* Drawer Móvil */}
             <Drawer
                 variant='temporary'
                 open={mobileOpen}
@@ -99,7 +104,7 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                 </Toolbar>
                 <Divider />
                 <List>
-                    {items.map(({ text, icon, route }) => (
+                    {filteredItems.map(({ text, icon, route }) => (
                         <ListItem key={text} disablePadding>
                             <StyledLink to={route} onClick={handleDrawerToggle}>
                                 <ListItemButton selected={location.pathname === route}>
@@ -110,59 +115,59 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                         </ListItem>
                     ))}
 
-                    {/* Informacion tarjetas bancarias */}
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={handleToggleMovements}>
-                            <ListItemIcon>
-                                <CreditCardIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Información de tarjetas bancarias" />
-                            {openMovements ? <ExpandLess /> : <ExpandMore />}
-                        </ListItemButton>
-                    </ListItem>
+                    {(idrol == 1 || idrol == 2) && (
+                        <>
+                            {/* Submenú tarjetas */}
+                            <ListItem disablePadding>
+                                <ListItemButton onClick={handleToggleMovementsTarjeta}>
+                                    <ListItemIcon><CreditCardIcon /></ListItemIcon>
+                                    <ListItemText primary="Información de tarjetas bancarias" />
+                                    {openMovementsTarjeta ? <ExpandLess /> : <ExpandMore />}
+                                </ListItemButton>
+                            </ListItem>
+                            <Collapse in={openMovementsTarjeta} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding>
+                                    {tarjetasSideBar.map(({ text, icon, route }) => (
+                                        <ListItem key={text} disablePadding>
+                                            <StyledLink to={route} onClick={handleDrawerToggle}>
+                                                <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
+                                                    <ListItemIcon>{icon}</ListItemIcon>
+                                                    <ListItemText primary={text} />
+                                                </ListItemButton>
+                                            </StyledLink>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Collapse>
 
-                    <Collapse in={openMovements} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            {tarjetasSideBar.map(({ text, route }) => (
-                                <ListItem key={text} disablePadding>
-                                    <StyledLink to={route} onClick={handleDrawerToggle}>
-                                        <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
-                                            <ListItemText primary={text} />
-                                        </ListItemButton>
-                                    </StyledLink>
-                                </ListItem>
-                            ))}
-                        </List>
-                    </Collapse>
-
-                    {/* Gestión de Movimientos con submenú */}
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={handleToggleMovements}>
-                            <ListItemIcon>
-                                <AccountBalanceWalletIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Gestión de Movimientos" />
-                            {openMovements ? <ExpandLess /> : <ExpandMore />}
-                        </ListItemButton>
-                    </ListItem>
-
-                    <Collapse in={openMovements} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            {gestionMovimientos.map(({ text, route }) => (
-                                <ListItem key={text} disablePadding>
-                                    <StyledLink to={route} onClick={handleDrawerToggle}>
-                                        <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
-                                            <ListItemText primary={text} />
-                                        </ListItemButton>
-                                    </StyledLink>
-                                </ListItem>
-                            ))}
-                        </List>
-                    </Collapse>
+                            {/* Submenú movimientos */}
+                            <ListItem disablePadding>
+                                <ListItemButton onClick={handleToggleMovements}>
+                                    <ListItemIcon><AccountBalanceWalletIcon /></ListItemIcon>
+                                    <ListItemText primary="Gestión de Movimientos" />
+                                    {openMovements ? <ExpandLess /> : <ExpandMore />}
+                                </ListItemButton>
+                            </ListItem>
+                            <Collapse in={openMovements} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding>
+                                    {gestionMovimientos.map(({ text, icon, route }) => (
+                                        <ListItem key={text} disablePadding>
+                                            <StyledLink to={route} onClick={handleDrawerToggle}>
+                                                <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
+                                                    <ListItemIcon>{icon}</ListItemIcon>
+                                                    <ListItemText primary={text} />
+                                                </ListItemButton>
+                                            </StyledLink>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Collapse>
+                        </>
+                    )}
                 </List>
             </Drawer>
 
-            {/* Drawer permanente en escritorio con opción de ocultar */}
+            {/* Drawer Escritorio */}
             <Drawer
                 variant='permanent'
                 sx={{
@@ -183,7 +188,7 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                 </Toolbar>
                 <Divider />
                 <List>
-                    {items.map(({ text, icon, route }) => (
+                    {filteredItems.map(({ text, icon, route }) => (
                         <ListItem key={text} disablePadding>
                             <StyledLink to={route}>
                                 <ListItemButton selected={location.pathname === route}>
@@ -194,58 +199,55 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                         </ListItem>
                     ))}
 
-                    {/* Informacion tarjetas bancarias */}
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={handleToggleMovementsTarjeta}>
-                            <ListItemIcon>
-                                <CreditCardIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Información de tarjetas bancarias" />
-                            {openMovementsTarjeta ? <ExpandLess /> : <ExpandMore />}
-                        </ListItemButton>
-                    </ListItem>
+                    {(idrol == 1 || idrol == 2) && (
+                        <>
+                            {/* Submenú tarjetas */}
+                            <ListItem disablePadding>
+                                <ListItemButton onClick={handleToggleMovementsTarjeta}>
+                                    <ListItemIcon><CreditCardIcon /></ListItemIcon>
+                                    <ListItemText primary="Información de tarjetas bancarias" />
+                                    {openMovementsTarjeta ? <ExpandLess /> : <ExpandMore />}
+                                </ListItemButton>
+                            </ListItem>
+                            <Collapse in={openMovementsTarjeta} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding>
+                                    {tarjetasSideBar.map(({ text, icon, route }) => (
+                                        <ListItem key={text} disablePadding>
+                                            <StyledLink to={route}>
+                                                <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
+                                                    <ListItemIcon>{icon}</ListItemIcon>
+                                                    <ListItemText primary={text} />
+                                                </ListItemButton>
+                                            </StyledLink>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Collapse>
 
-
-                    <Collapse in={openMovementsTarjeta} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            {tarjetasSideBar.map(({ text,icon, route }) => (
-                                <ListItem key={text} disablePadding>
-                                    <StyledLink to={route}>
-                                        <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
-                                        <ListItemIcon>{icon}</ListItemIcon>
-                                            <ListItemText primary={text} />
-                                        </ListItemButton>
-                                    </StyledLink>
-                                </ListItem>
-                            ))}
-                        </List>
-                    </Collapse>
-
-                    {/* Gestión de Movimientos con submenú */}
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={handleToggleMovements}>
-                            <ListItemIcon>
-                                <AccountBalanceWalletIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Gestión de Movimientos" />
-                            {openMovements ? <ExpandLess /> : <ExpandMore />}
-                        </ListItemButton>
-                    </ListItem>
-
-                    <Collapse in={openMovements} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            {gestionMovimientos.map(({ text,icon, route }) => (
-                                <ListItem key={text} disablePadding>
-                                    <StyledLink to={route}>
-                                        <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
-                                        <ListItemIcon>{icon}</ListItemIcon>
-                                            <ListItemText primary={text} />
-                                        </ListItemButton>
-                                    </StyledLink>
-                                </ListItem>
-                            ))}
-                        </List>
-                    </Collapse>
+                            {/* Submenú movimientos */}
+                            <ListItem disablePadding>
+                                <ListItemButton onClick={handleToggleMovements}>
+                                    <ListItemIcon><AccountBalanceWalletIcon /></ListItemIcon>
+                                    <ListItemText primary="Gestión de Movimientos" />
+                                    {openMovements ? <ExpandLess /> : <ExpandMore />}
+                                </ListItemButton>
+                            </ListItem>
+                            <Collapse in={openMovements} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding>
+                                    {gestionMovimientos.map(({ text, icon, route }) => (
+                                        <ListItem key={text} disablePadding>
+                                            <StyledLink to={route}>
+                                                <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
+                                                    <ListItemIcon>{icon}</ListItemIcon>
+                                                    <ListItemText primary={text} />
+                                                </ListItemButton>
+                                            </StyledLink>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Collapse>
+                        </>
+                    )}
                 </List>
                 <Divider />
             </Drawer>

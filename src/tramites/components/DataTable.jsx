@@ -74,7 +74,6 @@ export function DataTable() {
       if (changedField) {
         const newValue = newRow[changedField];
     
-        console.log(`Campo modificado: ${changedField}, Nuevo Valor: ${newValue}, ID: ${newRow.id}`);
         let respuesta = true;
     
         if (changedField === "escribirlink") {
@@ -217,10 +216,6 @@ export function DataTable() {
     let { etiquetas } = useSelector(state => state.etiquetasStore);
     let { etiqueta }  = useSelector(state => state.etiquetasStore);
     let { correo }    = useSelector(state => state.tramitesStore);
-
-    console.log("etiquetas ",etiquetas)
-    console.log("etiqueta ",etiqueta)
-    console.log("correo ",correo)
 
     const [rowsTest,  setRowsTest] = useState("");
     const [activeRow, setActiveRow] = useState(null);
@@ -819,13 +814,13 @@ export function DataTable() {
   return (
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
           
-          <ToastContainer />
+      <ToastContainer />
 
-          {/* Contenedor de filtros */}
-          <Box display="flex" justifyContent="space-between" marginBottom={2}>
-            <FilterData cotizador="tramite"/>  {/* Componente de filtros adicionales */}
-            <DateRange  cotizador="tramite"/>  {/* Componente para selección de rango de fechas */}
-        </Box>
+      {/* Contenedor de filtros */}
+      <Box display="flex" justifyContent="space-between" marginBottom={2}>
+        <FilterData cotizador="tramite"/>  {/* Componente de filtros adicionales */}
+        <DateRange  cotizador="tramite"/>  {/* Componente para selección de rango de fechas */}
+      </Box>
 
       <DataGrid
         rows={cotizadores}

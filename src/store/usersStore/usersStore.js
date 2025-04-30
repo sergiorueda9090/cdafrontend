@@ -14,6 +14,7 @@ export const usersStore = createSlice({
     imageUser   :false,
     image       : '',
     users       : [],
+    idrol       : '',      
     statesUser  :[
         {
           value: false,
@@ -38,6 +39,7 @@ export const usersStore = createSlice({
       state.repetirPassword = action.payload.repetirPassword;
       state.imageUser   = false;
       state.image       = action.payload.image;
+      state.idrol       = action.payload.idrol;
       state.statesUser  = [
           {
             value: false,
@@ -64,6 +66,7 @@ export const usersStore = createSlice({
       state.repetirPassword= '';
       state.imageUser   = false;
       state.image       = '';
+      state.idrol       = '';
       state.statesUser  = [
           {
             value: false,

@@ -2,20 +2,44 @@
 
 import React, { useState } from "react";
 import { Paper, InputBase, IconButton, Divider } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import { search_cotizadores, getAllThunks, getAllCotizadorTramitesThunks, 
-        getAllCotizadorConfirmacionPreciosThunks, getAllCotizadorPdfsThunks } from "../../store/cotizadorStore/cotizadorThunks";
+        getAllCotizadorConfirmacionPreciosThunks, getAllCotizadorPdfsThunks, 
+        getAllFilterDateThunks} from "../../store/cotizadorStore/cotizadorThunks";
+import { getFichaProveedorByIdThunk } from "../../store/fichaProveedoresStore/fichaProveedoresThunks";
 
-export const FilterData = ({cotizador}) => {
+export const FilterData = ({cotizador, id=''}) => {
     
     const dispatch = useDispatch();
+    let { startDate, endDate }    = useSelector(state => state.globalStore);
 
     const [searchQuery, setSearchQuery] = useState("");
+    
 
     const handleSearch = () => {
-       dispatch(search_cotizadores(searchQuery))
+        if(!searchQuery){
+            alert("Debes escribir algo en el buscador para buscar.");        
+            return;
+        }
+
+        if(cotizador == "fichaproveedor"){
+            
+            dispatch(getFichaProveedorByIdThunk(parseInt(id), startDate, endDate, searchQuery));
+
+        }else if (cotizador == "cotizador"){
+
+            dispatch(search_cotizadores(searchQuery))
+
+        }else{
+
+            dispatch(getAllFilterDateThunks(startDate, endDate));
+            
+        }
+
+       
     };
 
     const handleClear = () => {

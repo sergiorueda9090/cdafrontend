@@ -18,6 +18,7 @@ import { RoutesPdfs }                   from '../cargarPdfs/routes/Routes';
 
 import { PageMain as BancosMain }       from '../bancos/pages/PageMain';
 import { RoutesBancos }                 from '../bancos/routes/Routes';
+import { RoutesFichaProveedores }       from '../fichaproveedores/routes/Routes';
 
 import { RoutesTarjetas }               from '../registroTarjetas/routes/Routes';
 import { PageMain as FichaCliente }     from '../fichaClientes/pages/PageMain';
@@ -57,6 +58,7 @@ export const AppRouter = () => {
                 <Route path="/registroTarjetas/*"     element={ <RoutesTarjetas />} />
 
                 <Route path="/bancos/*"               element={ <RoutesBancos /> } />
+                <Route path="/fichaproveedores/*"     element={ <RoutesFichaProveedores /> } />
 
                 <Route path="/fichaCliente"           element={ <FichaCliente /> } />
                 {/*<Route path="/verify"                 element={ <Verify /> }    />*/}

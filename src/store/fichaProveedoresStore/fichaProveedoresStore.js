@@ -8,6 +8,8 @@ export const fichaProveedoresStore = createSlice({
     nombre      : '',
     etiqueta    : '',
     firchaproveedores : [],
+    fichaProveedoresDashboard:[],
+    firchaproveedor:[],
   },
   reducers: {
     showStore:(state,action) => {
@@ -18,11 +20,21 @@ export const fichaProveedoresStore = createSlice({
     listStore:(state, action) => {
       state.firchaproveedores = action.payload.firchaproveedores
     },
+    listIdStore:(state, action) => {
+      state.firchaproveedor = action.payload.firchaproveedor
+    },
+    listDashboardStore:(state, action) => {
+      state.fichaProveedoresDashboard = action.payload.fichaProveedoresDashboard
+    },
     resetFormularioStore:(state) => {
       state.id            = '';
       state.nombre        = '';
       state.proveedores   = '';
       state.etiqueta      = '';
+    },
+    saveId:(state, action) => {
+      console.log(action.payload.id)
+      state.id = action.payload.id;
     },
     handleFormStore:(state , action) => {
       const { name, value } = action.payload; // Obtener el nombre y el valor
@@ -33,4 +45,4 @@ export const fichaProveedoresStore = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listStore, resetFormularioStore, handleFormStore } = fichaProveedoresStore.actions;
+export const { showStore, listStore, resetFormularioStore, handleFormStore, listDashboardStore, listIdStore, saveId } = fichaProveedoresStore.actions;

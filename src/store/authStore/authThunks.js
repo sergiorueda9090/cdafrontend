@@ -27,8 +27,21 @@ export const getAuth = (email,password) => {
             // Hacer la solicitud
             const response = await axios.request(options);
             if(response.status === 200){
+
                 let data = response.data;
-                await dispatch(setAuthenticated({"access":data.access,"islogin":true}));
+
+                // Obtener la información del usuario autenticado
+                const userResponse = await axios.get(`${URL}/users/api/user/`, {
+                    headers: {
+                        Authorization: `Bearer ${data.access}`
+                    }
+                });
+
+                const userData = userResponse.data;
+
+                await dispatch(setAuthenticated({"access":data.access, "islogin":true, "idrol":userData.idrol}));
+                console.log('Usuario autenticado:', userData.idrol);
+
                 await dispatch(hideBackDropStore());
             }
             await dispatch(hideBackDropStore());

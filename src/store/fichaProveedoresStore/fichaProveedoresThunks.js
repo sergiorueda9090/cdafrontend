@@ -3,10 +3,12 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { loginFail } from "../authStore/authStore.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { showStore, listStore, resetFormularioStore, handleFormStore  } from "./fichaProveedoresStore.js";
+import { showStore, listStore, resetFormularioStore, handleFormStore, listDashboardStore, listIdStore, saveId  } from "./fichaProveedoresStore.js";
 import { getAllThunks as listarEtiquetas } from "../etiquetasStore/etiquetasThunks.js";
 // Función asincrónica para obtener los Pokemons
-const parametersURL = '/fichaproveedores/api/fichaproveedores/';
+const parametersURL         = '/fichaproveedores/api/fichaproveedores/';
+const paramtersURLDashboard = 'fichaproveedores/api/get_ficha_proveedores';
+const paramtersURLId        = 'fichaproveedores/api/get_ficha_proveedor_por_id';
 
 export const getAllThunks = () => {
 
@@ -336,5 +338,114 @@ export const clearAllProveedores = () => {
         await dispatch(showBackDropStore());
         await dispatch(listStore({'proveedores':[]}))
         await dispatch(hideBackDropStore());
+    };
+};
+
+export const getAllDashboardThunks = () => {
+
+    return async (dispatch, getState) => {
+        
+        await dispatch(showBackDropStore());
+        
+        const {authStore} = getState();
+        const token = authStore.token
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${ URL}/${paramtersURLDashboard}`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+
+                if(data.length > 0){
+                    
+                    await dispatch(listDashboardStore({'fichaProveedoresDashboard':data}))
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    await dispatch(listDashboardStore({'fichaProveedoresDashboard':[]}))
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+
+        } catch (error) {
+            
+            await dispatch(hideBackDropStore());
+
+            // Manejar errores
+            console.error(error);
+            
+            await dispatch ( loginFail() );
+            
+            await dispatch( hideBackDropStore() );
+
+        }
+    };
+};
+
+export const getFichaProveedorByIdThunk = (proveedorId, fechaInicio, fechaFin, search) => {
+    return async (dispatch, getState) => {
+
+        await dispatch(showBackDropStore());
+
+        const { authStore } = getState();
+        const token = authStore.token;
+
+        // Construir los parámetros dinámicamente
+        const queryParams = new URLSearchParams();
+
+        if (proveedorId) queryParams.append('proveedorId', proveedorId);
+        if (fechaInicio) queryParams.append('fechaInicio', fechaInicio);
+        if (fechaFin) queryParams.append('fechaFin', fechaFin);
+        if (search) queryParams.append('search', search); // <-- Agregado el search
+
+        const options = {
+            method: 'GET',
+            url: `${URL}/${paramtersURLId}?${queryParams.toString()}`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        };
+
+        try {
+            await dispatch(listIdStore({ firchaproveedor: [] }));
+
+            const response = await axios.request(options);
+
+            if (response.status === 200) {
+                const data = response.data;
+                await dispatch(saveId({ id: proveedorId }));
+                await dispatch(listIdStore({ firchaproveedor: data }));
+            } else {
+                await dispatch(listIdStore({ firchaproveedor: [] }));
+            }
+
+        } catch (error) {
+            // console.error(error);
+            // await dispatch(loginFail());
+        } finally {
+            await dispatch(hideBackDropStore());
+        }
     };
 };

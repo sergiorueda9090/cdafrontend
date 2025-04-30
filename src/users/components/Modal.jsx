@@ -88,7 +88,8 @@ export const FormDialogUser = () => {
         else if (!/\S+@\S+\.\S+/.test(formValues.email))
         newErrors.email = "Debe ser un correo válido";
         if (!formValues.first_name.trim()) newErrors.first_name = "El nombre es obligatorio";
-        if (!formValues.last_name.trim()) newErrors.last_name = "El apellido es obligatorio";
+        if (!formValues.last_name.trim()) newErrors.last_name   = "El apellido es obligatorio";
+        if (!formValues.idrol.trim()) newErrors.idrol           = "El Rol es obligatorio";
         if (!formValues.password.trim())
         newErrors.password = "La contraseña es obligatoria";
         else if (formValues.password.length < 6)
@@ -110,6 +111,10 @@ export const FormDialogUser = () => {
         // Validar username
         if (formValues.username && !formValues.username.trim()) {
             newErrors.username = "El usuario es obligatorio";
+        }
+
+        if (formValues.idrol && !formValues.idrol.trim()) {
+            newErrors.idrol = "El Rol es obligatorio";
         }
 
         // Validar email
@@ -174,6 +179,7 @@ export const FormDialogUser = () => {
                 formData.append("last_name",        formValues.last_name);
                 formData.append("password",         formValues.password);
                 formData.append("repetirPassword",  formValues.repetirPassword);
+                formData.append("idrol",            formValues.idrol);
         
                 // Agregar imagen solo si existe
                 if (selectedImage) {
@@ -197,6 +203,7 @@ export const FormDialogUser = () => {
                     last_name   : formValues.last_name,
                     password    : formValues.password,
                     repetirPassword:formValues.repetirPassword,
+                    idrol       : formValues.idrol,
                     image       : selectedImage
                 }
                 
@@ -331,7 +338,28 @@ export const FormDialogUser = () => {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
+                            <TextField
+                                autoComplete="off"
+                                fullWidth
+                                id="idrol"
+                                name="idrol"
+                                select
+                                label="Rol Usuario"
+                                SelectProps={{
+                                native: true,
+                                }}
+                                value={formValues.idrol}
+                                onChange={handleChange}
+                            >
+                                <option value="1">SuperAdmin</option>
+                                <option value="2">Admin</option>
+                                <option value="3">Auxiliar</option>
+                                <option value="4">Cliente</option>
+                            </TextField>
+                        </Grid>
+
+                        <Grid item xs={4}>
                             <Stack spacing={2} alignItems="flex-start">
                                 <TextField
                                     autoComplete="off"
@@ -375,7 +403,7 @@ export const FormDialogUser = () => {
                             </Stack>
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
                             <TextField
                                 autoComplete="off"
                                 fullWidth
