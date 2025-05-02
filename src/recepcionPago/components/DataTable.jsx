@@ -48,13 +48,21 @@ export function DataTable() {
         headerName: 'Fecha de Ingreso',
         width: 200,
         valueFormatter: (params) => {
-          console.log("params ",params)
           if (!params) return "";
           // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
           return params.slice(0, 16).replace("T", " ");
         }
       },
-      { field: 'fecha_transaccion',       headerName: 'Fecha de Transacción',   width: 200 },
+      {
+        field: 'fecha_transaccion',
+        headerName: 'Fecha de Transacción',
+        width: 200,
+        valueFormatter: (params) => {
+          if (!params) return "";
+          // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
+          return params.slice(0, 16).replace("T", " ");
+        }
+      },
       {
         field: 'valor',
         headerName: 'Valor',

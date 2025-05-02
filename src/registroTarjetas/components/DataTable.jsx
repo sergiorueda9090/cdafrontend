@@ -5,12 +5,14 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
+import { showThunk, deleteThunk, transMoneyThunk } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
 import { toast } from 'react-toastify';
 import emptyDataTable from "../../assets/images/emptyDataTable.png"
-import { Box } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import { FilterData } from '../../cotizador/components/FilterData';
 import { DateRange } from '../../cotizador/components/DateRange';
+
 export function DataTable() {
 
     const dispatch = useDispatch();
@@ -50,20 +52,36 @@ export function DataTable() {
         sortable: false,
         renderCell: (params) => (
           <>
-            <IconButton
-              aria-label="edit"
-              onClick={() => handleEdit(params.row)}
-              color="primary"
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              onClick={() => handleDelete(params.row.id)}
-              color="error"
-            >
-              <DeleteIcon />
-            </IconButton>
+            <Tooltip title="Editar Registro" arrow>
+              <IconButton
+                aria-label="edit"
+                onClick={() => handleEdit(params.row)}
+                color="primary"
+              >
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+
+              <Tooltip title="Eliminar Registro" arrow>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => handleDelete(params.row.id)}
+                    color="error"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Transladar dinero entre cuentas" arrow>
+                  <IconButton
+                    aria-label="edit"
+                    onClick={() => handleTransMoany(params.row)}
+                    color="warning">
+                    < CompareArrowsIcon />
+                  </IconButton>
+              </Tooltip>
+
+           
           </>
         ),
       },
@@ -123,6 +141,11 @@ export function DataTable() {
   const handleEdit = async (row) => {
     await dispatch(showThunk(row.id));
   };
+
+    // Función para manejar la edición
+    const handleTransMoany = async (row) => {
+      await dispatch(transMoneyThunk(row.id));
+    };
 
 
   return (

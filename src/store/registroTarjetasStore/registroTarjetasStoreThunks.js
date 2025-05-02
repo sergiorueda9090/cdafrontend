@@ -171,6 +171,70 @@ export const showThunk= (id = "") => {
                                               saldo         : response.data.saldo ?? '',
                                               imagen        : response.data.imagen ?? '',
                                               banco         : response.data.banco ?? '',
+                                              transMoneyState: false,
+                                            }
+                                        )
+                                );
+
+                await dispatch(openModalShared());
+
+                await dispatch( hideBackDropStore() );
+
+            }else{
+
+                await dispatch( hideBackDropStore() );
+
+                await dispatch(setAlert({ message: '❌ Ocurrió un error.', type: 'error'}));
+ 
+            }
+            
+
+        } catch (error) {
+
+            //await dispatch ( loginFail() );
+
+            await dispatch( hideBackDropStore() );
+            // Manejar errores
+            console.error(error);
+       
+        }
+
+    }
+
+}
+
+export const transMoneyThunk= (id = "") => {
+
+    return async (dispatch, getState) => {
+        
+        const {authStore} = getState();
+        const token       = authStore.token
+
+        await dispatch(showBackDropStore());
+        
+        const options = {
+            method: 'GET',
+            url: `${ URL}/${parametersURL}tarjeta/${id}`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+
+          try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+            
+            if(response.status == 200){
+
+                await dispatch(showStore(
+                                            { id            : response.data.id ?? '',
+                                              numero_cuenta : response.data.numero_cuenta ?? '',
+                                              nombre_cuenta : response.data.nombre_cuenta ?? '',
+                                              descripcion   : response.data.descripcion ?? '',
+                                              saldo         : response.data.saldo ?? '',
+                                              imagen        : response.data.imagen ?? '',
+                                              banco         : response.data.banco ?? '',
+                                              transMoneyState: true,
                                             }
                                         )
                                 );
@@ -215,6 +279,77 @@ export const updateThunks = (data) => {
         const options = {
             method: 'PUT',
             url: `${URL}/${parametersURL}tarjeta/${data.id}/update/`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+              },
+            data:data
+        }
+ 
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+            
+            if(response.status == 201 || response.status == 200){
+                
+                await dispatch(resetFormularioStore());
+
+                await dispatch(setAlert({ message: '¡ ✏️ Acción completada con éxito!', type: 'success'}));
+
+                await dispatch( getAllThunks() );
+
+                await dispatch( closeModalShared() );
+
+                await dispatch( hideBackDropStore() );
+              
+            }else{
+
+                await dispatch(setAlert({ message: '❌ Ocurrió un error.', type: 'error'}));
+
+                await dispatch( getAllThunks() );
+
+                await dispatch( closeModalShared() );
+
+                await dispatch( hideBackDropStore() );
+           
+            }
+            
+
+        } catch (error) {
+
+            //await dispatch ( loginFail() );
+            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
+            
+            //await dispatch ( loginFail() );
+
+            await dispatch( closeModalShared() );
+
+            await dispatch( hideBackDropStore() );
+            // Manejar errores
+            console.error(error);
+       
+        }
+
+    }
+
+}
+
+
+export const updateTranferirThunks = (data) => {
+
+    return async (dispatch, getState) => {
+
+        const {authStore} = getState();
+        const token       = authStore.token
+   
+        await dispatch(showBackDropStore());
+        
+        console.log(`${URL}/${parametersURL}transferirtarjeta/${data.id}/${data.idTarTranMoney}/`);
+
+        const options = {
+            method: 'PUT',
+            url: `${URL}/${parametersURL}transferirtarjeta/${data.id}/${data.idTarTranMoney}/`,
             headers: {
                 Authorization: `Bearer ${token}`,
                 'content-type': 'multipart/form-data; boundary=---011000010111000001101001'

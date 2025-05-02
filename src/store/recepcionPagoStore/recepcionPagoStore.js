@@ -1,5 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+// Función para obtener la fecha actual en formato YYYY-MM-DDTHH:mm
+/*
+const obtenerFechaActualFormatoInput = () => {
+  const ahora = new Date();
+  const fecha = ahora.toISOString().slice(0, 16); // Ej: "2025-05-02T21:33"
+  return fecha;
+};
+*/
+
 export const recepcionPagoStore = createSlice({
   name: 'recepcionPagoStore',
   initialState: {

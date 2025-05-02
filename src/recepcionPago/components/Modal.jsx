@@ -62,7 +62,7 @@ export const FormDialogUser = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  /*const handleSubmit = (e) => {
    
     e.preventDefault();
    
@@ -96,6 +96,38 @@ export const FormDialogUser = () => {
 
     dispatch(closeModalShared());
     
+  };*/
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  
+    if (!validateForm()) return;
+  
+    // Formatear fecha_transaccion si tiene valor
+    let formattedFecha = fecha_transaccion;
+    if (fecha_transaccion) {
+      const date = new Date(fecha_transaccion);
+      formattedFecha = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ` +
+                       `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}.` +
+                       `${String(date.getMilliseconds()).padStart(3, '0')}000`; // simulando microsegundos
+    }
+  
+    const dataSend = {
+      cliente_id: cliente_id,
+      id_tarjeta_bancaria: id_tarjeta_bancaria,
+      fecha_transaccion: formattedFecha,
+      valor: valor,
+      observacion: observacion,
+    };
+  
+    if (id) {
+      dataSend.id = id;
+      dispatch(updateThunks(dataSend));
+    } else {
+      dispatch(createThunks(dataSend));
+    }
+  
+    dispatch(closeModalShared());
   };
 
   const handleClose = () => {
@@ -173,7 +205,7 @@ export const FormDialogUser = () => {
                   fullWidth
                   name="fecha_transaccion"
                   label="📅 Fecha de Transacción"
-                  type="date"
+                  type="datetime-local"
                   value={fecha_transaccion}
                   onChange={handleChange}
                   error={!!errors.fecha_transaccion}
@@ -181,6 +213,23 @@ export const FormDialogUser = () => {
                   InputLabelProps={{ shrink: true }} // Esto asegura que el label no se sobreponga
                 />
               </Grid>
+
+                            
+              {/*<Grid item xs={12}>
+                <TextField
+                  autoComplete="off"
+                  fullWidth
+                  name="observacion"
+                  label="📄 Observacion"
+                  type="text"
+                  value={observacion}
+                  multiline
+                  rows={4} // You can adjust this number based on your needs
+                  onChange={handleChange}
+                  error={!!errors.observacion}
+                  helperText={errors.observacion}
+                />
+              </Grid>*/}
 
               <Grid item xs={6}>
                 <TextField

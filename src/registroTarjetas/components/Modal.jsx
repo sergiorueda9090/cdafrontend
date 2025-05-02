@@ -11,7 +11,7 @@ import { Grid, TextField, Select, MenuItem, InputLabel, FormControl, Avatar, Box
 import { useDispatch, useSelector } from 'react-redux';
 
 import { closeModalShared } from '../../store/globalStore/globalStore';
-import { createThunks, updateThunks, handleFormStoreThunk } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
+import { createThunks, updateThunks, handleFormStoreThunk, updateTranferirThunks } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
 
 import bancobogota    from "../../assets/images/payments/mp-banco-bogota.webp";
 import  bancolombia   from "../../assets/images/payments/mp-bancolombia.webp";
@@ -57,18 +57,20 @@ export const FormDialogUser = () => {
   const dispatch = useDispatch();
 
   const { openModalStore }    = useSelector((state) => state.globalStore);
-  const { id, numero_cuenta, nombre_cuenta, descripcion, saldo, imagen, banco } = useSelector((state) => state.registroTarjetasStore);
+  const { id, numero_cuenta, nombre_cuenta, descripcion, saldo, imagen, banco, transMoneyState, tarjetasBancarias, idTarTranMoney } = useSelector((state) => state.registroTarjetasStore);
   const [errors, setErrors]   = useState({});
-
+  console.log("tarjetasBancarias ",tarjetasBancarias);
   const handleChange = (e) => {
     dispatch(handleFormStoreThunk(e.target));
   };
 
-    const handleTypeBank = (value) => {
-      console.log("value ",value)
-      dispatch(handleFormStoreThunk({ name: 'banco',          value:value.name }));
-      //dispatch(handleFormStoreThunk({ name: 'imagen',  value:value.image }));
-    };
+  const handleTypeBank = (value) => {
+    dispatch(handleFormStoreThunk({ name: 'banco',          value:value.name }));
+  };
+
+  const handleTypeTranMoney = (value) => {
+    dispatch(handleFormStoreThunk({ name: 'idTarTranMoney', value:value.id }));
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -95,7 +97,7 @@ export const FormDialogUser = () => {
   const handleSubmit = (e) => {
    
     e.preventDefault();
-   
+    
     if (!validateForm()) return;
 
     if (!id) {
@@ -129,6 +131,29 @@ export const FormDialogUser = () => {
     
   };
 
+
+  const handleSubmitTransMoney = (e) => {
+   
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    console.log("id ",id);
+    console.log("idTarTranMoney ",idTarTranMoney);
+    if (id && idTarTranMoney) {
+     
+      const dataSend = {
+        id : id,
+        idTarTranMoney : idTarTranMoney,
+      };
+
+      dispatch(updateTranferirThunks(dataSend));
+
+    }
+
+    dispatch(closeModalShared());
+    
+  };
+
   const handleClose = () => {
     dispatch(closeModalShared());
   };
@@ -138,7 +163,7 @@ export const FormDialogUser = () => {
   return (
     <Dialog open={openModalStore} onClose={handleClose} fullWidth maxWidth="lg">
       <DialogTitle>{id ? "Editar Tarjeta Bancaria" : "Crear Tarjeta Bancaria"}</DialogTitle>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={transMoneyState ? handleSubmitTransMoney : handleSubmit}>
         <DialogContent>
           <DialogContentText>
             Completa la información para poder crear una nueva tarjeta bancaria.
@@ -185,20 +210,23 @@ export const FormDialogUser = () => {
                 />
               </Grid>
 
-              {/*<Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  name="saldo"
-                  label="💸 Saldo de la cuenta bancaria"
-                  type="text"
-                  value={saldo}
-                  onChange={handleChange}
-                  error={!!errors.saldo}
-                  helperText={errors.saldo}
-                />
-              </Grid>*/}
+              {transMoneyState ? (<Grid item xs={6}>
+                <FormControl fullWidth>
+                    <Autocomplete
+                        options={tarjetasBancarias}
+                        getOptionLabel={(option) => option.nombre_cuenta+' '+option.numero_cuenta}
+                        onChange={(event, newValue) => handleTypeTranMoney(newValue)}
+                        renderOption={(props, option) => (
+                          <Box component="li" {...props} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <Typography>{option.nombre_cuenta+' '+option.numero_cuenta}</Typography>
+                          </Box>
+                        )}
+                        renderInput={(params) => <TextField {...params} label="Seleccione la tarjeta a la que desea transferir dinero" />}
+                      />
+                  </FormControl>
 
-              <Grid item xs={6}>
+              </Grid>):(
+                <Grid item xs={6}>
                 <FormControl fullWidth>
                     <Autocomplete
                         options={paymentMethods}
@@ -214,7 +242,8 @@ export const FormDialogUser = () => {
                       />
                   </FormControl>
 
-              </Grid>
+              </Grid>)
+              }
             </Grid>
 
           
@@ -223,9 +252,16 @@ export const FormDialogUser = () => {
           <Button onClick={handleClose} variant="outlined" color="error">
             Cancelar
           </Button>
-          <Button type="submit" variant="outlined" color="primary">
-            {id ? "Editar Tarjeta Bancaria" : "Crear Tarjeta Bancaria"}
-          </Button>
+          {transMoneyState ? (
+                      <Button type="submit" variant="outlined" color="primary">
+                         {id ? "Trasladar dinero" : ""}
+                    </Button>
+          ):(
+            <Button type="submit" variant="outlined" color="primary">
+              {id ? "Editar Tarjeta Bancaria" : "Crear Tarjeta Bancaria"}
+            </Button>
+          )}
+
         </DialogActions>
       </form>
     </Dialog>

@@ -273,6 +273,43 @@ export function DataTable() {
           </>
         ),  
       },
+
+      { field: 'telefono',  headerName: 'Teléfono ',   width: 130,  
+        renderCell: (params) => (
+          <>
+          {params.value != "" ?(<Tooltip title="Copiar Teléfono">
+              <IconButton
+                aria-label="Copiar Teléfono"
+                onClick={() => handleCopyToClipboard(params.value)}
+                color="primary"
+                size="small"
+              >
+                <ContentCopyIcon />
+              </IconButton>
+            </Tooltip>):('')}
+            {params.value}
+          </>
+        ),  
+      },
+
+      { field: 'correo',  headerName: 'Correo',   width: 130,  
+        renderCell: (params) => (
+          <>
+            {params.value != "" ?(<Tooltip title="Copiar correo">
+              <IconButton
+                aria-label="Copiar correo"
+                onClick={() => handleCopyToClipboard(params.value)}
+                color="primary"
+                size="small"
+              >
+                <ContentCopyIcon />
+              </IconButton>
+            </Tooltip>):('')}
+            {params.value}
+          </>
+        ),  
+      },
+
       {
         field: 'actions',
         headerName: 'Actions',

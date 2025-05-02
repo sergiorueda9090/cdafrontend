@@ -4,6 +4,8 @@ export const registroTarjetasStore = createSlice({
   name: 'registroTarjetasStore',
   initialState: {
     id                : '',
+    idTarTranMoney    : '',
+    transMoneyState   : false,
     numero_cuenta     : '',
     nombre_cuenta     : '',
     descripcion       : '',
@@ -22,6 +24,7 @@ export const registroTarjetasStore = createSlice({
       state.saldo         = action.payload.saldo;
       state.imagen        = action.payload.imagen;
       state.banco         = action.payload.banco;
+      state.transMoneyState = action.payload.transMoneyState;
     },
     listStore:(state, action) => {
       state.tarjetasBancarias = action.payload.tarjetasBancarias
@@ -31,12 +34,14 @@ export const registroTarjetasStore = createSlice({
     },
     resetFormularioStore:(state) => {
       state.id            = '';
+      state.idTarTranMoney= '';
       state.numero_cuenta = '';
       state.nombre_cuenta = '';
       state.descripcion   = '';
       state.saldo         = '';
       state.imagen        = '';
       state.banco         = '';
+      state.transMoneyState = false;
     },
     handleFormStore:(state , action) => {
       const { name, value } = action.payload; // Obtener el nombre y el valor
