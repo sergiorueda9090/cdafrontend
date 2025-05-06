@@ -8,8 +8,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import { search_cotizadores, getAllThunks, getAllCotizadorTramitesThunks, 
         getAllCotizadorConfirmacionPreciosThunks, getAllCotizadorPdfsThunks, 
-        getAllFilterDateThunks} from "../../store/cotizadorStore/cotizadorThunks";
-import { getFichaProveedorByIdThunk } from "../../store/fichaProveedoresStore/fichaProveedoresThunks";
+        getAllFilterDateThunks, getAllFilterDatePdfThunks} from "../../store/cotizadorStore/cotizadorThunks";
+
+import { getAllFilterDateThunks as getFilterTramitesThunks }                    from '../../store/tramitesStore/tramitesThunks';
+import { getAllFilterDateThunks as getAllCotizadorConfirmacionThunksFilter  }   from "../../store/confirmacionPreciosStore/confirmacionPreciosThunks";
+import { getAllThunks as getAllFichaClienteThunksFilter  }  from "../../store/fichaClienteStore/fichaClienteStoreThunks";
+import { getAllThunks as getAllThunksArchivo }              from '../../store/archivocotizacionesantiguasStore/archivocotizacionesantiguasStoreThunks';
+import { getAllThunks as getAllThunksHistorial }             from '../../store/historialtramitesemitidosStore/historialtramitesemitidosStoreThunks';
+import { getFichaProveedorByIdThunk }                       from "../../store/fichaProveedoresStore/fichaProveedoresThunks";
 
 export const FilterData = ({cotizador, id=''}) => {
     
@@ -33,6 +39,30 @@ export const FilterData = ({cotizador, id=''}) => {
 
             dispatch(search_cotizadores(searchQuery))
 
+        }else if(cotizador == "tramite"){
+        
+            dispatch( getFilterTramitesThunks(startDate, endDate, searchQuery) );
+        
+        }else if(cotizador == "confirmacionprecios"){
+        
+            dispatch( getAllCotizadorConfirmacionThunksFilter(startDate, endDate, searchQuery) );
+        
+        }else if(cotizador == "pdfs"){
+        
+            dispatch( getAllFilterDatePdfThunks(startDate, endDate, searchQuery) );
+            
+        }else if(cotizador == "fichacliente"){
+        
+            dispatch( getAllFichaClienteThunksFilter(startDate, endDate, searchQuery) );
+            
+        }else if(cotizador == "archivocotizacionesantiguasStore"){
+   
+            dispatch( getAllThunksArchivo(startDate, endDate, searchQuery)) ;
+        
+        }else if(cotizador == "historialtramitesemitidos"){
+            
+            dispatch( getAllThunksHistorial(startDate, endDate, searchQuery)) ;
+        
         }else{
 
             dispatch(getAllFilterDateThunks(startDate, endDate));
@@ -60,7 +90,7 @@ export const FilterData = ({cotizador, id=''}) => {
         
         }else if(cotizador == "pdfs"){
 
-            dispatch(getAllCotizadorPdfsThunks());
+            dispatch(getAllFilterDatePdfThunks());
 
         }else if(cotizador == "cuentasbancarias"){
             
@@ -68,10 +98,17 @@ export const FilterData = ({cotizador, id=''}) => {
             return;
 
         }else if(cotizador == "fichacliente"){
+        
+            dispatch( getAllFichaClienteThunksFilter() );
             
-            alert("Ficha de los Clientes EN PROCESO DE DESARROLLO....");
-            return;
-
+        }else if(cotizador == "archivocotizacionesantiguasStore"){
+                    
+            dispatch( getAllThunksArchivo()) ;
+        
+        }else if(cotizador == "historialtramitesemitidos"){
+            
+            dispatch( getAllThunksHistorial()) ;
+        
         }else{
 
             dispatch(getAllThunks());

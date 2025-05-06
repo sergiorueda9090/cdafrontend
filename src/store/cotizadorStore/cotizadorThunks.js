@@ -641,3 +641,70 @@ export const search_cotizadores = (searchTerm) => {
         await dispatch(hideBackDropStore());
     };
 };
+
+
+export const getAllFilterDatePdfThunks = (fechaInicio, fechaFin, query = "") => {
+
+    return async (dispatch, getState) => {
+
+        await dispatch(showBackDropStore());
+
+        const { authStore } = getState();
+        const token = authStore.token;
+
+        let url = `${URL}/cotizador/get_cotizadores_pdf_filter_date/api/`;
+
+        // Construcción de parámetros
+        const params = new URLSearchParams();
+        if (fechaInicio) params.append("fechaInicio", fechaInicio);
+        if (fechaFin)    params.append("fechaFin", fechaFin);
+        if (query.trim()) params.append("q", query.trim());
+
+        // Agregar parámetros si existen
+        if ([...params].length > 0) {
+            url += `?${params.toString()}`;
+        }
+
+        const options = {
+            method: "GET",
+            url,
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+
+        try {
+            const response = await axios.request(options);
+
+            if(response.status === 200){
+
+                let data = response.data;
+                
+                console.log("datos confirmacion filter ",data);
+
+                if(data.length > 0){
+                    
+                    await dispatch(listStore({'cotizadores':data}))
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    await dispatch(listStore({'cotizadores':[]}))
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+        } catch (error) {
+            console.error("Error al obtener cotizadores:", error);
+        }
+
+        await dispatch(hideBackDropStore());
+    };
+};

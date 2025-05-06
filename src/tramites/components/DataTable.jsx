@@ -818,7 +818,7 @@ export function DataTable() {
 
       {/* Contenedor de filtros */}
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
-        <FilterData cotizador="tramite"/>  {/* Componente de filtros adicionales */}
+        <FilterData cotizador="tramite"/>  {/* Componente de filtros adicionales buscar */}
         <DateRange  cotizador="tramite"/>  {/* Componente para selección de rango de fechas */}
       </Box>
 

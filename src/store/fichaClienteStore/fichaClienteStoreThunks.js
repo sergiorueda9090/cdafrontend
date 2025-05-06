@@ -8,19 +8,33 @@ import { showStore, listStore, resetFormularioStore, handleFormStore  } from "./
 // Función asincrónica para obtener los Pokemons
 const parametersURL = 'fichacliente/api/';
 
-export const getAllThunks = () => {
+export const getAllThunks = (fechaInicio, fechaFin, query = "") => {
 
     return async (dispatch, getState) => {
         
         await dispatch(showBackDropStore());
         
         const {authStore} = getState();
-        const token = authStore.token
+        const token       = authStore.token
 
+        let url = `${ URL}/${parametersURL}fichaclientes/`;
+  
+        // Construcción de parámetros
+        const params = new URLSearchParams();
+        if (fechaInicio) params.append("fechaInicio", fechaInicio);
+        if (fechaFin)    params.append("fechaFin", fechaFin);
+        if (query.trim()) params.append("q", query.trim());
+
+        // Agregar parámetros si existen
+        if ([...params].length > 0) {
+            url += `?${params.toString()}`;
+        }
+
+        
         // Iniciar la carga
         const options = {
             method: 'GET',
-            url: `${ URL}/${parametersURL}fichaclientes/`,
+            url: url,
             headers: {
               Authorization: `Bearer ${token}`
             }

@@ -9,12 +9,17 @@ import { Button, Box  } from '@mui/material';
 import { getAllFilterDateThunks, getAllThunks, 
          getAllCotizadorTramitesThunks, 
          getAllCotizadorConfirmacionPreciosThunks, 
-         getAllCotizadorPdfsThunks }      from '../../store/cotizadorStore/cotizadorThunks';
+         getAllCotizadorPdfsThunks, getAllFilterDatePdfThunks }      from '../../store/cotizadorStore/cotizadorThunks';
+
+import { getAllFilterDateThunks as getFilterTramitesThunks }              from '../../store/tramitesStore/tramitesThunks';
+import { getAllFilterDateThunks as getAllCotizadorConfirmacionThunksFilter  } from "../../store/confirmacionPreciosStore/confirmacionPreciosThunks";
 
 import { dashboard_obtener_datos_cuenta, 
          dashboard_obtener_datos_cuenta_dates, 
          getAllThunksFilter,
          getAllThunks as getAllThunksCuentasBancarias } from '../../store/cuentasBancariasStore/cuentasBancariasThunks';
+
+import { getAllThunks as getAllFichaClienteThunksFilter  } from "../../store/fichaClienteStore/fichaClienteStoreThunks";
 
 import { getAllThunksFilter as getAllThunksFilterUtilidadOcacional, 
          getAllThunks       as getAllThunksUtilidadOcacional  } from '../../store/utilidadOcacionalStore/utilidadOcacionalStoreThunks';
@@ -61,6 +66,8 @@ export const DateRange = ({cotizador,id=''}) => {
 
         const formattedStartDate = dayjs(startDate).format("YYYY-MM-DD");
         const formattedEndDate   = dayjs(endDate).format("YYYY-MM-DD");
+        console.log("formattedStartDate ",formattedStartDate)
+        console.log("formattedEndDate ",formattedEndDate)
 
         if(cotizador == "dashBoard"){
 
@@ -68,12 +75,37 @@ export const DateRange = ({cotizador,id=''}) => {
             dispatch( endDateGlobalStore({'endDate':formattedEndDate}) )
             dispatch(dashboard_obtener_datos_cuenta_dates(id, formattedStartDate, formattedEndDate));
 
+        }else if(cotizador == "tramite"){
+
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) )
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) )
+            dispatch( getFilterTramitesThunks(formattedStartDate, formattedEndDate) );
+
+        }else if(cotizador == "confirmacionprecios"){
+            
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) )
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) )
+            dispatch( getAllCotizadorConfirmacionThunksFilter(formattedStartDate, formattedEndDate) );
+                
+        }else if(cotizador == "pdfs"){
+            
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) )
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) )
+            dispatch( getAllFilterDatePdfThunks(formattedStartDate, formattedEndDate) );
+                
         }else if(cotizador == "cuentasbancarias"){
 
             dispatch( startDateGlobalStore({'startDate':formattedStartDate}) )
             dispatch( endDateGlobalStore({'endDate':formattedEndDate}) )
-            dispatch(getAllThunksFilter(formattedStartDate, formattedEndDate));
+            dispatch(  getAllThunksFilter(formattedStartDate, formattedEndDate) );
 
+        }else if(cotizador == "fichacliente"){
+                
+            
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch( getAllFichaClienteThunksFilter(formattedStartDate, formattedEndDate)) ;
+                    
         }else if(cotizador == "utilidadOcacional"){
 
             dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
@@ -111,7 +143,7 @@ export const DateRange = ({cotizador,id=''}) => {
             dispatch( getAllThunksFilterRecepcionPago(formattedStartDate, formattedEndDate)) ;
 
         }else if(cotizador == "archivocotizacionesantiguasStore"){
-            
+    
             dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
             dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
             dispatch( getAllThunksArchivo(formattedStartDate, formattedEndDate)) ;
@@ -152,21 +184,20 @@ export const DateRange = ({cotizador,id=''}) => {
 
         }else if(cotizador == "confirmacionprecios"){
 
-            dispatch(getAllCotizadorConfirmacionPreciosThunks());
+            dispatch(getAllCotizadorConfirmacionThunksFilter());
 
         }else if(cotizador == "pdfs"){
 
-            dispatch(getAllCotizadorPdfsThunks());
+            dispatch(getAllFilterDatePdfThunks());
 
         }else if(cotizador == "cuentasbancarias"){
             
             dispatch(getAllThunksCuentasBancarias());
      
         }else if(cotizador == "fichacliente"){
-            
-            alert("EN PROCESO DE DESARROLLO....");
-            return;
-
+                
+            dispatch( getAllFichaClienteThunksFilter()) ;
+                    
         }else if(cotizador == "dashBoard"){
 
             dispatch(dashboard_obtener_datos_cuenta(id));

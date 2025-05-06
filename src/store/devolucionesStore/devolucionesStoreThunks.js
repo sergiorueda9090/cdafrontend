@@ -335,8 +335,8 @@ export const getAllThunksFilter = (fechaInicio, fechaFin) => {
         const token         = authStore.token;
 
         // Construir la URL con los parámetros de fecha
-        let url = `${ URL}/${parametersURL}devolucion/listar_devolucion_filtradas/`;
-
+        let url = `${ URL}/${parametersURL}devoluciones/filtro/`;
+  
         // Agregar las fechas a los parámetros de la URL si existen
         if (fechaInicio || fechaFin) {
             const params = new URLSearchParams();

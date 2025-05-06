@@ -207,7 +207,6 @@ export function DataTable() {
         headerName: "PDF",
         width: 150,
         renderCell: (params) => {
-          console.log("params.value ",params.value)
           if (params.value) {
             return (
               <Tooltip title="Ver PDF">

@@ -8,7 +8,7 @@ import { listStore, showStore  } from "./archivocotizacionesantiguasStore.js";
 // Función asincrónica para obtener los Pokemons
 const urlPatter = "archivocotizacionesantiguas";
 
-export const getAllThunks = (fechaInicio, fechaFin) => {
+export const getAllThunks = (fechaInicio, fechaFin, query="") => {
 
     return async (dispatch, getState) => {
         await dispatch(showBackDropStore());
@@ -19,13 +19,26 @@ export const getAllThunks = (fechaInicio, fechaFin) => {
         // Construir la URL con los parámetros de fecha
         let url = `${URL}/${urlPatter}/api/archivocotizacionesantiguas/`;
 
+        
+        // Construcción de parámetros
+        const params = new URLSearchParams();
+        if (fechaInicio) params.append("fechaInicio", fechaInicio);
+        if (fechaFin)    params.append("fechaFin", fechaFin);
+        if (query.trim()) params.append("q", query.trim());
+
+        // Agregar parámetros si existen
+        if ([...params].length > 0) {
+            url += `?${params.toString()}`;
+        }
+        
         // Agregar las fechas a los parámetros de la URL si existen
-        if (fechaInicio || fechaFin) {
+        /*if (fechaInicio || fechaFin) {
             const params = new URLSearchParams();
             if (fechaInicio) params.append("fecha_inicio", fechaInicio);
             if (fechaFin) params.append("fecha_fin", fechaFin);
+            if (query.trim()) params.append("q", query.trim());
             url += `?${params.toString()}`;
-        }
+        }*/
 
         const options = {
             method: "GET",

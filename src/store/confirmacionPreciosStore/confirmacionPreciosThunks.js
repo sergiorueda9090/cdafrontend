@@ -5,12 +5,13 @@ import { showThunk as precioClientesShow } from "../clientesStore/clientesThunks
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
 import { showStore, listStore, resetFormularioStore  } from "./confirmacionPreciosStore.js";
+import { listStore as listStoreClientes } from "../cotizadorStore/cotizadorStore.js"
 
 // Función asincrónica para obtener los Pokemons
 export const getAllThunks = () => {
 
     return async (dispatch, getState) => {
-        alert("")
+    
         await dispatch(showBackDropStore());
         
         const {authStore} = getState();
@@ -332,8 +333,6 @@ export const deleteThunk = (idUser = "") => {
 }
 
 
-
-
 export const getAllCotizadorTramitesThunks = () => {
 
     return async (dispatch, getState) => {
@@ -395,5 +394,70 @@ export const getAllCotizadorTramitesThunks = () => {
             await dispatch( hideBackDropStore() );
 
         }
+    };
+};
+
+export const getAllFilterDateThunks = (fechaInicio, fechaFin, query = "") => {
+    return async (dispatch, getState) => {
+
+        await dispatch(showBackDropStore());
+
+        const { authStore } = getState();
+        const token = authStore.token;
+
+        let url = `${URL}/cotizador/get_cotizadores_confirmacion_filter_date/api/`;
+
+        // Construcción de parámetros
+        const params = new URLSearchParams();
+        if (fechaInicio) params.append("fechaInicio", fechaInicio);
+        if (fechaFin)    params.append("fechaFin", fechaFin);
+        if (query.trim()) params.append("q", query.trim());
+
+        // Agregar parámetros si existen
+        if ([...params].length > 0) {
+            url += `?${params.toString()}`;
+        }
+
+        const options = {
+            method: "GET",
+            url,
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+
+        try {
+            const response = await axios.request(options);
+
+            if(response.status === 200){
+
+                let data = response.data;
+                
+                console.log("datos confirmacion filter ",data);
+
+                if(data.length > 0){
+                    
+                    await dispatch(listStoreClientes({'cotizadores':data}))
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    await dispatch(listStoreClientes({'cotizadores':[]}))
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+        } catch (error) {
+            console.error("Error al obtener cotizadores:", error);
+        }
+
+        await dispatch(hideBackDropStore());
     };
 };

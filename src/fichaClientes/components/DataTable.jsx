@@ -195,7 +195,7 @@ export function DataTable() {
 
       
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          <FilterData  cotizador="fichacliente"/>  {/* Componente de filtros adicionales */}
+           {/*<FilterData  cotizador="fichacliente"/>  Componente de filtros adicionales */}
           <DateRange   cotizador="fichacliente"/>  {/* Componente para selección de rango de fechas */}
       </Box>
 
