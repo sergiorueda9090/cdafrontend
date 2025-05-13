@@ -12,5 +12,8 @@ export const purpleTheme = createTheme({
         error: {
             main: red.A400
         }
-    }
+    },
+    typography: {
+        fontFamily: `'Montserrat', 'Coral Pixels', sans-serif`,
+    },
 })

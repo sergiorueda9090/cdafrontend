@@ -4,7 +4,7 @@ import Button               from '@mui/material/Button';
 import PersonAddAltIcon     from '@mui/icons-material/PersonAddAlt';
 
 import { DataTable }                    from '../components/DataTable';
-import { resetFormularioStore }         from '../../store/clientesStore/clientesStore';
+import { resetFormularioStore }         from '../../store/registroTarjetasStore/registroTarjetasStore';
 import { openModalShared, clearAlert }  from '../../store/globalStore/globalStore';
 import { FormDialogUser }               from '../components/Modal';
 

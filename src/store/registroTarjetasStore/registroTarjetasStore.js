@@ -12,6 +12,7 @@ export const registroTarjetasStore = createSlice({
     saldo             : 0,
     imagen            : '',
     banco             : '',
+    is_daviplata      : false,
     tarjetasBancarias : [],
     getTotalTarjetas  : [],
   },
@@ -25,6 +26,7 @@ export const registroTarjetasStore = createSlice({
       state.imagen        = action.payload.imagen;
       state.banco         = action.payload.banco;
       state.transMoneyState = action.payload.transMoneyState;
+      state.is_daviplata  = action.payload.is_daviplata;
     },
     listStore:(state, action) => {
       state.tarjetasBancarias = action.payload.tarjetasBancarias
@@ -42,6 +44,7 @@ export const registroTarjetasStore = createSlice({
       state.imagen        = '';
       state.banco         = '';
       state.transMoneyState = false;
+      state.is_daviplata  = false;
     },
     handleFormStore:(state , action) => {
       const { name, value } = action.payload; // Obtener el nombre y el valor

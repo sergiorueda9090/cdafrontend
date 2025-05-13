@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Grid, TextField, Select, MenuItem, InputLabel, FormControl, Avatar, Box, Typography, Autocomplete } from "@mui/material";
-
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -57,11 +57,18 @@ export const FormDialogUser = () => {
   const dispatch = useDispatch();
 
   const { openModalStore }    = useSelector((state) => state.globalStore);
-  const { id, numero_cuenta, nombre_cuenta, descripcion, saldo, imagen, banco, transMoneyState, tarjetasBancarias, idTarTranMoney } = useSelector((state) => state.registroTarjetasStore);
+  const { id, numero_cuenta, nombre_cuenta, descripcion, saldo, imagen, banco, transMoneyState, tarjetasBancarias, idTarTranMoney, is_daviplata } = useSelector((state) => state.registroTarjetasStore);
   const [errors, setErrors]   = useState({});
   console.log("tarjetasBancarias ",tarjetasBancarias);
-  const handleChange = (e) => {
+  console.log("is_daviplata ",is_daviplata);
+  /*const handleChange = (e) => {
     dispatch(handleFormStoreThunk(e.target));
+  };*/
+
+  const handleChange = (e) => {
+    const { name, type, checked, value } = e.target;
+    const finalValue = type === "checkbox" ? checked : value;
+    dispatch(handleFormStoreThunk({ name, value: finalValue }));
   };
 
   const handleTypeBank = (value) => {
@@ -107,7 +114,8 @@ export const FormDialogUser = () => {
         nombre_cuenta : nombre_cuenta,
         descripcion   : descripcion,
         imagen        : imagen,
-        banco         : banco
+        banco         : banco,
+        is_daviplata  : is_daviplata,
       };
 
       dispatch(createThunks(dataSend));
@@ -120,7 +128,8 @@ export const FormDialogUser = () => {
         nombre_cuenta : nombre_cuenta,
         descripcion   : descripcion,
         imagen        : imagen,
-        banco         : banco
+        banco         : banco,
+        is_daviplata  : is_daviplata,
       };
 
       dispatch(updateThunks(dataSend));
@@ -227,23 +236,38 @@ export const FormDialogUser = () => {
 
               </Grid>):(
                 <Grid item xs={6}>
-                <FormControl fullWidth>
+                  <FormControl fullWidth>
                     <Autocomplete
-                        options={paymentMethods}
-                        getOptionLabel={(option) => option.name}
-                        onChange={(event, newValue) => handleTypeBank(newValue)}
-                        renderOption={(props, option) => (
-                          <Box component="li" {...props} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                            <Avatar src={option.image} alt={option.name} sx={{ width: 30, height: 30 }} />
-                            <Typography>{option.name}</Typography>
-                          </Box>
-                        )}
-                        renderInput={(params) => <TextField {...params} label="Selecciona un método de pago" />}
-                      />
+                      options={paymentMethods}
+                      getOptionLabel={(option) => option.name}
+                      value={paymentMethods.find((option) => option.name === banco) || null}
+                      onChange={(event, newValue) => handleTypeBank(newValue)}
+                      renderOption={(props, option) => (
+                        <Box component="li" {...props} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          <Avatar src={option.image} alt={option.name} sx={{ width: 30, height: 30 }} />
+                          <Typography>{option.name}</Typography>
+                        </Box>
+                      )}
+                      renderInput={(params) => <TextField {...params} label="Selecciona un método de pago" />}
+                    />
                   </FormControl>
 
               </Grid>)
               }
+
+              <Grid item xs={6}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={is_daviplata}
+                      onChange={handleChange}
+                      name="is_daviplata"
+                      color="primary"
+                    />
+                  }
+                  label="¿Es cuenta DaviPlata?"
+                />
+              </Grid>
             </Grid>
 
           

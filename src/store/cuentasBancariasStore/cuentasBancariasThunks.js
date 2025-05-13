@@ -35,6 +35,13 @@ export const getAllThunks = () => {
 
                 let data = response.data;
                 console.log("data ",data)
+                
+                data.forEach(cuenta => {
+                    const valor = parseFloat(cuenta.valor_alias) || 0;
+                    const cuatroPorMil = parseFloat(cuenta.cuatro_por_mil) || 0;
+                    cuenta.total = valor < 0 ? valor + cuatroPorMil : valor - cuatroPorMil;
+                });
+
                 if(data.length > 0){
                     
                     await dispatch(listStore({'cuentasBancarias':data}))
@@ -360,17 +367,30 @@ export const dashboard_obtener_datos_cuenta = (id = "") => {
                 let data = response.data;
 
                 if(data.data.length > 0){
+                    
+                    const dashboardData = data.data.map(item => {
+                        const valor = parseFloat(item.valor_alias) || 0;
+                        const cuatroPorMil = parseFloat(item.cuatro_por_mil) || 0;
+                        const total_meno_cuatro_por_mil = valor < 0 ? valor + cuatroPorMil : valor - cuatroPorMil;
+                    
+                        return {
+                          ...item,
+                          total_meno_cuatro_por_mil
+                        };
+                      });
 
                     await dispatch(
                                     listDashboard(
                                         {
-                                            dashboardData           : response.data.data, 
+                                            dashboardData           : dashboardData, 
                                             total_cuenta_bancaria   : data.totales.total_cuenta_bancaria,
                                             total_devoluciones      : data.totales.total_devoluciones,
                                             total_gastos_generales  : data.totales.total_gastos_generales,
                                             total_utilidad_ocacional: data.totales.total_utilidad_ocacional,
                                             total_recepcionDePagos  : data.totales.total_recepcionDePagos,
                                             total                   : data.totales.total,
+                                            total_meno_cuatro_por_mil: data.totales.total_meno_cuatro_por_mil,
+                                            cuatro_por_mil          : data.totales.cuatro_por_mil,
                                             nombre_cuenta           : data.tarjeta.nombre_cuenta,
                                             descripcion_cuenta      : data.tarjeta.descripcion_cuenta,
                                             numero_cuenta           : data.tarjeta.numero_cuenta,
@@ -392,6 +412,7 @@ export const dashboard_obtener_datos_cuenta = (id = "") => {
                                 total_utilidad_ocacional: 0,
                                 total_recepcionDePagos  : 0,
                                 total                   : 0,
+                                cuatro_por_mil          : 0,
                                 nombre_cuenta           : '',
                                 descripcion_cuenta      : '',
                                 numero_cuenta           : '',
@@ -472,6 +493,7 @@ export const dashboard_obtener_datos_cuenta_dates = (id, fechaInicio="", fechaFi
                                             total_utilidad_ocacional: data.totales.total_utilidad_ocacional,
                                             total_recepcionDePagos  : data.totales.total_recepcionDePagos,
                                             total                   : data.totales.total,
+                                            cuatro_por_mil          : data.totales.cuatro_por_mil,
                                             nombre_cuenta           : data.tarjeta.nombre_cuenta,
                                             descripcion_cuenta      : data.tarjeta.descripcion_cuenta,
                                             numero_cuenta           : data.tarjeta.numero_cuenta,
@@ -493,6 +515,7 @@ export const dashboard_obtener_datos_cuenta_dates = (id, fechaInicio="", fechaFi
                                 total_utilidad_ocacional: 0,
                                 total_recepcionDePagos  : 0,
                                 total                   : 0,
+                                cuatro_por_mil          : 0,
                                 nombre_cuenta           : '',
                                 descripcion_cuenta      : '',
                                 numero_cuenta           : '',

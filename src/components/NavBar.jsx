@@ -84,7 +84,7 @@ export const NavBar = ({ drawerWidth = 240, nameModule = 'JournalApp', handleDra
                     <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
                         <MenuItem onClick={handleLogout}>
                             <LogoutOutlined sx={{ marginRight: 1 }} />
-                            Cerrar sesión
+                            Cerrar sesión close
                         </MenuItem>
                     </Menu>
                 </Grid>

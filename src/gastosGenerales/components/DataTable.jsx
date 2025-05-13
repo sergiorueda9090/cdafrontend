@@ -56,9 +56,36 @@ export function DataTable() {
       { field: 'fecha_transaccion',    headerName: 'Fecha de Transacción',  width: 200 },
       { field: 'observacion',          headerName: 'Descripción',           width: 200 },
       { field: 'valor',                headerName: 'Valor',                 width: 160, align: "right", headerAlign: "right",   
+          valueFormatter: (params) => {
+          return new Intl.NumberFormat('es-CO').format(params);
+        },
+        renderCell: (params) => {
+          const valor = params.value || 0;
+          const color = valor < 0 ? 'red' : 'green';
+          return (
+            <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+             {new Intl.NumberFormat('es-CO').format(valor)}
+            </span>
+          );
+        }
+      },
+      { field: 'cuatro_por_mil',                
+        headerName: 'Cuatro por Mil',                
+        width: 160, 
+        align: "right", 
+        headerAlign: "right",   
         valueFormatter: (params) => {
-        return new Intl.NumberFormat('es-CO').format(params);
-      }},
+          return new Intl.NumberFormat('es-CO').format(params);
+        },renderCell: (params) => {
+          const valor = params.value || 0;
+          const color = valor < 0 ? 'red' : 'green';
+          return (
+            <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+             {new Intl.NumberFormat('es-CO').format(valor)}
+            </span>
+          );
+        }
+      },
       { field: 'nombre_gasto',         headerName: 'Gasto',                 width: 160 },
       { field: 'nombre_tarjeta',       headerName: 'Tarjeta',               width: 160 },
       {

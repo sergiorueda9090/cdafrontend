@@ -57,7 +57,16 @@ export function DataTable() {
         headerAlign: "right",        
         valueFormatter: (params) => {
           return new Intl.NumberFormat('es-CO').format(params);
-        } 
+        },
+        renderCell: (params) => {
+          const valor = params.value || 0;
+          const color = valor < 0 ? 'red' : 'green';
+          return (
+            <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+             {new Intl.NumberFormat('es-CO').format(valor)}
+            </span>
+          );
+        }
       },
       { field: 'nombre_cliente',       headerName: 'Cliente',               width: 160 },
       {

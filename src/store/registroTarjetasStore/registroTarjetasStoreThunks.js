@@ -172,6 +172,7 @@ export const showThunk= (id = "") => {
                                               imagen        : response.data.imagen ?? '',
                                               banco         : response.data.banco ?? '',
                                               transMoneyState: false,
+                                              is_daviplata  : response.data.is_daviplata ?? '',
                                             }
                                         )
                                 );

@@ -78,6 +78,36 @@ export function DataTable() {
           );
         }
       },
+      {
+        field: 'cuatro_por_mil',
+        headerName: 'Cuatro por Mil',
+        width: 199,
+        align: "right", headerAlign: "right",
+        renderCell: (params) => {
+          const valor = params.value || 0;
+          const color = valor < 0 ? 'red' : 'green';
+          return (
+            <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+             {new Intl.NumberFormat('es-CO').format(valor)}
+            </span>
+          );
+        }
+      },
+      {
+        field: 'total',
+        headerName: 'Total',
+        width: 199,
+        align: "right", headerAlign: "right",
+        renderCell: (params) => {
+          const valor = params.value || 0;
+          const color = valor < 0 ? 'red' : 'green';
+          return (
+            <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+             {new Intl.NumberFormat('es-CO').format(valor)}
+            </span>
+          );
+        }
+      },
       { field: 'cilindraje',            headerName: 'Cilindraje',            width: 130 },
       { field: 'placa',                 headerName: 'Placa',            width: 130 },
       {

@@ -49,6 +49,38 @@ import { URL } from "../../constants.js/constantGlogal";
         </span>
       )
     },
+    {
+      field: "cuatro_por_mil",
+      headerName: "Cuatro por Mil",
+      width: 250,
+      align: "right",
+      headerAlign: "right",
+      renderCell: (params) => {
+        const valor = params.value || 0;
+        const color = valor < 0 ? 'red' : 'green';
+        return (
+          <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+            {new Intl.NumberFormat('es-CO').format(valor)}
+          </span>
+        );
+      }
+    },
+    {
+      field: "total_meno_cuatro_por_mil",
+      headerName: "total_meno_cuatro_por_mil",
+      width: 250,
+      align: "right",
+      headerAlign: "right",
+      renderCell: (params) => {
+        const valor = params.value || 0;
+        const color = valor < 0 ? 'red' : 'green';
+        return (
+          <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+            {new Intl.NumberFormat('es-CO').format(valor)}
+          </span>
+        );
+      }
+    },
     { field: "placa",  headerName: "placa",    width: 150 },
     {
       field: "origen",
