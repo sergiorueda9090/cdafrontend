@@ -6,11 +6,12 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import UndoIcon from '@mui/icons-material/Undo';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import { useSelector, useDispatch } from 'react-redux';
 import { resetFormularioStore }     from '../../store/cotizadorStore/cotizadorStore'
 import { showThunk, deleteThunk, updateThunks }   from '../../store/cotizadorStore/cotizadorThunks';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-toastify';
 
 import { useNavigate }              from 'react-router-dom';
@@ -313,7 +314,7 @@ export function DataTable() {
       {
         field: 'actions',
         headerName: 'Actions',
-        width: 150,
+        width: 180,
         sortable: false,
         renderCell: (params) => (
           <>
@@ -336,6 +337,18 @@ export function DataTable() {
                   <DoubleArrowIcon />
                 </IconButton>
             </Tooltip>
+
+            <Tooltip title="Eliminar Registro" arrow>
+              <IconButton
+                aria-label="Eliminar Registro"
+                onClick={() => handleDelete(params.row.id)}
+                color="error"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+
+            
             
             {!dateFilter ? <>
                <Tooltip title="Historia de registros" arrow>

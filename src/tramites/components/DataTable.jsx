@@ -6,6 +6,7 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import { Tooltip } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
+import UndoIcon from '@mui/icons-material/Undo';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
@@ -14,7 +15,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import { Autocomplete, TextField } from '@mui/material';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk, updateThunks }   from '../../store/cotizadorStore/cotizadorThunks';
+import { showThunk, deleteThunk, updateThunks, update_cotizador_devolver }   from '../../store/cotizadorStore/cotizadorThunks';
 
 import { useNavigate }              from 'react-router-dom';
 import { URL } from '../../constants.js/constantGlogal';
@@ -204,7 +205,49 @@ export function DataTable() {
       });
     };
 
+    const handleDevolver = (data="") => {
+      if(data == "") return
+      toast(
+        ({ closeToast }) => (
+          <div>
+            <p>¿Estás seguro de que deseas devolver este registro al estado de confirmacion de precio?</p>
+            <button
+              onClick={() => {
+                handleDevolverConfirmar(data); // Confirmar eliminación
+              }}
+              style={{
+                marginRight: '10px',
+                backgroundColor: 'red',
+                color: 'white',
+                border: 'none',
+                padding: '5px 10px',
+                cursor: 'pointer',
+              }}
+            >
+              Sí, Confirmar
+            </button>
+            <button
+              onClick={closeToast} // Cancelar eliminación
+              style={{
+                backgroundColor: 'gray',
+                color: 'white',
+                border: 'none',
+                padding: '5px 10px',
+                cursor: 'pointer',
+              }}
+            >
+              Cancelar
+            </button>
+          </div>
+        ),
+        { autoClose: false } // Evitar cierre automático
+      );
 
+    }
+
+    const handleDevolverConfirmar = (data) => {
+      dispatch(update_cotizador_devolver({'id':data.id, 'devolver':data.devolver}))
+    }
     const confirmDelete = (rowId) => {
       alert("llama el endpoint de elminar el archivo");
     }
@@ -705,7 +748,17 @@ export function DataTable() {
             >
               <ReceiptLongIcon />
             </IconButton>
-          </Tooltip>
+          </Tooltip> 
+
+            <Tooltip title="Volver al valor anterior" arrow>
+              <IconButton
+                aria-label="Volver al valor anterior"
+                onClick={() => handleDevolver({'id':params.row.id,'devolver':'tramite'})}
+                color="info"
+              >
+                <UndoIcon />
+              </IconButton>
+            </Tooltip>
     
           {/* Botón de Emitido */}
           { 

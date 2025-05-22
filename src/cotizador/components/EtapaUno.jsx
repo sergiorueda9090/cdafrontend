@@ -40,7 +40,7 @@ export const EtapaUno = () => {
 
   const validarEntrada = (valor, tipo) => {
     let nuevoValor = valor
-      .replace(/[`!\[\].]/g, "") // Elimina acento grave, exclamación, punto y corchetes
+      .replace(/[`!\[\]]/g, "") // Elimina acento grave, exclamación, punto y corchetes
       .replace(/^\s+/, ""); // Elimina espacios iniciales
     
     if (tipo === "placa") {

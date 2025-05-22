@@ -4,7 +4,7 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import { Box, Tooltip } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
-
+import UndoIcon from '@mui/icons-material/Undo';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Icono de confirmación
@@ -14,7 +14,7 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk, updateThunks }   from '../../store/cotizadorStore/cotizadorThunks';
+import { showThunk, deleteThunk, updateThunks, update_cotizador_devolver }   from '../../store/cotizadorStore/cotizadorThunks';
 
 import { toast, Bounce } from 'react-toastify';
 
@@ -121,10 +121,55 @@ export function DataTable() {
       );
 
     }
+
+    const handleDevolver = (data="") => {
+      if(data == "") return
+      toast(
+        ({ closeToast }) => (
+          <div>
+            <p>¿Estás seguro de que deseas devolver este registro al estado de confirmacion de precio?</p>
+            <button
+              onClick={() => {
+                handleDevolverConfirmar(data); // Confirmar eliminación
+              }}
+              style={{
+                marginRight: '10px',
+                backgroundColor: 'red',
+                color: 'white',
+                border: 'none',
+                padding: '5px 10px',
+                cursor: 'pointer',
+              }}
+            >
+              Sí, Confirmar
+            </button>
+            <button
+              onClick={closeToast} // Cancelar eliminación
+              style={{
+                backgroundColor: 'gray',
+                color: 'white',
+                border: 'none',
+                padding: '5px 10px',
+                cursor: 'pointer',
+              }}
+            >
+              Cancelar
+            </button>
+          </div>
+        ),
+        { autoClose: false } // Evitar cierre automático
+      );
+
+    }
     
     const handleUploadFileConfirmar = (id) => {
       dispatch(updateThunks({id, 'pdf':fileUpload, confirmacionPreciosModulo: 0, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0}, 'pdf'))
     }
+
+    const handleDevolverConfirmar = (data) => {
+      dispatch(update_cotizador_devolver({'id':data.id, 'devolver':data.devolver}))
+    }
+
     const handleOpenFileDialog = (row) => {
       setSelectedRow(row);
       fileInputRef.current?.click();
@@ -249,6 +294,17 @@ export function DataTable() {
                   </IconButton>
                 </Tooltip>
               )}
+
+                  
+            <Tooltip title="Volver al valor anterior" arrow>
+              <IconButton
+                aria-label="Volver al valor anterior"
+                onClick={() => handleDevolver({'id':params.row.id,'devolver':'pdf'})}
+                color="info"
+              >
+                <UndoIcon />
+              </IconButton>
+            </Tooltip>
 
               {
                 archivoFile ? (  <>

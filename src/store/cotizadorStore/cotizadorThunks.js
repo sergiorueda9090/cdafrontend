@@ -126,7 +126,7 @@ export const createThunks = (data, modulo="") => {
 
             }else{
 
-                await dispatch(setAlert({ message: '❌ Ocurrió un error.', type: 'error'}));
+                await dispatch(setAlert({ message: `¡🚗 ${response.data.error}`, type: 'error'}));
 
                 await dispatch( getAllThunks() );
 
@@ -137,21 +137,24 @@ export const createThunks = (data, modulo="") => {
             }
             
 
-        } catch (error) {
+        }catch (error) {
+            const errorData = error.response?.data;
 
-            // Mostrar una alerta con el mensaje de error
-            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
+            let errorMessage = '❌ Ha ocurrido un error.';
 
-            await dispatch( getAllThunks() );
-
-            //await dispatch ( loginFail() );
-
-            await dispatch( closeModalShared() );
-
-            await dispatch( hideBackDropStore() );
-            // Manejar errores
+            if (typeof errorData === 'string') {
+                errorMessage = `❌ ${errorData}`;
+            } else if (typeof errorData === 'object') {
+                // Convertimos errores del tipo { campo: ["mensaje"] } a texto
+                errorMessage = '❌ ' + Object.entries(errorData)
+                    .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+                    .join(' | ');
+            }
+            await dispatch(setAlert({ message: errorMessage, type: 'error' }));
+            await dispatch(getAllThunks());
+            await dispatch(closeModalShared());
+            await dispatch(hideBackDropStore());
             console.error(error);
-       
         }
 
     }
@@ -335,6 +338,13 @@ export const deleteThunk = (idUser = "") => {
                 await dispatch( getAllThunks() );
 
                 await dispatch(setAlert({ message: '¡ 🗑️ Acción completada con éxito!', type: 'success'}));
+
+            }else if(response.status == 200){
+
+                await dispatch( getAllThunks() );
+
+                await dispatch(setAlert({ message: '¡ 🗑️ Acción completada con éxito!', type: 'success'}));
+
 
             }else{
 
@@ -708,3 +718,93 @@ export const getAllFilterDatePdfThunks = (fechaInicio, fechaFin, query = "") => 
         await dispatch(hideBackDropStore());
     };
 };
+
+export const update_cotizador_devolver = (data) => {
+    
+    return async (dispatch, getState) => {
+        console.log("update_cotizador_devolver ",data)
+        const {authStore} = getState();
+        const token       = authStore.token
+    
+        await dispatch(showBackDropStore());
+
+        const options = {
+            method: 'PUT',
+            url: `${URL}/${urlPatter}/update_cotizador_devolver/api/${data.id}/`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+              },
+            data:data
+        }
+        /******************************** */
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+  
+            if(response.status == 201 || response.status == 200){
+                
+                await dispatch(resetFormularioStore());
+
+                await dispatch(setAlert({ message: '¡ ✏️ Acción completada con éxito!', type: 'success'}));
+
+                if(data.devolver == "cotizador"){
+                
+                    await dispatch(getAllThunks());
+
+                }else if(data.devolver == "tramite"){
+
+                    await dispatch( getAllCotizadorTramitesThunks() );
+
+                }else if(data.devolver == "confirmarprecio"){
+
+                    await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
+
+
+                }else if(data.devolver == "pdf"){
+
+                    await dispatch( getAllCotizadorPdfsThunks() );
+
+                }else{
+                    
+                    alert("eeeee");
+
+                }
+                
+
+                await dispatch( closeModalShared() );
+
+                await dispatch( hideBackDropStore() );
+                //toast.success('Successfully created!');
+            }else{
+
+                await dispatch(setAlert({ message: '❌ Ocurrió un error.', type: 'error'}));
+
+                await dispatch( getAllCotizadorTramitesThunks() );
+
+                await dispatch( closeModalShared() );
+
+                await dispatch( hideBackDropStore() );
+                //toast.error('This is an error!');;
+            }
+            
+
+        } catch (error) {
+
+            
+            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
+            
+            //await dispatch ( loginFail() );
+
+            await dispatch( closeModalShared() );
+
+            await dispatch( hideBackDropStore() );
+            // Manejar errores
+            console.error(error);
+       
+        }
+
+    }
+
+}

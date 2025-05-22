@@ -8,7 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Autocomplete, TextField } from '@mui/material';
 
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import UndoIcon from '@mui/icons-material/Undo';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Icono de confirmación
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -20,7 +20,7 @@ import { toast } from 'react-toastify';
 
 import { showThunk, updateThunks } from '../../store/cotizadorStore/cotizadorThunks';
 import { getAllThunks as getAllTarjetas, handleFormStoreThunk, handleDisplayAllTarjetasThunk } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
-import { handleFormStoreThunk as handleFormStoreThunkCotizador } from '../../store/cotizadorStore/cotizadorThunks';
+import { handleFormStoreThunk as handleFormStoreThunkCotizador, update_cotizador_devolver } from '../../store/cotizadorStore/cotizadorThunks';
 import { clearAllProveedores, handleFormStoreThunk as handleFormStoreThunkProveedores, getAllThunks as getAllProveedores } from '../../store/proveedoresStore/proveedoresThunks';
 
 import { useNavigate }              from 'react-router-dom';
@@ -29,6 +29,7 @@ import { DateRange } from '../../cotizador/components/DateRange';
 import emptyDataTable from "../../assets/images/emptyDataTable.png"
 
 import { Chip } from "@mui/material";
+
 
 const getContrastColor = (hexColor) => {
   // Convertir HEX a RGB
@@ -198,6 +199,49 @@ export function DataTable() {
       setActiveRow(null); // Cierra el Autocomplete al hacer clic afuera
     };
 
+    const handleDevolver = (data="") => {
+      if(data == "") return
+      toast(
+        ({ closeToast }) => (
+          <div>
+            <p>¿Estás seguro de que deseas devolver este registro al estado de confirmacion de precio?</p>
+            <button
+              onClick={() => {
+                handleDevolverConfirmar(data); // Confirmar eliminación
+              }}
+              style={{
+                marginRight: '10px',
+                backgroundColor: 'red',
+                color: 'white',
+                border: 'none',
+                padding: '5px 10px',
+                cursor: 'pointer',
+              }}
+            >
+              Sí, Confirmar
+            </button>
+            <button
+              onClick={closeToast} // Cancelar eliminación
+              style={{
+                backgroundColor: 'gray',
+                color: 'white',
+                border: 'none',
+                padding: '5px 10px',
+                cursor: 'pointer',
+              }}
+            >
+              Cancelar
+            </button>
+          </div>
+        ),
+        { autoClose: false } // Evitar cierre automático
+      );
+
+    }
+        const handleDevolverConfirmar = (data) => {
+          dispatch(update_cotizador_devolver({'id':data.id, 'devolver':data.devolver}))
+        }
+        
     const esEditable = etiqueta?.toUpperCase() === 'AMALFI' || etiqueta?.toUpperCase() === 'ELVIN';
 
     
@@ -321,7 +365,9 @@ export function DataTable() {
         headerName: 'Comisión Proveedor',
         width: 180,
         renderCell: (params) => {
-          return esEditable ? (
+          console.log("activeRow ",activeRow)
+          console.log("params.id ",params.id)
+          return esEditable && activeRow == params.id? (
             <input 
               type="text"
               value={comisiones[params.id] || ''}
@@ -435,6 +481,17 @@ export function DataTable() {
                   </IconButton>
                 </Tooltip>
               )}
+
+              
+            <Tooltip title="Volver al valor anterior" arrow>
+              <IconButton
+                aria-label="Volver al valor anterior"
+                onClick={() => handleDevolver({'id':params.row.id,'devolver':'confirmarprecio'})}
+                color="info"
+              >
+                <UndoIcon />
+              </IconButton>
+            </Tooltip>
   
               {/* Mostrar icono de confirmación y eliminar archivo si hay un archivo subido */}
               {
