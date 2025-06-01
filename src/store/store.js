@@ -23,6 +23,9 @@ import { archivocotizacionesantiguasStore } from './archivocotizacionesantiguasS
 import { historialtramitesemitidosStore } from './historialtramitesemitidosStore/historialtramitesemitidosStore';
 import { proveedoresStore }           from './proveedoresStore/proveedoresStore';
 import { fichaProveedoresStore }      from './fichaProveedoresStore/fichaProveedoresStore';
+import { balancegeneralStore }        from './balancegeneralStore/balancegeneralStore';
+import { utilidadStore }              from './utilidadStore/utilidadStore';
+import { authCustomerStore }          from './authCustomers/authCustomers';
 
 export const store = configureStore({
   reducer: {
@@ -49,6 +52,9 @@ export const store = configureStore({
     archivocotizacionesantiguasStore: archivocotizacionesantiguasStore.reducer,
     historialtramitesemitidosStore: historialtramitesemitidosStore.reducer,
     proveedoresStore      : proveedoresStore.reducer,
-    fichaProveedoresStore : fichaProveedoresStore.reducer
+    fichaProveedoresStore : fichaProveedoresStore.reducer,
+    balancegeneralStore   : balancegeneralStore.reducer,
+    utilidadStore         : utilidadStore.reducer,
+    authCustomerStore     : authCustomerStore.reducer
   }
 })

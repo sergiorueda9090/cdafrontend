@@ -15,9 +15,12 @@ import { RoutesTramites }               from '../tramites/routes/Routes';
 import { RoutesCotizador }              from '../cotizador/routes/Routes';
 import { RoutesConfirmacionPrecios }    from '../confirmacionPrecios/routes/Routes';
 import { RoutesPdfs }                   from '../cargarPdfs/routes/Routes';
+import { AuthRoutesCustomer }           from '../authClientes/routes/AuthRoutesCustomer';                   
 
 import { PageMain as BancosMain }       from '../bancos/pages/PageMain';
 import { RoutesBancos }                 from '../bancos/routes/Routes';
+import { RoutesBalanceGeneral }         from '../balanceGeneral/routes/Routes';
+import { RoutesUtilidad }               from '../utilidad/routes/Routes';
 import { RoutesFichaProveedores }       from '../fichaproveedores/routes/Routes';
 
 import { RoutesTarjetas }               from '../registroTarjetas/routes/Routes';
@@ -58,6 +61,9 @@ export const AppRouter = () => {
                 <Route path="/registroTarjetas/*"     element={ <RoutesTarjetas />} />
 
                 <Route path="/bancos/*"               element={ <RoutesBancos /> } />
+                <Route path="/balancegeneral/*"       element={ <RoutesBalanceGeneral /> } />
+                <Route path="/utilidad/*"             element={ <RoutesUtilidad /> } />
+                
                 <Route path="/fichaproveedores/*"     element={ <RoutesFichaProveedores /> } />
 
                 <Route path="/fichaCliente"           element={ <FichaCliente /> } />
@@ -82,6 +88,9 @@ export const AppRouter = () => {
             )
           
         }
+        
+        {/* ✅ Siempre disponible para clientes */}
+        <Route path="/customer/*" element={ <AuthRoutesCustomer /> } />
       </Routes>
   )
 }

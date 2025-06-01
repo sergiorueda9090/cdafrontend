@@ -14,8 +14,10 @@ import { getAllFilterDateThunks as getFilterTramitesThunks }                    
 import { getAllFilterDateThunks as getAllCotizadorConfirmacionThunksFilter  }   from "../../store/confirmacionPreciosStore/confirmacionPreciosThunks";
 import { getAllThunks as getAllFichaClienteThunksFilter  }  from "../../store/fichaClienteStore/fichaClienteStoreThunks";
 import { getAllThunks as getAllThunksArchivo }              from '../../store/archivocotizacionesantiguasStore/archivocotizacionesantiguasStoreThunks';
-import { getAllThunks as getAllThunksHistorial }             from '../../store/historialtramitesemitidosStore/historialtramitesemitidosStoreThunks';
+import { getAllThunks as getAllThunksHistorial }            from '../../store/historialtramitesemitidosStore/historialtramitesemitidosStoreThunks';
 import { getFichaProveedorByIdThunk }                       from "../../store/fichaProveedoresStore/fichaProveedoresThunks";
+import { getAllThunks as getAllThunksUtilidadFilter }       from "../../store/utilidadStore/utilidadStoreThunks";
+
 
 export const FilterData = ({cotizador, id=''}) => {
     
@@ -34,6 +36,10 @@ export const FilterData = ({cotizador, id=''}) => {
         if(cotizador == "fichaproveedor"){
             
             dispatch(getFichaProveedorByIdThunk(parseInt(id), startDate, endDate, searchQuery));
+
+        }else if (cotizador == "utilidad"){
+
+            dispatch(getAllThunksUtilidadFilter("", startDate, endDate, searchQuery));
 
         }else if (cotizador == "cotizador"){
 
@@ -109,6 +115,10 @@ export const FilterData = ({cotizador, id=''}) => {
             
             dispatch( getAllThunksHistorial()) ;
         
+        }else if (cotizador == "utilidad"){
+
+            dispatch(getAllThunksUtilidadFilter());
+
         }else{
 
             dispatch(getAllThunks());

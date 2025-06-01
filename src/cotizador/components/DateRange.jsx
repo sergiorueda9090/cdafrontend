@@ -45,6 +45,8 @@ import { getAllThunks as getAllThunksArchivo } from '../../store/archivocotizaci
 import { getAllThunks as getAllThunksHistorial } from '../../store/historialtramitesemitidosStore/historialtramitesemitidosStoreThunks';
 
 import { getFichaProveedorByIdThunk } from '../../store/fichaProveedoresStore/fichaProveedoresThunks';
+import { getAllThunks as getAllThunksBalanceGeneral } from '../../store/balancegeneralStore/balancegeneralStoreThunks';
+import { getAllThunks as getAllThunksUtilidadFilter }       from "../../store/utilidadStore/utilidadStoreThunks";
 
 import dayjs from "dayjs";
 
@@ -160,6 +162,18 @@ export const DateRange = ({cotizador,id=''}) => {
             dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
             dispatch(getFichaProveedorByIdThunk(parseInt(id), formattedStartDate, formattedEndDate));
 
+        }else if(cotizador == "utilidad"){
+            
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch(getAllThunksUtilidadFilter("", formattedStartDate, formattedEndDate));
+
+        }else if(cotizador == "balancegeneral"){
+            
+            dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
+            dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
+            dispatch(getAllThunksBalanceGeneral(formattedStartDate, formattedEndDate));
+
         }else{
 
             dispatch(getAllFilterDateThunks(formattedStartDate, formattedEndDate));
@@ -246,6 +260,14 @@ export const DateRange = ({cotizador,id=''}) => {
         }else if(cotizador == "fichaproveedor"){
             
             dispatch( getAllThunksHistorial()) ;
+
+        }else if(cotizador == "balancegeneral"){
+            
+            dispatch(getAllThunksBalanceGeneral());
+
+        }else if(cotizador == "utilidad"){
+            
+            dispatch(getAllThunksUtilidadFilter());
 
         }else{
         

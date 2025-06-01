@@ -14,6 +14,7 @@ import LabelIcon from '@mui/icons-material/Label';
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
@@ -28,6 +29,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import GroupsIcon from '@mui/icons-material/Groups';
+
 import { useSelector } from 'react-redux';
 
 const StyledLink = styled(Link)({
@@ -47,19 +49,23 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
     const handleToggleMovementsTarjeta = () => setOpenMovementsTarjeta(!openMovementsTarjeta);
 
     const items = [
-        { text: 'Usuarios', icon: <PeopleIcon />, route: '/users' },
-        { text: 'Clientes', icon: <Face6Icon />, route: '/clientes' },
-        { text: 'Etiquetas', icon: <LabelIcon />, route: '/etiquetas' },
-        { text: 'Proveedores', icon: <GroupsIcon />, route: '/proveedores' },
-        { text: 'Ficha Proveedores', icon: <GroupsIcon />, route: '/fichaproveedores' },
-        { text: 'Cotizador', icon: <RequestQuoteIcon />, route: '/cotizador' },
-        { text: 'Trámites', icon: <ReceiptLongIcon />, route: '/tramites' },
-        { text: 'Confirmación de Precios', icon: <AttachMoneyIcon />, route: '/confirmacionprecios' },
-        { text: 'Cargar PDFs', icon: <PictureAsPdfIcon />, route: '/cargarpdfs' },
-        { text: 'Cuentas Bancarias', icon: <AccountBalanceIcon />, route: '/bancos' },
-        { text: 'Ficha del Cliente', icon: <ContactPageIcon />, route: '/fichaCliente' },
-        { text: 'Archivo de cotizaciones antiguas', icon: <FolderIcon />, route: '/archivocotizacionesantiguas' },
-        { text: 'Historial Tramites emitidos', icon: <HistoryEduIcon />, route: '/historialtramitesemitidos' },
+        { text: 'Customer',                             icon: <PeopleIcon />,           route: '/customer' },
+        { text: 'Profile',                              icon: <PeopleIcon />,           route: '/customer/profile' },
+        { text: 'Usuarios',                             icon: <PeopleIcon />,           route: '/users' },
+        { text: 'Clientes',                             icon: <Face6Icon />,            route: '/clientes' },
+        { text: 'Etiquetas',                            icon: <LabelIcon />,            route: '/etiquetas' },
+        { text: 'Proveedores',                          icon: <GroupsIcon />,           route: '/proveedores' },
+        { text: 'Ficha Proveedores',                    icon: <GroupsIcon />,           route: '/fichaproveedores' },
+        { text: 'Cotizador',                            icon: <RequestQuoteIcon />,     route: '/cotizador' },
+        { text: 'Trámites',                             icon: <ReceiptLongIcon />,      route: '/tramites' },
+        { text: 'Confirmación de Precios',              icon: <AttachMoneyIcon />,      route: '/confirmacionprecios' },
+        { text: 'Cargar PDFs',                          icon: <PictureAsPdfIcon />,     route: '/cargarpdfs' },
+        { text: 'Cuentas Bancarias',                    icon: <AccountBalanceIcon />,   route: '/bancos' },
+        { text: 'Balance General',                      icon: <AssuredWorkloadIcon />,  route: '/balancegeneral' },
+        { text: 'Utilidades',                           icon: <MonetizationOnIcon />,   route: '/utilidad' },
+        { text: 'Ficha del Cliente',                    icon: <ContactPageIcon />,      route: '/fichaCliente' },
+        { text: 'Archivo de cotizaciones antiguas',     icon: <FolderIcon />,           route: '/archivocotizacionesantiguas' },
+        { text: 'Historial Tramites emitidos',          icon: <HistoryEduIcon />,       route: '/historialtramitesemitidos' },
     ];
 
     const filteredItems = items.filter(item => {
