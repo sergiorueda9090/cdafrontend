@@ -10,6 +10,7 @@ export const authCustomerStore = createSlice({
     telefono  : "",
     isLogin   : cliente_data.isLogin === true,
     data      : [],
+    recepcionPagoArray: [],
   },
   reducers: {
     loginSuccess: (state, action) => {
@@ -26,8 +27,11 @@ export const authCustomerStore = createSlice({
       state.nombre    = "";
       state.telefono  = "";
       state.data      = [];
-    }
+    },
+    showStoreRecepcionPago: (state, action) => {
+      state.recepcionPagoArray = action.payload;
+    },
   }
 }); 
 // Action creators are generated for each case reducer function
-export const {loginSuccess,  loginFail } = authCustomerStore.actions;
+export const {loginSuccess,  loginFail, showStoreRecepcionPago } = authCustomerStore.actions;

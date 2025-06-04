@@ -6,14 +6,17 @@ export const utilidadStore = createSlice({
   initialState: {
     id          : '',
     utilidades  : [],
+    total       : 0,
   },
   reducers: {
     listStore:(state, action) => {
       state.utilidades = action.payload.utilidades
+      state.total      = action.payload.total
     },
     resetFormularioStore:(state) => {
       state.id           = '';
       state.utilidades   = '';
+      state.total        = '';
     },
   }
 })

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { Box, Chip } from "@mui/material";
+import { Box, Chip, Typography } from "@mui/material";
 import { FilterData } from '../../cotizador/components/FilterData';
 import { DateRange } from '../../cotizador/components/DateRange';
 
@@ -11,7 +11,7 @@ export function DataTable() {
     const dispatch = useDispatch();
     
     let { firchaproveedor, id:idProveedor }    = useSelector(state => state.fichaProveedoresStore);
-    let { utilidades }                         = useSelector(state => state.utilidadStore);
+    let { utilidades, total }                         = useSelector(state => state.utilidadStore);
 
     const columns = [
       { field: 'id',                  headerName: 'ID',                     width: 100 },
@@ -52,6 +52,25 @@ export function DataTable() {
         <DateRange  cotizador="utilidad"/>  {/* Componente para selección de rango de fechas */}
       </Box>
       
+        <Paper 
+            elevation={3} 
+            sx={{ 
+              p: 2, 
+              mb: 3, 
+              maxWidth: 600, 
+              mx: 'auto', 
+              backgroundColor: '#e3f2fd', 
+              borderRadius: 2, 
+              boxShadow: '0 4px 10px rgba(33, 150, 243, 0.3)'
+            }}
+          >
+            <Typography variant="subtitle1" align="center" color="textSecondary">
+              Total Utilidad
+            </Typography>
+            <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
+              {total == 0 ? 0 : new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(total)}
+            </Typography>
+        </Paper>
 
       <DataGrid
         rows={ utilidades }

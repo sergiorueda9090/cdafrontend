@@ -37,7 +37,8 @@ export const getAllThunks = (proveedorId, fechaInicio, fechaFin, search) => {
 
             if (response.status === 200) {
                 const data = response.data;
-                await dispatch(listStore({ utilidades: data }));
+                console.log("data ",data)
+                await dispatch(listStore({ utilidades: data.data, total: data.total }));
             } else {
                 await dispatch(listStore({ utilidades: [] }));
             }

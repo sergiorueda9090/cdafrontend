@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -13,8 +13,11 @@ import {
   ListItem,
   ListItemText,
   IconButton,
-  Link
+  Link,
+  Tabs, 
+  Tab,
 } from "@mui/material";
+
 import { DataGrid } from "@mui/x-data-grid";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { useSelector,useDispatch } from "react-redux";
@@ -27,8 +30,12 @@ import { getCotizadoresCliente } from "../../store/authCustomers/authCustomersTh
 
 export const ProfilePage = () => {
   
-  const { data } = useSelector((state) => state.authCustomerStore);
-  
+  const { data, recepcionPagoArray } = useSelector((state) => state.authCustomerStore);
+
+  const [tabIndex, setTabIndex] = useState(0);
+    const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
+  };
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -57,19 +64,49 @@ export const ProfilePage = () => {
   const hasData = Array.isArray(data) && data.length > 0;
   const cliente = hasData ? data[0] : null;
 
+      const columnsRecepcion = [
+        { field: 'id',                      headerName: 'ID',                     width: 100 },
+        {
+          field: 'fecha_ingreso',
+          headerName: 'Fecha de Ingreso',
+          width: 200,
+          valueFormatter: (params) => {
+            if (!params) return "";
+            // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
+            return params.slice(0, 16).replace("T", " ");
+          }
+        },
+        {
+          field: 'fecha_transaccion',
+          headerName: 'Fecha de Transacción',
+          width: 200,
+          valueFormatter: (params) => {
+            if (!params) return "";
+            // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
+            return params.slice(0, 16).replace("T", " ");
+          }
+        },
+        {
+          field: 'valor',
+          headerName: 'Valor',
+          width: 130,
+          align: "right", headerAlign: "right",
+        },
+      ];
+
   const columns = [
-      { field: "placa", headerName: "Placa", flex: 1 },
-      { field: "modelo", headerName: "Modelo", flex: 1 },
-      { field: "correo", headerName: "Correo electrónico", flex: 1 },
-      { field: "chasis", headerName: "Chasis", flex: 1 },
-      { field: "cilindraje", headerName: "Cilindraje", flex: 1 },
-      { field: "total", headerName: "Total", flex: 1 },
-      { field: "fechaCreacion", headerName: "Fecha de creación", flex: 1 },
-      { field: "fechaTramite", headerName: "Fecha de trámite", flex: 1 },
+      { field: "placa", headerName: "Placa",  width: 250 },
+      { field: "modelo", headerName: "Modelo",  width: 250 },
+      { field: "correo", headerName: "Correo electrónico",  width: 250 },
+      { field: "chasis", headerName: "Chasis",  width: 250 },
+      { field: "cilindraje", headerName: "Cilindraje",  width: 250 },
+      { field: "total", headerName: "Total", width: 250 },
+      { field: "fechaCreacion", headerName: "Fecha de creación",  width: 250 },
+      { field: "fechaTramite", headerName: "Fecha de trámite",  width: 250 },
       {
           field: "acciones",
           headerName: "Acciones",
-          flex: 1,
+          width: 250,
           renderCell: (params) => (
             <a
               href={`http://127.0.0.1:8000${params.row.pdf}`} // cambia TU_BACKEND.com por tu dominio
@@ -161,16 +198,32 @@ export const ProfilePage = () => {
           {/* Trámites */}
           <Grid item xs={12} md={8}>
             <Paper elevation={3} sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
-                Información de Trámites
-              </Typography>
-              <DataGrid
-                rows={data}
-                columns={columns}
-                autoHeight
-                disableSelectionOnClick
-                sx={{ backgroundColor: "white" }}
-              />
+
+              <Tabs value={tabIndex} onChange={handleTabChange} sx={{ mb: 2 }}>
+                <Tab label="Información de Trámites" />
+                <Tab label="Recepción de Pago" />
+              </Tabs>
+                
+              <TabPanel value={tabIndex} index={0}>
+                <DataGrid
+                  rows={data}
+                  columns={columns}
+                  autoHeight
+                  disableSelectionOnClick
+                  sx={{ backgroundColor: "white" }}
+                />
+              </TabPanel>
+
+              <TabPanel value={tabIndex} index={1}>
+                <DataGrid
+                  rows={recepcionPagoArray}
+                  columns={columnsRecepcion}
+                  autoHeight
+                  disableSelectionOnClick
+                  sx={{ backgroundColor: "white" }}
+                />
+              </TabPanel>
+
             </Paper>
           </Grid>
         </Grid>
@@ -233,3 +286,11 @@ export const ProfilePage = () => {
     </Box>
   );
 };
+
+function TabPanel({ children, value, index }) {
+  return (
+    <div hidden={value !== index}>
+      {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
+    </div>
+  );
+}

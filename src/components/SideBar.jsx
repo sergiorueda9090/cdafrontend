@@ -47,10 +47,10 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
 
     const handleToggleMovements = () => setOpenMovements(!openMovements);
     const handleToggleMovementsTarjeta = () => setOpenMovementsTarjeta(!openMovementsTarjeta);
+    {/*{ text: 'Customer', icon: <PeopleIcon />,  route: '/customer' },
+       { text: 'Profile',  icon: <PeopleIcon />,  route: '/customer/profile' },*/}
 
     const items = [
-        { text: 'Customer',                             icon: <PeopleIcon />,           route: '/customer' },
-        { text: 'Profile',                              icon: <PeopleIcon />,           route: '/customer/profile' },
         { text: 'Usuarios',                             icon: <PeopleIcon />,           route: '/users' },
         { text: 'Clientes',                             icon: <Face6Icon />,            route: '/clientes' },
         { text: 'Etiquetas',                            icon: <LabelIcon />,            route: '/etiquetas' },

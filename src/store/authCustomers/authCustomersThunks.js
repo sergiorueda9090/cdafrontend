@@ -1,5 +1,5 @@
 import axios from "axios";
-import { loginSuccess, loginFail } from "./authCustomers.js";
+import { loginSuccess, loginFail, showStoreRecepcionPago } from "./authCustomers.js";
 import { URL } from "../../constants.js/constantGlogal.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 
@@ -88,7 +88,8 @@ export const getCotizadoresCliente = (clienteData) => {
                 await dispatch(setAlert({ message: '¡✨ Acción completada con éxito!', type: 'success'}));
 
                 await dispatch(loginSuccess({data: response.data.data, islogin: true}));
-
+    
+                await dispatch(showRecepcionPago(clienteData.id_cliente));
 
             } else {
                 
@@ -166,3 +167,58 @@ export const getAuth = (email,password) => {
         }
     };
 };
+
+export const showRecepcionPago= (id = "") => {
+
+    return async (dispatch, getState) => {
+        
+        const {authStore} = getState();
+        const token       = authStore.token
+        const parametersURL = 'recepcionpago/api/';
+
+        await dispatch(showBackDropStore());
+        
+        const options = {
+            method: 'GET',
+            url: `${URL}/${parametersURL}recepcionescliente/${id}/`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+
+          try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+            
+            if(response.status == 200){
+                console.log("response.data ",response);
+                await dispatch(showStoreRecepcionPago(response.data));
+
+                await dispatch(openModalShared());
+
+                await dispatch( hideBackDropStore() );
+
+            }else{
+
+                await dispatch(showStoreRecepcionPago([]));
+
+                await dispatch( hideBackDropStore() );
+
+                await dispatch(setAlert({ message: '❌ Ocurrió un error.', type: 'error'}));
+ 
+            }
+            
+
+        } catch (error) {
+
+            //await dispatch ( loginFail() );
+
+            await dispatch( hideBackDropStore() );
+            // Manejar errores
+            console.error(error);
+       
+        }
+
+    }
+
+}

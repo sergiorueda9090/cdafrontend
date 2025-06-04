@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import NotFoundImage from "../../assets/images/404cda.svg";
-
+import bienvenidos from "../../assets/images/bienvenidos.webp";
 export const NothingSelectedView = () => {
   const navigate = useNavigate();
 
