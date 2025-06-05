@@ -90,7 +90,7 @@ export const ShowView = () => {
         totalGastosGenerales,
         totalComisionesProveedores,
         totalTarjetas,
-        sumaTotal }    = useSelector(state => state.balancegeneralStore);
+        sumaTotal, utilidades }    = useSelector(state => state.balancegeneralStore);
   console.log("balanceGeneral ", balanceGeneral)
   console.log("totalTarjetas ",totalTarjetas)
   const { startDate, endDate } = useSelector(state => state.globalStore);
@@ -117,6 +117,19 @@ const data = [
     value: totalTarjetas,
     color: "#FF8042"
   }
+];
+
+const dataBalanceUtilidad = [
+  {
+    name: "Balance General",
+    value: sumaTotal,
+    color: "#0088FE"
+  },
+  {
+    name: "Utilidades ",
+    value: utilidades,
+    color: "#00C49F"
+  },
 ];
 
   
@@ -260,7 +273,7 @@ const data = [
           </Card>
         </Grid>
   
-        <Grid item xs={12}>
+        <Grid item xs={6}>
           <Paper sx={{ p: 2 }}>
               <Typography variant="h6" align="center">
                 📊 Resumen Financiero
@@ -273,6 +286,27 @@ const data = [
                   <Legend />
                   <Bar dataKey="value" radius={[5, 5, 0, 0]}>
                     {data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={6}>
+          <Paper sx={{ p: 2 }}>
+              <Typography variant="h6" align="center">
+                📊 Total Balance vs. Utilidades
+              </Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dataBalanceUtilidad} layout="vertical" margin={{ left: 20, right: 20 }}>
+                  <XAxis type="number" tickFormatter={(value) => new Intl.NumberFormat("es-CO").format(value)} />
+                  <YAxis dataKey="name" type="category" width={120} />
+                  <Tooltip formatter={(value) => new Intl.NumberFormat("es-CO").format(value)} />
+                  <Legend />
+                  <Bar dataKey="value" radius={[5, 5, 0, 0]}>
+                    {dataBalanceUtilidad.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Bar>
