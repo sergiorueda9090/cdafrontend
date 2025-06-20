@@ -168,7 +168,7 @@ export const getAuth = (email,password) => {
     };
 };
 
-export const showRecepcionPago= (id = "") => {
+export const showRecepcionPago= ( id = "") => {
 
     return async (dispatch, getState) => {
         
@@ -214,6 +214,109 @@ export const showRecepcionPago= (id = "") => {
             //await dispatch ( loginFail() );
 
             await dispatch( hideBackDropStore() );
+            // Manejar errores
+            console.error(error);
+       
+        }
+
+    }
+
+}
+
+export const getCotizadoresClienteSecond = (clienteData) => {
+   
+    return async (dispatch) => {
+        try {
+            
+            if (!clienteData || !clienteData.token || !clienteData.telefono || !clienteData.id_cliente) {
+                throw new Error("Faltan datos del cliente.");
+            }
+
+            const response = await axios.post(`${URL}/clientes/api/cotizador-cliente/`, {
+                token       : clienteData.token,
+                telefono    : clienteData.telefono,
+                id_cliente  : clienteData.id_cliente
+            });
+            
+        
+            if (response.status === 200) {
+             
+                await dispatch(loginSuccess({data: response.data.data, islogin: true}));
+    
+
+            } else {
+                
+                let data = response.data;
+
+                localStorage.removeItem("cliente_data");
+
+                window.location.href = '/customer/customer';
+
+                await dispatch(setAlert({ message: data.error, type: 'error'}));
+                
+                await dispatch(loginSuccess({data:[], islogin: false}));
+
+                await dispatch(loginFail());
+
+            }
+
+        } catch (error) {
+
+                localStorage.removeItem("cliente_data");
+
+                window.location.href = '/customer/customer';
+
+                await dispatch(setAlert({ message: error.response.data.error, type: 'error'}));
+                
+                await dispatch(loginSuccess({data:[], islogin: false}));
+
+                await dispatch(loginFail());
+
+
+        }
+    };
+};
+
+export const showRecepcionPagoSecond = ( id = "") => {
+
+    return async (dispatch, getState) => {
+        
+        const {authStore} = getState();
+        const token       = authStore.token
+        const parametersURL = 'recepcionpago/api/';
+        
+        const options = {
+            method: 'GET',
+            url: `${URL}/${parametersURL}recepcionescliente/${id}/`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+
+          try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+            
+            if(response.status == 200){
+
+                console.log("response.data ",response);
+
+                await dispatch(showStoreRecepcionPago(response.data));
+
+
+            }else{
+
+                await dispatch(showStoreRecepcionPago([]));
+
+                await dispatch( hideBackDropStore() );
+
+                await dispatch(setAlert({ message: '❌ Ocurrió un error.', type: 'error'}));
+ 
+            }
+            
+
+        } catch (error) {
+
             // Manejar errores
             console.error(error);
        

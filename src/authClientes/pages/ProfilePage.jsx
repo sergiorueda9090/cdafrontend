@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { loginFail } from "../../store/authCustomers/authCustomers"; // Ajusta según tu path
 import InstagramIcon from "@mui/icons-material/Instagram";
 import movilidadA2 from "../../assets/images/movilidadA2.jpeg"; // Ajusta si tu alias no es "@/"
-import { getCotizadoresCliente } from "../../store/authCustomers/authCustomersThunks";
+import { getCotizadoresCliente, getCotizadoresClienteSecond, showRecepcionPagoSecond } from "../../store/authCustomers/authCustomersThunks";
 
 
 export const ProfilePage = () => {
@@ -54,6 +54,41 @@ export const ProfilePage = () => {
       }
 
   }, [])
+
+  const startPollingRecepcionPago = () => {
+    setInterval(() => {
+      const clienteData = JSON.parse(localStorage.getItem("cliente_data"));
+      const idCliente = clienteData?.id_cliente;
+
+      if (idCliente) {
+        dispatch(showRecepcionPagoSecond(idCliente));
+      } else {
+        console.warn("ID cliente no encontrado en localStorage.");
+      }
+    }, 1000); // 1000 ms = 1 segundo
+  };
+
+  const startPollingCotizadores = () => {
+    setInterval(() => {
+      const clienteData = JSON.parse(localStorage.getItem("cliente_data"));
+
+      if (
+        clienteData &&
+        clienteData.token &&
+        clienteData.telefono &&
+        clienteData.id_cliente
+      ) {
+        dispatch(getCotizadoresClienteSecond(clienteData));
+      } else {
+        console.warn("Faltan datos válidos en localStorage para getCotizadoresClienteSecond.");
+      }
+    }, 1000); // cada segundo
+  };
+
+  useEffect(() => {
+    startPollingRecepcionPago();
+    startPollingCotizadores();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("cliente_data");

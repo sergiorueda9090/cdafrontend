@@ -101,7 +101,7 @@ export const LoginPage = () => {
 
         <form>
           <TextField
-            label="Número de Identificación"
+            label="Número de Teléfono "
             name="identificacion"
             value={identificacionLogin}
             onChange={handleChange}

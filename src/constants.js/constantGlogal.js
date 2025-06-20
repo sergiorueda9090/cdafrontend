@@ -1,8 +1,6 @@
 //export const URL  = 'https://cda.sergiodevsolutions.com';
 export const URL  = 'https://backend.movilidad2a.com';
-
 //export const URL = 'http://127.0.0.1:8000';
-
 export const TOKEN = (() => {
     const token = localStorage.getItem("access"); // Obtener el valor almacenado
 
