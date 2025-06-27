@@ -11,6 +11,7 @@ export const balancegeneralStore = createSlice({
     totalTarjetas: 0,
     sumaTotal:0,
     utilidades:0,
+    tarjetas:[],
   },
   reducers: {
     listStore: (state, action) => {
@@ -21,6 +22,7 @@ export const balancegeneralStore = createSlice({
       state.totalTarjetas = action.payload.totalTarjetas || 0;
       state.sumaTotal = action.payload.sumaTotal || 0;
       state.utilidades = action.payload.utilidades || 0;
+      state.tarjetas = action.payload.tarjetas || [];
     },
     resetFormularioStore: (state) => {
       state.id = '';
@@ -31,6 +33,7 @@ export const balancegeneralStore = createSlice({
       state.totalTarjetas = 0;
       state.sumaTotal = 0;
       state.utilidades = 0;
+      state.tarjetas = [];
     },
   }
 })

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import { Box } from "@mui/material";
@@ -453,35 +453,71 @@ export function DataTable() {
   };
 
 
-  return (
-    <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
-      
-        {/* Contenedor de filtros */}
-        <Box display="flex" justifyContent="space-between" marginBottom={2}>
-            <FilterData  cotizador="cotizador"/>  {/* Componente de filtros adicionales */}
-            <DateRange   cotizador="cotizador"/>  {/* Componente para selección de rango de fechas */}
-        </Box>
+  const [selectedCell, setSelectedCell] = useState({ rowId: null, field: null });
 
-      <DataGrid
+  const handleCellClick = (params) => {
+    setSelectedCell({ rowId: params.id, field: params.field });
+  };
+
+  const enhancedColumns = columns.map((col) => ({
+  ...col,
+  cellClassName: (params) => {
+    return selectedCell.rowId === params.id && selectedCell.field === col.field
+      ? 'selected-cell'
+      : '';
+  },
+}));
+
+  return (
+    <Paper sx={{ padding: 2, height: 700, width: '100%', position: 'relative' }}>
       
+      {/* Filtros */}
+      <Box display="flex" justifyContent="space-between" marginBottom={2}>
+        <FilterData cotizador="cotizador" />
+        <DateRange cotizador="cotizador" />
+      </Box>
+
+      {/* Etiqueta superior (sergio) en columna seleccionada */}
+      {selectedCell.field && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 72, // Ajusta si el header es más alto
+            left: `calc(${columns.findIndex(c => c.field === selectedCell.field)} * 150px + 10px)`,
+            backgroundColor: 'green',
+            color: 'white',
+            padding: '2px 8px',
+            borderRadius: '4px',
+            zIndex: 2,
+            fontSize: '12px',
+          }}
+        >
+          Carlos
+        </Box>
+      )}
+
+      {/* Tabla */}
+      <DataGrid
         rows={cotizadores}
-        columns={columns}
+        columns={enhancedColumns}
+        onCellClick={handleCellClick}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         sx={{
           border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
-          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+          "& .even-row": { backgroundColor: "#f5f5f5" },
+          "& .odd-row": { backgroundColor: "#ffffff" },
+          "& .selected-cell": {
+            border: "2px solid green",
+          },
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
         slots={{
-          noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
+          noRowsOverlay: NoRowsOverlay,
         }}
-
       />
-
     </Paper>
   );
 }

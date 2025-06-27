@@ -39,40 +39,65 @@ export const FormDialogUser = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-
   const handleSubmit = (e) => {
-
     e.preventDefault();
 
     if (!validateForm()) return;
-  
+
+    // Validaciones adicionales para preciosLey
+    const isEmpty = val => val === '' || val === null || val === undefined;
+
+    let hasEmptyFields = false;
+
+    preciosLey.forEach((item, index) => {
+      if (
+        isEmpty(item.descripcion) ||
+        isEmpty(item.precio_ley) ||
+        isEmpty(item.comision)
+      ) {
+        alert(`❌ Fila ${index + 1}: Hay campos vacíos o nulos`);
+        hasEmptyFields = true;
+      }
+    });
+
+    // Verificar duplicados en descripcion
+    const descripcionCount = {};
+    preciosLey.forEach(item => {
+      const desc = item.descripcion;
+      if (desc && desc.trim() !== '') {
+        descripcionCount[desc] = (descripcionCount[desc] || 0) + 1;
+      }
+    });
+
+    const duplicados = Object.entries(descripcionCount)
+      .filter(([desc, count]) => count > 1)
+      .map(([desc]) => desc);
+
+    if (duplicados.length > 0) {
+      alert(`❌ Descripciones duplicadas encontradas: ${duplicados.join(', ')}`);
+    }
+
+    if (hasEmptyFields || duplicados.length > 0) {
+      alert('⛔ No se puede continuar. Corrige los errores antes de enviar.');
+      return;
+    }
+
+    // Datos válidos, proceder con dispatch
+    const dataSend = {
+      id          : id || undefined,
+      nombre      : nombre.trim(),
+      direccion   : direccion?.trim() || '',
+      telefono    : telefono?.trim() || '',
+      color       : color,
+      precios_ley : JSON.stringify(preciosLey),
+    };
 
     if (!id) {
-
-      const dataSend = {
-        nombre      : nombre.trim(),
-        direccion   : direccion?.trim() || '',
-        telefono    : telefono?.trim() || '',
-        color       : color,
-        precios_ley : JSON.stringify(preciosLey),
-      };
-
       dispatch(createThunks(dataSend));
-
     } else {
-
-      const dataSend = {
-        id          : id,
-        nombre      : nombre.trim(),
-        direccion   : direccion?.trim() || '',
-        telefono    : telefono?.trim() || '',
-        color       : color,
-        precios_ley : JSON.stringify(preciosLey),
-      };
-    
       dispatch(updateThunks(dataSend));
-    
     }
+
     dispatch(closeModalShared());
   };
 

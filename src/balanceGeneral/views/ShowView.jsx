@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid }      from "@mui/x-data-grid";
-import { Grid, Typography, Box, Card }      from "@mui/material";
+import { Grid, Typography, Box, Card, List, ListItemButton, ListItemIcon, ListItemText  } from "@mui/material";
 import Paper from '@mui/material/Paper';
 
 
 import { useSelector, useDispatch }   from "react-redux";
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
-import { useNavigate, useParams }  from 'react-router-dom';
+import { useNavigate, useParams, Link }  from 'react-router-dom';
 
 
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
@@ -90,7 +90,7 @@ export const ShowView = () => {
         totalGastosGenerales,
         totalComisionesProveedores,
         totalTarjetas,
-        sumaTotal, utilidades }    = useSelector(state => state.balancegeneralStore);
+        sumaTotal, utilidades, tarjetas }    = useSelector(state => state.balancegeneralStore);
   console.log("balanceGeneral ", balanceGeneral)
   console.log("totalTarjetas ",totalTarjetas)
   const { startDate, endDate } = useSelector(state => state.globalStore);
@@ -157,7 +157,12 @@ const dataBalanceUtilidad = [
     ...row,
     id: uuidv4() // Usa el ID existente o genera uno nuevo
   }));
-  
+
+  const tarjetasDisponibles = [
+    { nombre: "Tarjeta Débito", icon: "/assets/icons/glass/ic-glass-bag.svg", ruta: "/tarjetas/debito" },
+    { nombre: "Tarjeta Crédito", icon: "/assets/icons/glass/ic-glass-card.svg", ruta: "/tarjetas/credito" },
+    { nombre: "Tarjeta Virtual", icon: "/assets/icons/glass/ic-glass-virtual.svg", ruta: "/tarjetas/virtual" },
+  ];
 
   return (
     <Box sx={{ height: 500, width: "100%", p: 3 }}>
@@ -180,27 +185,65 @@ const dataBalanceUtilidad = [
           </Box>
       </Grid>
 
-        <Grid item xs={4}>
+          <Grid item xs={12} sm={6} md={4}>
             <Card
               elevation={0}
               sx={{
                 borderRadius: 2,
                 p: 2,
-                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
-              }}>
+                backgroundColor: "#F4F6F8",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
               <Box display="flex" justifyContent="space-between">
                 <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
               </Box>
 
-              <Box mt={2}>
+              <Box mt={2} mb={2}>
                 <Typography variant="subtitle2" color="text.secondary">
                   Saldos total tarjetas
                 </Typography>
-                <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(totalTarjetas)}</Typography>
+                <Typography variant="h3">
+                  ${new Intl.NumberFormat("es-CO").format(totalTarjetas)}
+                </Typography>
+              </Box>
+
+              <Box>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  Tarjetas disponibles:
+                </Typography>
+
+                <Box sx={{ maxHeight: 200, overflowY: "auto" }}>
+                  <List dense>
+                    {tarjetas.map((tarjeta, index) => (
+                      <ListItemButton
+                        key={index}
+                        component={Link}
+                        to={"/"}
+                        sx={{
+                          borderRadius: 1,
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Box display="flex" alignItems="center">
+                          <ListItemText primary={tarjeta.nombre} />
+                        </Box>
+
+                        <Typography variant="body2" fontWeight="bold" color="text.primary">
+                          ${new Intl.NumberFormat("es-CO").format(tarjeta.valor)}
+                        </Typography>
+                      </ListItemButton>
+                    ))}
+                  </List>
+                </Box>
               </Box>
             </Card>
-        </Grid>
-
+          </Grid>
+        
         <Grid item xs={4}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,

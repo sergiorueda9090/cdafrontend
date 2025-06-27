@@ -54,7 +54,8 @@ export const getAllThunks = (fechaInicio, fechaFin) => {
                         totalComisionesProveedores: data.total_comisiones_proveedores,
                         totalTarjetas: data.totalTarjetas,
                         sumaTotal: data.sumaTotal,
-                        utilidades:data.utilidades
+                        utilidades:data.utilidades,
+                        tarjetas: data.tarjetas
                     }));
                 } else {
                     await dispatch(listStore({
@@ -64,7 +65,8 @@ export const getAllThunks = (fechaInicio, fechaFin) => {
                         totalComisionesProveedores: 0,
                         totalTarjetas:0,
                         sumaTotal:0,
-                        utilidades:0
+                        utilidades:0,
+                        tarjetas:[]
                     }));
                 }
 

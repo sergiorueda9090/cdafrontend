@@ -1,20 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link as RouterLink } from 'react-router-dom';
 import { Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { AuthLayout } from '../layout/AuthLayout';
-
+import { clearAlert }  from '../../store/globalStore/globalStore';
 import { useDispatch } from 'react-redux'
 import { getAuth }     from '../../store/authStore/authThunks';
 import { SimpleBackdrop } from "../../components/Backdrop/BackDrop";
-
+import { ToastContainer, toast } from 'react-toastify';
+import { useSelector } from "react-redux";
 
 export const LoginPage = () => {
-  
+  const { alert }  = useSelector( state => state.globalStore );
   const [email,     setEmail]     = useState('');
   const [password,  setPassword]  = useState('');
   const [errors,    setErrors]    = useState({ email: '', password: '' });
 
   const dispatch = useDispatch()
+
+    useEffect(() => {
+        if (alert) {
+          // Muestra la alerta según el tipo
+          if (alert.type === 'success') toast.success(alert.message, { position: 'top-center' });
+          if (alert.type === 'error') toast.error(alert.message, { position: 'top-center' });
+    
+          // Limpia la alerta después de mostrarla
+          dispatch(clearAlert());
+        }
+    }, [alert]);
   
   const validate = () => {
     let tempErrors = { email: '', password: '' };
@@ -95,6 +107,20 @@ export const LoginPage = () => {
         </form>
 
       <SimpleBackdrop />
+
+      
+        {/* START ALERT */}
+        <ToastContainer
+            position="top-center" // Posición predeterminada
+            autoClose={1000} // Tiempo de cierre automático
+            hideProgressBar={false} // Mostrar barra de progreso
+            newestOnTop={true} // Notificaciones más recientes arriba
+            closeOnClick // Cierre al hacer clic
+            draggable // Arrastrar para cerrar
+            pauseOnHover // Pausar al pasar el ratón
+            theme="colored" // Tema colorido
+        />
+        {/* END ALERT */}
     
     </AuthLayout>
   )

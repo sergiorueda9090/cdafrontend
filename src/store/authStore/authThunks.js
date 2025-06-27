@@ -1,6 +1,6 @@
 import axios from "axios";
 import { setAuthenticated, loginFail } from "./authStore.js";
-import { showBackDropStore, hideBackDropStore } from "../globalStore/globalStore.js";
+import { showBackDropStore, hideBackDropStore, setAlert } from "../globalStore/globalStore.js";
 import { URL, TOKEN } from "../../constants.js/constantGlogal.js";
 
 // Función asincrónica para obtener los Pokemons
@@ -40,17 +40,23 @@ export const getAuth = (email,password) => {
                 const userData = userResponse.data;
 
                 await dispatch(setAuthenticated({"access":data.access, "islogin":true, "idrol":userData.idrol}));
-                console.log('Usuario autenticado:', userData.idrol);
-
                 await dispatch(hideBackDropStore());
+
+            }else{
+
+                 console.log('1 Usuario autenticado:',response);   
+                 await dispatch(setAlert({ message: "¡❌ Acción completada con éxito!", type: "error" }));
+
             }
+
+            console.log('2 Usuario autenticado:', response);
             await dispatch(hideBackDropStore());
             // Despachar la acción setAuthenticated con la respuesta de la solicitud
         } catch (error) {
             // Manejar errores
             await dispatch(hideBackDropStore());
-            console.error(error);
-            await dispatch(loginFail());
+            await dispatch(setAlert({ message: `❌ ${error.response.data.detail}.`, type: "error" }));
+            console.log("error.response.data.detail ",error.response.data.detail)
         }
     };
 };

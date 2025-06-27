@@ -20,11 +20,11 @@ export const EtapaUno = () => {
   const { id, idCliente, precioDeLey, comisionPrecioLey, etiquetaDosArray, idEtiqueta, etiquetaDos, placa, cilindraje,modelo, chasis, 
           telefono,nombreCompleto,numeroDocumento,tipoDocumento,correo, direccion, total, dateFilter, disableBtn } = formValues;
   
-  const { clientes }  = useSelector(state => state.clientesStore);
-  const { preciosLey } = useSelector((state) => state.clientesStore);
-  const { etiquetas } = useSelector((state)  => state.etiquetasStore);
-  
-  console.log("etiquetas ",etiquetas);
+  const { clientes }    = useSelector(state => state.clientesStore);
+  const { preciosLey }  = useSelector((state) => state.clientesStore);
+  const { etiquetas }   = useSelector((state)  => state.etiquetasStore);
+    
+  console.log("preciosLey ",preciosLey);
 
   const tipoDocumentoOptions    = ['Cedula', 'Pasaporte', 'Tarjeta de Identidad', 'Número de Identificación Tributaria', 'Cédula de Extranjería', 'Permiso por Protección Temporal'];
   const prefijos                = ['319', '314', '313', '300', '301', '321', '322'];
@@ -248,17 +248,17 @@ export const EtapaUno = () => {
                 options={preciosLey}
                 value={preciosLey.find((option) => option.precio_ley === precioDeLey) || null} // Encuentra el objeto correspondiente
                 onChange={handlePrecioLeyChange}
-                getOptionLabel={(option) => option.precio_ley || ''} // Muestra el precio de ley como texto
+                getOptionLabel={(option) => option.descripcion || ''} // Muestra el precio de ley como texto
                 renderOption={(props, option) => (
                   <li {...props}>
-                    {option.precio_ley} {/* Si quieres mostrar más datos */}
+                    {option.descripcion} {/* Si quieres mostrar más datos */}
                   </li>
                 )}
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Precio de Ley"
-                    placeholder="Seleccione un precio de ley"
+                    label="Descripción"
+                    placeholder="Seleccione Descripción"
                     error={!!errors.precioDeLey}
                     helperText={errors.precioDeLey}
                   />

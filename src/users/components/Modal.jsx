@@ -67,7 +67,7 @@ export const FormDialogUser = () => {
         };
         //END IMAGEN
 
-    const [errors, setErrors]         = useState({});
+    const [errors, setErrors] = useState({});
 
     // Manejar cambios en los inputs
     const handleChange = (event) => {
@@ -82,14 +82,16 @@ export const FormDialogUser = () => {
     const validateForm = () => {
 
         const newErrors = {};
-
+         if (formValues.idrol == "") {
+            newErrors.idrol = "El Rol es obligatorio";
+        }
         if (!formValues.username.trim()) newErrors.username = "El usuario es obligatorio";
         if (!formValues.email.trim()) newErrors.email = "El correo es obligatorio";
         else if (!/\S+@\S+\.\S+/.test(formValues.email))
         newErrors.email = "Debe ser un correo válido";
         if (!formValues.first_name.trim()) newErrors.first_name = "El nombre es obligatorio";
         if (!formValues.last_name.trim()) newErrors.last_name   = "El apellido es obligatorio";
-        if (!formValues.idrol.trim()) newErrors.idrol           = "El Rol es obligatorio";
+        //if (!formValues.idrol.trim()) newErrors.idrol           = "El Rol es obligatorio";
         if (!formValues.password.trim())
         newErrors.password = "La contraseña es obligatoria";
         else if (formValues.password.length < 6)
@@ -100,20 +102,24 @@ export const FormDialogUser = () => {
         newErrors.repetirPassword = "Las contraseñas deben coincidir";
 
         setErrors(newErrors);
-
+        
+        if (Object.keys(newErrors).length > 0) {
+            const errorMessages = Object.values(newErrors).join("\n");
+            alert(errorMessages);
+        }
         return Object.keys(newErrors).length === 0;
     };
 
     // Validar formulario para update
     const validateUpdateForm = () => {
         const newErrors = {};
-
+         
         // Validar username
         if (formValues.username && !formValues.username.trim()) {
             newErrors.username = "El usuario es obligatorio";
         }
 
-        if (formValues.idrol && !formValues.idrol.trim()) {
+        if (formValues.idrol == "") {
             newErrors.idrol = "El Rol es obligatorio";
         }
 
@@ -153,9 +159,14 @@ export const FormDialogUser = () => {
                 newErrors.repetirPassword = "Las contraseñas deben coincidir";
             }
         }
-
+        console.log("newErrors ",newErrors)
+        
         // Guardar errores en el estado
         setErrors(newErrors);
+                if (Object.keys(newErrors).length > 0) {
+            const errorMessages = Object.values(newErrors).join("\n");
+            alert(errorMessages);
+        }
 
         // Retornar true si no hay errores
         return Object.keys(newErrors).length === 0;
@@ -180,6 +191,8 @@ export const FormDialogUser = () => {
                 formData.append("password",         formValues.password);
                 formData.append("repetirPassword",  formValues.repetirPassword);
                 formData.append("idrol",            formValues.idrol);
+                formData.append("is_active",        formValues.is_active);
+                formData.append("is_superuser", 1);
         
                 // Agregar imagen solo si existe
                 if (selectedImage) {
@@ -193,9 +206,11 @@ export const FormDialogUser = () => {
             }
 
         }else{
-
+            
             if (validateUpdateForm()) {
 
+                console.log("INGRESSAAAAAA")
+                
                 let data = {
                     id          : formValues.idUser,
                     email       : formValues.email,
@@ -204,7 +219,9 @@ export const FormDialogUser = () => {
                     password    : formValues.password,
                     repetirPassword:formValues.repetirPassword,
                     idrol       : formValues.idrol,
-                    image       : selectedImage
+                    image       : selectedImage,
+                    is_active   :  formValues.is_active,
+                    is_superuser: 1,
                 }
                 
                 await dispatch(updateThunks(data));
@@ -213,9 +230,6 @@ export const FormDialogUser = () => {
                 console.log("Errores en el formulario:", errors);
             }
         }
-
-
-
 
     };
 
@@ -352,6 +366,7 @@ export const FormDialogUser = () => {
                                 value={formValues.idrol}
                                 onChange={handleChange}
                             >
+                                <option value="">Seleccionar Rol</option>
                                 <option value="1">SuperAdmin</option>
                                 <option value="2">Admin</option>
                                 <option value="3">Auxiliar</option>
@@ -407,18 +422,18 @@ export const FormDialogUser = () => {
                             <TextField
                                 autoComplete="off"
                                 fullWidth
-                                id="estado"
-                                name="estado"
+                                id="is_active"
+                                name="is_active"
                                 select
                                 label="Estado del Usuario"
                                 SelectProps={{
                                 native: true,
                                 }}
-                                value={formValues.estado}
+                                value={formValues.is_active}
                                 onChange={handleChange}
                             >
-                                <option value={false}>Inactivo</option>
-                                <option value={true}>Activo</option>
+                                <option value="0">Inactivo</option>
+                                <option value="1">Activo</option>
                             </TextField>
                         </Grid>
 

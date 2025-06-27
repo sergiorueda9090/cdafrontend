@@ -152,6 +152,7 @@ export const showThunk= (id = "") => {
                                               last_name : response.data.last_name ?? '',
                                               password  : response.data.password ?? '',
                                               repetirPassword: response.data.repetirPassword ?? '',
+                                              is_active: response.data.is_active == true ? '1' : '0',
                                             }
                                         )
                                 );

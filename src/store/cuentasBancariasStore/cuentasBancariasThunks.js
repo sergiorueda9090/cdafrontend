@@ -382,19 +382,22 @@ export const dashboard_obtener_datos_cuenta = (id = "") => {
                     await dispatch(
                                     listDashboard(
                                         {
-                                            dashboardData           : dashboardData, 
+                                            dashboardData           : dashboardData.concat(data.cuatro_por_mil_data),
                                             total_cuenta_bancaria   : data.totales.total_cuenta_bancaria,
                                             total_devoluciones      : data.totales.total_devoluciones,
                                             total_gastos_generales  : data.totales.total_gastos_generales,
                                             total_utilidad_ocacional: data.totales.total_utilidad_ocacional,
                                             total_recepcionDePagos  : data.totales.total_recepcionDePagos,
+                                            total_cuatro_por_mil    : data.totales.total_cuatro_por_mil,
                                             total                   : data.totales.total,
                                             total_meno_cuatro_por_mil: data.totales.total_meno_cuatro_por_mil,
                                             cuatro_por_mil          : data.totales.cuatro_por_mil,
                                             nombre_cuenta           : data.tarjeta.nombre_cuenta,
                                             descripcion_cuenta      : data.tarjeta.descripcion_cuenta,
                                             numero_cuenta           : data.tarjeta.numero_cuenta,
-                                            banco                   : data.tarjeta.banco}
+                                            banco                   : data.tarjeta.banco,
+                                            obtener_datos_cuenta    : data.obtener_datos_cuenta
+                                        }
                                     )
                                 )
                     await dispatch(hideBackDropStore());
@@ -412,11 +415,13 @@ export const dashboard_obtener_datos_cuenta = (id = "") => {
                                 total_utilidad_ocacional: 0,
                                 total_recepcionDePagos  : 0,
                                 total                   : 0,
+                                total_cuatro_por_mil    : 0,
                                 cuatro_por_mil          : 0,
                                 nombre_cuenta           : '',
                                 descripcion_cuenta      : '',
                                 numero_cuenta           : '',
-                                banco                   : ''}
+                                banco                   : '',
+                                obtener_datos_cuenta    : []}
                         )
                     )
 

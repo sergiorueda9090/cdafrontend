@@ -14,18 +14,9 @@ export const usersStore = createSlice({
     imageUser   :false,
     image       : '',
     users       : [],
-    idrol       : '',      
-    statesUser  :[
-        {
-          value: false,
-          label: 'Inactivo',
-        },
-        {
-          value: true,
-          label: 'Activo',
-        },
-      ],
+    idrol       : '',
     openModalUser:true,
+    is_active : "0",
   },
   reducers: {
     showUserStore:(state,action) => {
@@ -40,16 +31,7 @@ export const usersStore = createSlice({
       state.imageUser   = false;
       state.image       = action.payload.image;
       state.idrol       = action.payload.idrol;
-      state.statesUser  = [
-          {
-            value: false,
-            label: 'Inactivo',
-          },
-          {
-            value: true,
-            label: 'Activo',
-          },
-        ]
+      state.is_active   = action.payload.is_active;
     },
     listUsuersStore:(state, action) => {
       state.users = action.payload.users
@@ -67,16 +49,7 @@ export const usersStore = createSlice({
       state.imageUser   = false;
       state.image       = '';
       state.idrol       = '';
-      state.statesUser  = [
-          {
-            value: false,
-            label: 'Inactivo',
-          },
-          {
-            value: true,
-            label: 'Activo',
-          },
-        ]
+      state.is_active   = "0";
     },
   }
 })

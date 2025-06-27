@@ -22,12 +22,14 @@ export const cuentasBancariasStore = createSlice({
     total_utilidad_ocacional  : 0,
     total_recepcionDePagos    : 0,
     total                     : 0,
+    total_cuatro_por_mil      : 0,
     cuatro_por_mil            : 0,
     total_meno_cuatro_por_mil : 0,
     nombre_cuenta             : '',
     descripcion_cuenta        : '',
     numero_cuenta             : '',
     banco                     : '',
+    cuatro_por_mil_data       : [],
   },
   reducers: {
     showStore:(state,action) => {
@@ -54,6 +56,7 @@ export const cuentasBancariasStore = createSlice({
       state.total_gastos_generales    = action.payload.total_gastos_generales;
       state.total_utilidad_ocacional  = action.payload.total_utilidad_ocacional;
       state.total_recepcionDePagos    = action.payload.total_recepcionDePagos;
+       state.total_cuatro_por_mil     = action.payload.total_cuatro_por_mil;
       state.total                     = action.payload.total;
       state.cuatro_por_mil            = action.payload.cuatro_por_mil;
       state.total_meno_cuatro_por_mil = action.payload.total_meno_cuatro_por_mil;
