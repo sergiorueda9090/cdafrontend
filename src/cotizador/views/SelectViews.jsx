@@ -11,7 +11,7 @@ import { FormDialogUser }               from '../components/Modal';
 import { useSelector, useDispatch }     from 'react-redux';
 
 import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop";
-import { getAllThunks }                 from "../../store/cotizadorStore/cotizadorThunks";
+import { getAllThunks, getAllThunksSecond }                 from "../../store/cotizadorStore/cotizadorThunks";
 import { getAllThunksTramites }         from '../../store/clientesStore/clientesThunks';
 import { getAllThunks as getAllThunksEtiqutas } from '../../store/etiquetasStore/etiquetasThunks';
 
@@ -24,6 +24,22 @@ export const SelectViews = () => {
     const { alert } = useSelector( state => state.globalStore );
   
    
+    const useIntervalDispatch = () => {
+        useEffect(() => {
+            // Llama inmediatamente al montar
+            dispatch(getAllThunksSecond());
+
+
+            // Establece el intervalo para llamar cada segundo (1000 ms)
+            const intervalId = setInterval(() => {
+            dispatch(getAllThunksSecond());
+            }, 1000);
+
+            // Limpia el intervalo al desmontar el componente
+            return () => clearInterval(intervalId);
+        }, [dispatch]);
+    };
+
     useEffect(() => {
         if (alert) {
           // Muestra la alerta según el tipo
@@ -45,8 +61,10 @@ export const SelectViews = () => {
         await dispatch(resetFormularioStore());
         await dispatch(openModalShared())
     }
-  
-  return (
+    
+    useIntervalDispatch();
+
+  return (  
     <Grid container direction="row" justifyContent="space-between" sx={{ mb:1 }} alignItems='center'>
 
         <Grid item>

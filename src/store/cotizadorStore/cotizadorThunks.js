@@ -808,3 +808,57 @@ export const update_cotizador_devolver = (data) => {
     }
 
 }
+
+
+export const getAllThunksSecond = () => {
+
+    return async (dispatch, getState) => {
+        
+        const {authStore} = getState();
+        const token = authStore.token
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${ URL}/${urlPatter}/api`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+          
+                if(data.length > 0){
+                    
+                    await dispatch(listStore({'cotizadores':data, 'dateFilter':false}))
+
+
+
+                }else{
+
+                    await dispatch(listStore({'cotizadores':[], 'dateFilter':false}))
+
+
+                }
+
+            }
+
+
+        } catch (error) {
+            
+  
+
+            // Manejar errores
+            console.error(error);
+            
+
+        }
+    };
+};
