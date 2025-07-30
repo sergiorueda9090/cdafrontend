@@ -14,7 +14,7 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk, updateThunks, update_cotizador_devolver }   from '../../store/cotizadorStore/cotizadorThunks';
+import { showThunk, deleteThunk, updatePdfThunks, update_cotizador_devolver }   from '../../store/cotizadorStore/cotizadorThunks';
 
 import { toast, Bounce } from 'react-toastify';
 
@@ -163,7 +163,7 @@ export function DataTable() {
     }
     
     const handleUploadFileConfirmar = (id) => {
-      dispatch(updateThunks({id, 'pdf':fileUpload, confirmacionPreciosModulo: 0, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0}, 'pdf'))
+      dispatch(updatePdfThunks({id, 'pdf':fileUpload, confirmacionPreciosModulo: 0, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0}, 'pdf'))
     }
 
     const handleDevolverConfirmar = (data) => {

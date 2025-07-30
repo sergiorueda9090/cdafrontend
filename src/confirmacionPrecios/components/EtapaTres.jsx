@@ -11,6 +11,7 @@ export const EtapaTres = () => {
   const { preciosLey } = useSelector((state) => state.clientesStore);
   const { id, precioDeLey, comisionPrecioLey, total } = useSelector((state) => state.cotizadorStore);
 
+  console.log(" === preciosLey === ", preciosLey)
 
   // Estados locales para manejar los valores seleccionados
   const [precioLey, setPrecioLey]         = useState(precioDeLey); // Precio de ley seleccionado
@@ -84,12 +85,12 @@ export const EtapaTres = () => {
           <Autocomplete
               disablePortal
               options={preciosLey}
-              value={preciosLey.find((option) => option.precio_ley === precioLey) || null} // Encuentra el objeto correspondiente
+              value={preciosLey.find((option) => option.descripcion === precioLey) || null} // Encuentra el objeto correspondiente
               onChange={handlePrecioLeyChange}
-              getOptionLabel={(option) => option.precio_ley || ''} // Muestra el precio de ley como texto
+              getOptionLabel={(option) => option.descripcion || ''} // Muestra el precio de ley como texto
               renderOption={(props, option) => (
                 <li {...props}>
-                  {option.precio_ley} {/* Si quieres mostrar más datos */}
+                  {option.descripcion} {/* Si quieres mostrar más datos */}
                 </li>
               )}
               renderInput={(params) => (

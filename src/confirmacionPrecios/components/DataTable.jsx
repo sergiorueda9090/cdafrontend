@@ -178,15 +178,31 @@ export function DataTable() {
 
   
     const handleSelectionChange = (id, newValue) => {
-      dispatch(handleFormStoreThunk({name: 'banco', value:newValue.banco }));
-      dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:id }));
+      console.log(" id ",id)
+      console.log(" newValue ",newValue)
+      if(newValue){
+        dispatch(handleFormStoreThunk({name: 'banco', value:newValue.banco }));
+        dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:id }));
+      }else{
+        dispatch(handleFormStoreThunk({name: 'banco', value:"" }));
+        dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:"" }));
+      }
+
     };
 
     const handleProveedorSelectionChange = (id, newValue) => {
       console.log("newValue ",newValue)
-      dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:newValue.nombre }));
-      dispatch(handleFormStoreThunkProveedores({name: 'etiqueta',  value:newValue.etiqueta_nombre }));
-      dispatch(handleFormStoreThunkProveedores({name: 'id',         value:id }));
+      if(newValue){
+        dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:newValue.nombre }));
+        dispatch(handleFormStoreThunkProveedores({name: 'etiqueta',  value:newValue.etiqueta_nombre }));
+        dispatch(handleFormStoreThunkProveedores({name: 'id',        value:id }));
+
+      }else{
+        dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:"" }));
+        dispatch(handleFormStoreThunkProveedores({name: 'etiqueta',  value:"" }));
+        dispatch(handleFormStoreThunkProveedores({name: 'id',        value:"" }));
+
+      }
     };
 
     const [activeRow, setActiveRow] = useState(null); // Guarda la fila activa
@@ -198,7 +214,7 @@ export function DataTable() {
     const handleBlur = () => {
       setActiveRow(null); // Cierra el Autocomplete al hacer clic afuera
     };
-
+    console.log(" ==== nombre ==== ",nombre)
     const handleDevolver = (data="") => {
       if(data == "") return
       toast(
@@ -295,65 +311,71 @@ export function DataTable() {
       { field: 'nombreCompleto',        headerName: 'Nombre',          width: 130 },*/
       { field: 'cilindraje',            headerName: 'Cilindraje',      width: 150 },
       { field: 'modelo',                headerName: 'Modelo',          width: 130 },
-      { 
-        field: 'proveedores',           
-        headerName: 'Proveedores',     
-        width: 200,        
-        editable: true,
+      {
+        field: 'proveedores',
+        headerName: 'Proveedores',
+        width: 200,
+        editable: false, // Porque manejamos la edición manualmente
         renderCell: (params) => {
           const isActive = activeRow === params.id;
+
           return (
-            <Box width="100%" onClick={() => handleCellClick(params.id)}>
+            <Box width="100%">
               {isActive && proveedores.length > 0 ? (
                 <Autocomplete
                   options={proveedores}
                   getOptionLabel={(option) => option.nombre}
                   isOptionEqualToValue={(option, value) => option.id === value?.id}
-                  defaultValue={{id: 0, nombre: "Seguros Generales"}}
-                  value={proveedores.find((option) => option.nombre === nombre) || {id: 0, nombre: "Seguros Generales"}}
+                  value={
+                    proveedores.find((option) => option.nombre === nombre) || null
+                  }
                   onChange={(_, newValue) => {
                     if (newValue) {
                       handleProveedorSelectionChange(newValue.id, newValue);
-                      // Habilitar edición de comisionProveedor si es link de pago
+
                       const comisionColumn = columns.find(col => col.field === 'comisionProveedor');
-                      if(comisionColumn) {
+                      if (comisionColumn) {
                         comisionColumn.editable = newValue.nombre === 'Link de Pago';
                       }
                     } else {
+                      handleProveedorSelectionChange(null, null);
                       handleShowAllProveedores();
                     }
                   }}
-                  renderInput={(params) => (
+                  renderInput={(paramsInput) => (
                     <TextField
-                      {...params}
-                      variant="standard" 
-                      placeholder="Seleccione una Proveedor"
-                      InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                          <>
-                            {params.InputProps.endAdornment}
-                          </>
-                        ),
-                      }}
+                      {...paramsInput}
+                      variant="standard"
+                      placeholder="Seleccione un Proveedor"
                       autoFocus
+                      // vuelve a mostrar el chip si pierde el foco
                     />
                   )}
                   fullWidth
+                  clearOnEscape
+                  clearText="Limpiar"
+                  disableClearable={false}
                 />
               ) : (
                 <Chip
-                  label={params.value ? params.value.etiqueta_nombre : "Seguros Generales"}
+                    label={
+                      nombre && nombre !== ""
+                        ? nombre
+                        : "Seguros Generales"
+                    }
                   style={{
                     backgroundColor: "#262254",
-                    color: "#ffffff", 
+                    color: "#ffffff",
                     padding: "5px",
                     borderRadius: "5px",
                     textAlign: "center",
                     width: "100%",
                     cursor: "pointer",
                   }}
-                  onClick={() => dispatch(getAllProveedores())}
+                  onClick={() => {
+                    dispatch(getAllProveedores());
+                    handleCellClick(params.id); // activa edición solo cuando se hace clic en el chip
+                  }}
                 />
               )}
             </Box>
@@ -395,7 +417,74 @@ export function DataTable() {
           }).format(params);
         }
       },
-      {
+         {
+        field: 'tarjetas',
+        headerName: 'Tarjetas',
+        width: 250,
+        editable: false, // La edición se maneja manualmente con el Chip
+        renderCell: (params) => {
+          const isActive = activeRow === params.id;
+          const tarjetaSeleccionada = tarjetasBancarias.find((option) => option.id === params.value?.id);
+          console.log("tarjetaSeleccionada ",tarjetaSeleccionada)
+          return (
+            <Box width="100%">
+              {isActive && tarjetasBancarias.length > 0 ? (
+                <Autocomplete
+                    options={tarjetasBancarias}
+                    getOptionLabel={(option) => option.nombre_cuenta}
+                    isOptionEqualToValue={(option, value) => option.id === value?.id}
+                    value={tarjetasBancarias.find((option) => option.banco === banco) || null}
+                    onChange={(_, newValue) => {
+                      if (newValue) {
+                        handleSelectionChange(newValue.id, newValue);
+                      } else {
+                        handleSelectionChange(null, null); // Limpia selección
+                        handleDisplayAllTarjetas();
+                      }
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="standard"
+                        placeholder="Seleccione una tarjeta"
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <>
+                              {params.InputProps.endAdornment}
+                            </>
+                          ),
+                        }}
+                        autoFocus
+                      />
+                    )}
+                    fullWidth
+                    clearOnEscape
+                    disableClearable={false} // permite que aparezca la "X"
+                  />
+              ) : (
+                <Chip
+                  label={params.value ? params.value.nombre_cuenta : "Seleccionar Tarjeta"}
+                  style={{
+                    backgroundColor: "#262254",
+                    color: "#ffffff",
+                    padding: "5px",
+                    borderRadius: "5px",
+                    textAlign: "center",
+                    width: "100%",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    handleShowAllTarjetas(); // si necesitas cargar tarjetas desde Redux
+                    handleCellClick(params.id);
+                  }}
+                />
+              )}
+            </Box>
+          );
+        },
+      },
+      /*{
         field: 'tarjetas',
         headerName: 'Tarjetas',
         width: 250,
@@ -453,7 +542,7 @@ export function DataTable() {
           </Box>
           );
         },
-      },
+      },*/
       {
         field: "actions",
         headerName: "Actions",
