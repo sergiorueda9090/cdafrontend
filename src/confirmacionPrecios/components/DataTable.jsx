@@ -181,7 +181,7 @@ export function DataTable() {
       console.log(" id ",id)
       console.log(" newValue ",newValue)
       if(newValue){
-        dispatch(handleFormStoreThunk({name: 'banco', value:newValue.banco }));
+        dispatch(handleFormStoreThunk({name: 'banco', value:newValue.nombre_cuenta }));
         dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:id }));
       }else{
         dispatch(handleFormStoreThunk({name: 'banco', value:"" }));
@@ -314,7 +314,7 @@ export function DataTable() {
       {
         field: 'proveedores',
         headerName: 'Proveedores',
-        width: 200,
+        width: 250,
         editable: false, // Porque manejamos la edición manualmente
         renderCell: (params) => {
           const isActive = activeRow === params.id;
@@ -361,7 +361,7 @@ export function DataTable() {
                     label={
                       nombre && nombre !== ""
                         ? nombre
-                        : "Seguros Generales"
+                        : "Seleccione un Proveedor"
                     }
                   style={{
                     backgroundColor: "#262254",
@@ -417,7 +417,7 @@ export function DataTable() {
           }).format(params);
         }
       },
-         {
+      {
         field: 'tarjetas',
         headerName: 'Tarjetas',
         width: 250,
@@ -425,7 +425,8 @@ export function DataTable() {
         renderCell: (params) => {
           const isActive = activeRow === params.id;
           const tarjetaSeleccionada = tarjetasBancarias.find((option) => option.id === params.value?.id);
-          console.log("tarjetaSeleccionada ",tarjetaSeleccionada)
+          console.log("tarjetasBancarias ",tarjetasBancarias)
+          console.log("banco ",banco)
           return (
             <Box width="100%">
               {isActive && tarjetasBancarias.length > 0 ? (
@@ -433,7 +434,7 @@ export function DataTable() {
                     options={tarjetasBancarias}
                     getOptionLabel={(option) => option.nombre_cuenta}
                     isOptionEqualToValue={(option, value) => option.id === value?.id}
-                    value={tarjetasBancarias.find((option) => option.banco === banco) || null}
+                    value={tarjetasBancarias.find((option) => option.nombre_cuenta === banco) || null}
                     onChange={(_, newValue) => {
                       if (newValue) {
                         handleSelectionChange(newValue.id, newValue);
@@ -758,6 +759,21 @@ export function DataTable() {
      
       if (etiqueta.toLowerCase() === "elvin" || etiqueta.toLowerCase() === "amalfi"){
           comision = -Math.abs(comision); // Asegura que sea negativo
+      }
+
+      if (!fileUpload) {
+        alert("Por favor selecciona un archivo.");
+        return;
+      }
+
+      if (!idBanco) {
+        alert("Por favor selecciona un Tarjeta.");
+        return;
+      }
+
+      if (!idProveedor) {
+        alert("Por favor selecciona un proveedor.");
+        return;
       }
 
       dispatch(updateThunks(

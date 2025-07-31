@@ -48,7 +48,8 @@ export const registroTarjetasStore = createSlice({
     },
     handleFormStore:(state , action) => {
       const { name, value } = action.payload; // Obtener el nombre y el valor
-      console.log( name, value )
+      console.log( "name ", name )
+      console.log(" value ",value)
       state[name] = value; // Actualizar dinámicamente la propiedad en el estado
     }
   }
