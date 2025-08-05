@@ -339,7 +339,7 @@ export const ShowView = () => {
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
-                Recepcion de Iva
+                4 x 1.000
               </Typography>
               <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_cuatro_por_mil)}</Typography>
             </Box>

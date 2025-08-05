@@ -62,7 +62,36 @@ export function DataTable() {
         }
       },
       { field: 'ft',      headerName: 'Fecha de Transacción',  width: 130 },
-      { field: 'desc_alias',           headerName: 'Descripción',           width: 230 },
+      { field: 'desc_alias',           
+        headerName: 'Descripción',           
+        width: 230,        
+        renderCell: (params) => {
+          const { origen, desc_alias, placa, cliente_nombre } = params.row;
+
+             let descripcion = desc_alias;
+
+              if (origen === "Tramite") {
+
+                descripcion += ` - SOAT ${placa}`;
+                
+                return (
+                  <span style={{ fontWeight: '500' }}>
+                    {descripcion}
+                  </span>
+                );
+
+              }else{
+
+                return (
+                  <span style={{ fontWeight: '500' }}>
+                    {cliente_nombre}
+                  </span>
+                );
+
+              }
+
+        }
+      },
       {
         field: 'valor_alias',
         headerName: 'Valor',
@@ -82,13 +111,14 @@ export function DataTable() {
         field: 'cuatro_por_mil',
         headerName: 'Cuatro por Mil',
         width: 199,
-        align: "right", headerAlign: "right",
+        align: "right",
+        headerAlign: "right",
         renderCell: (params) => {
           const valor = params.value || 0;
-          const color = valor < 0 ? 'red' : 'green';
+          const valorNegativo = -Math.abs(valor); // Siempre convertir a negativo
           return (
-            <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
-             {new Intl.NumberFormat('es-CO').format(valor)}
+            <span style={{ color: 'red', fontWeight: 'bold', fontSize: "26px" }}>
+              {new Intl.NumberFormat('es-CO').format(valorNegativo)}
             </span>
           );
         }
@@ -109,7 +139,24 @@ export function DataTable() {
         }
       },
       { field: 'cilindraje',            headerName: 'Cilindraje',            width: 130 },
-      { field: 'placa',                 headerName: 'Placa',            width: 130 },
+      { field: 'placa',                 headerName: 'Placa',            width: 130,
+                renderCell: (params) => {
+          const { origen, desc_alias, placa } = params.row;
+
+             let descripcion = "";
+
+              if (origen === "Tramite") {
+                descripcion += ` Devito - SOAT ${placa}`;
+              }
+
+              return (
+                <span style={{ fontWeight: '500' }}>
+                  {descripcion}
+                </span>
+              );
+
+        }
+       },
       {
         field: "origen",
         headerName: "Origen",
@@ -141,7 +188,7 @@ export function DataTable() {
           );
         }
       },
-      { field: 'nombreTitular',         headerName: 'Nombre del Titular',    width: 230 },
+      /*{ field: 'nombreTitular',         headerName: 'Nombre del Titular',    width: 230 },*/
       {
         field: 'actions',
         headerName: 'Actions',

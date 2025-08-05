@@ -191,7 +191,7 @@ export function DataTable() {
     };
 
     const handleProveedorSelectionChange = (id, newValue) => {
-      console.log("newValue ",newValue)
+      console.log("newValue sss ",newValue)
       if(newValue){
         dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:newValue.nombre }));
         dispatch(handleFormStoreThunkProveedores({name: 'etiqueta',  value:newValue.etiqueta_nombre }));
@@ -763,6 +763,29 @@ export function DataTable() {
 
       if (!fileUpload) {
         alert("Por favor selecciona un archivo.");
+        return;
+      }
+
+      const allowedImageTypes = [
+                                  'image/jpeg',
+                                  'image/png',
+                                  'image/gif',
+                                  'image/webp',
+                                  'image/svg+xml'
+                                ];
+
+      const fileName = fileUpload.name;
+      const fileExtension = fileName.split('.').pop().toLowerCase();
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+
+      if (!allowedImageTypes.includes(fileUpload.type)) {
+        alert("Por favor sube solo archivos de imagen (JPEG, PNG, GIF, WEBP o SVG).");
+        return;
+      }
+
+      // Validación adicional por extensión (opcional)
+      if (!allowedExtensions.includes(fileExtension)) {
+        alert("Tipo de archivo no permitido. Sube solo imágenes con extensión .jpg, .jpeg, .png, .gif, .webp o .svg");
         return;
       }
 

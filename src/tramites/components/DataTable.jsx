@@ -433,7 +433,8 @@ export function DataTable() {
               />
             ) : (
               <Chip
-                onClick={params.value == "LINK DE PAGO" ? undefined : () => handleCellClick(params.id)}
+                /*onClick={params.value == "LINK DE PAGO" ? undefined : () => handleCellClick(params.id)}*/
+                onClick={() => handleCellClick(params.id)}
                 label={params.value ? params.value : "Seleccionar Etiqueta"}
                 style={{
                   backgroundColor: "#262254",
@@ -443,7 +444,7 @@ export function DataTable() {
                   textAlign: "center",
                   width: "100%",
                   cursor: params.value == "LINK DE PAGO" ? "default" : "pointer",
-                  opacity: params.value == "LINK DE PAGO" ? 0.6 : 1, // Opcional: Reduce la opacidad si está deshabilitado
+                  /*opacity: params.value == "LINK DE PAGO" ? 0.6 : 1, // Opcional: Reduce la opacidad si está deshabilitado*/
                 }}
               />
             )}

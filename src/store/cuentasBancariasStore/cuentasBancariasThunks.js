@@ -621,7 +621,13 @@ export const getAllThunksFilter = (fechaInicio="", fechaFin="") => {
             if(response.status === 200){
 
                 let data = response.data;
-                console.log("data ",data)
+                
+                data.forEach(cuenta => {
+                    const valor = parseFloat(cuenta.valor_alias) || 0;
+                    const cuatroPorMil = parseFloat(cuenta.cuatro_por_mil) || 0;
+                    cuenta.total = valor < 0 ? valor + cuatroPorMil : valor - cuatroPorMil;
+                });
+
                 if(data.length > 0){
                     
                     await dispatch(listStore({'cuentasBancarias':data}))
