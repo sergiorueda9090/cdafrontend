@@ -5,6 +5,7 @@ export const proveedoresStore = createSlice({
   name: 'proveedoresStore',
   initialState: {
     id          : '',
+    idProveedor : '',
     nombre      : '',
     etiqueta    : '',
     proveedores : [],

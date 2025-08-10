@@ -54,7 +54,9 @@ export function DataTable() {
     let { cotizadores, archivo, idBanco } = useSelector(state => state.cotizadorStore);
     let { tarjetasBancarias, banco }      = useSelector(state => state.registroTarjetasStore);
     let { proveedores, nombre, etiqueta, id: idProveedor } = useSelector( state => state.proveedoresStore);
-
+    console.log(" == proveedores == ",proveedores)
+    console.log(" == etiqueta == ",etiqueta)
+    console.log(" == idProveedor == ",idProveedor)
     const [comisiones, setComisiones] = useState({});
 
     const handleComisionChange = (event, id) => {
@@ -178,8 +180,6 @@ export function DataTable() {
 
   
     const handleSelectionChange = (id, newValue) => {
-      console.log(" id ",id)
-      console.log(" newValue ",newValue)
       if(newValue){
         dispatch(handleFormStoreThunk({name: 'banco', value:newValue.nombre_cuenta }));
         dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:id }));
@@ -191,11 +191,16 @@ export function DataTable() {
     };
 
     const handleProveedorSelectionChange = (id, newValue) => {
-      console.log("newValue sss ",newValue)
       if(newValue){
         dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:newValue.nombre }));
         dispatch(handleFormStoreThunkProveedores({name: 'etiqueta',  value:newValue.etiqueta_nombre }));
         dispatch(handleFormStoreThunkProveedores({name: 'id',        value:id }));
+        
+        if(newValue.etiqueta_nombre !== "seguros generales"){
+          console.log("INGRESA")
+          dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:"" }));
+          dispatch(handleFormStoreThunk({name: 'banco', value:"" }));
+        }
 
       }else{
         dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:"" }));
@@ -214,7 +219,7 @@ export function DataTable() {
     const handleBlur = () => {
       setActiveRow(null); // Cierra el Autocomplete al hacer clic afuera
     };
-    console.log(" ==== nombre ==== ",nombre)
+    
     const handleDevolver = (data="") => {
       if(data == "") return
       toast(
@@ -254,13 +259,14 @@ export function DataTable() {
       );
 
     }
-        const handleDevolverConfirmar = (data) => {
-          dispatch(update_cotizador_devolver({'id':data.id, 'devolver':data.devolver}))
-        }
+    const handleDevolverConfirmar = (data) => {
+      dispatch(update_cotizador_devolver({'id':data.id, 'devolver':data.devolver}))
+    }
         
     const esEditable = etiqueta?.toUpperCase() === 'AMALFI' || etiqueta?.toUpperCase() === 'ELVIN';
 
     
+
     const columns = [
       { field: 'id',                    headerName: 'ID',              width: 90},
       {
@@ -425,8 +431,7 @@ export function DataTable() {
         renderCell: (params) => {
           const isActive = activeRow === params.id;
           const tarjetaSeleccionada = tarjetasBancarias.find((option) => option.id === params.value?.id);
-          console.log("tarjetasBancarias ",tarjetasBancarias)
-          console.log("banco ",banco)
+
           return (
             <Box width="100%">
               {isActive && tarjetasBancarias.length > 0 ? (
@@ -462,6 +467,7 @@ export function DataTable() {
                     fullWidth
                     clearOnEscape
                     disableClearable={false} // permite que aparezca la "X"
+                    disabled={etiqueta !== "seguros generales"}
                   />
               ) : (
                 <Chip
@@ -485,65 +491,6 @@ export function DataTable() {
           );
         },
       },
-      /*{
-        field: 'tarjetas',
-        headerName: 'Tarjetas',
-        width: 250,
-        editable: true,
-        renderCell: (params) => {
-          const isActive = activeRow === params.id; // Verifica si esta celda está activa
-          return (
-            <Box width="100%"  onClick={() => handleCellClick(params.id)}>
-            {isActive && tarjetasBancarias.length > 0 ? (
-              <Autocomplete
-                options={tarjetasBancarias}
-                getOptionLabel={(option) => option.nombre_cuenta}
-                isOptionEqualToValue={(option, value) => option.id === value?.id}
-                value={tarjetasBancarias.find((option) => option.banco === banco) || null} // Encuentra el objeto correspondiente
-                onChange={(_, newValue) => {
-                  if (newValue) {
-                    handleSelectionChange(newValue.id, newValue);
-                  } else {
-                    handleDisplayAllTarjetas(); // Manejo cuando se borra la selección
-                  }
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="standard"
-                    placeholder="Seleccione una tarjeta"
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                        <>
-                          {params.InputProps.endAdornment}
-                        </>
-                      ),
-                    }}
-                    autoFocus
-                  />
-                )}
-                fullWidth
-              />
-            ) : (
-              <Chip
-                label={params.value ? params.value.nombre_cuenta : "Seleccionar Tarjeta"}
-                style={{
-                  backgroundColor: "#262254",
-                  color: "#ffffff",
-                  padding: "5px",
-                  borderRadius: "5px",
-                  textAlign: "center",
-                  width: "100%",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleShowAllTarjetas()}
-              />
-            )}
-          </Box>
-          );
-        },
-      },*/
       {
         field: "actions",
         headerName: "Actions",
@@ -552,6 +499,10 @@ export function DataTable() {
         renderCell: (params) => {
           const isFileUploaded = uploadedFiles[params.row.id];
           const archivoFile = params.row.archivo;
+
+              console.log(" etiqueta ",etiqueta);
+            console.log(" archivoFile ",isFileUploaded);
+            console.log(" banco ",banco);
 
           return (
             <>
@@ -619,17 +570,22 @@ export function DataTable() {
                     </IconButton>
                   </Tooltip>
 
-                  {params.row.precioDeLey != "" && banco != "" && !archivoFile && isFileUploaded &&
+                {(
+                  etiqueta !== "" && (
+                    (etiqueta !== "seguros generales" && isFileUploaded) || 
+                    (etiqueta == "seguros generales" && isFileUploaded && banco !== "")
+                  )
+                ) && (
                   <Tooltip title="Confirmar">
                     <IconButton
-                      aria-label="delete-file"
+                      aria-label="confirmar-archivo"
                       color="success"
                       onClick={() => handleUploadFile(params.row.id)}
                     >
                       <AutoStoriesIcon />
                     </IconButton>
                   </Tooltip>
-                  }
+                )}
               
                   
                 </>
@@ -757,7 +713,7 @@ export function DataTable() {
       // Eliminar separadores de miles y convertir a número
       let comision = parseFloat(comisionRaw.replace(/\./g, ''));
      
-      if (etiqueta.toLowerCase() === "elvin" || etiqueta.toLowerCase() === "amalfi"){
+      if (etiqueta.toLowerCase() != "seguros generales"){
           comision = -Math.abs(comision); // Asegura que sea negativo
       }
 
@@ -788,8 +744,8 @@ export function DataTable() {
         alert("Tipo de archivo no permitido. Sube solo imágenes con extensión .jpg, .jpeg, .png, .gif, .webp o .svg");
         return;
       }
-
-      if (!idBanco) {
+      console.log(" === idBanco === ",idBanco)
+      if (!idBanco && etiqueta == "seguros generales") {
         alert("Por favor selecciona un Tarjeta.");
         return;
       }
@@ -798,7 +754,7 @@ export function DataTable() {
         alert("Por favor selecciona un proveedor.");
         return;
       }
-
+      console.log(" === idBanco === ",idBanco)
       dispatch(updateThunks(
                               {
                                   id,

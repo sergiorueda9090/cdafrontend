@@ -4,6 +4,8 @@ import { loginFail } from "../authStore/authStore.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
 import { showStore, listStore, resetFormularioStore, handleFormStore, listDashboardStore, listIdStore, saveId  } from "./fichaProveedoresStore.js";
+import { resetFormularioStore as resetForm } from "../recepcionPagoStore/recepcionPagoStore.js";
+import { resetFormularioStore as resetFormProveedores } from "../proveedoresStore/proveedoresStore.js";
 import { getAllThunks as listarEtiquetas } from "../etiquetasStore/etiquetasThunks.js";
 // Función asincrónica para obtener los Pokemons
 const parametersURL         = '/fichaproveedores/api/fichaproveedores/';
@@ -448,4 +450,128 @@ export const getFichaProveedorByIdThunk = (proveedorId, fechaInicio, fechaFin, s
             await dispatch(hideBackDropStore());
         }
     };
+};
+
+
+export const createCuentaBancariaThunks = (data) => {
+
+    return async (dispatch, getState) => {
+
+        const {authStore} = getState();
+        const token       = authStore.token
+
+        await dispatch(showBackDropStore());
+
+
+        const options = {
+            method: 'POST',
+            url: `${URL}/cuentasbancarias/api/cuentas/crearcuentabancaria/`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+              },
+            data:data
+        }
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+            
+            console.log("response.data ",response);
+
+            if(response.status == 201){
+                
+                await dispatch( closeModalShared() );
+
+                await dispatch( hideBackDropStore() );
+
+                await dispatch(resetForm());
+
+                /*await dispatch(resetFormProveedores());*/
+
+                toast.success('Successfully created!');
+
+                await dispatch(setAlert({ message: '¡✨ Acción completada con éxito!', type: 'success'}));
+
+            }else{
+
+                await dispatch(setAlert({ message: '❌ Ocurrió un error.', type: 'error'}));
+                
+                await dispatch( closeModalShared() );
+
+                /*await dispatch( getAllThunks() );
+
+                
+
+                await dispatch( hideBackDropStore() );*/
+                //toast.error('This is an error!');;
+            }
+            
+
+        } catch (error) {
+
+            //await dispatch ( loginFail() );
+            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
+            
+            //await dispatch ( loginFail() );
+            
+            await dispatch( closeModalShared() );
+
+            await dispatch( hideBackDropStore() );
+            // Manejar errores
+            console.error(error);
+       
+        }
+
+    }
+
+}
+
+
+export const deleteCuentaBancariaThunks = (idCuenta) => {
+  return async (dispatch, getState) => {
+    const { authStore } = getState();
+    const token = authStore.token;
+
+    await dispatch(showBackDropStore());
+
+    const options = {
+      method: "DELETE",
+      url: `${URL}/cuentasbancarias/api/cuentas/crearcuentabancaria/delete/${idCuenta}/`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+
+      console.log("response.data ", response);
+
+      if (response.status === 200) {
+        await dispatch(hideBackDropStore());
+        toast.success("Successfully deleted!");
+        await dispatch(
+          setAlert({
+            message: "¡🗑️ Eliminación completada con éxito!",
+            type: "success",
+          })
+        );
+
+        // Si necesitas refrescar la lista:
+        // await dispatch(getAllThunks());
+      } else {
+        await dispatch(
+          setAlert({ message: "❌ Ocurrió un error al eliminar.", type: "error" })
+        );
+      }
+    } catch (error) {
+      await dispatch(
+        setAlert({ message: "❌ Error en el servidor.", type: "error" })
+      );
+      console.error(error);
+    } finally {
+      await dispatch(hideBackDropStore());
+    }
+  };
 };

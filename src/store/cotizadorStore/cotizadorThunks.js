@@ -293,7 +293,7 @@ export const updateThunks = (data, modulo="") => {
         } catch (error) {
 
             
-            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
+            await dispatch(setAlert({ message: `❌ ${error.response.data.error}.`, type: 'error'}));
             
             //await dispatch ( loginFail() );
 
@@ -301,7 +301,7 @@ export const updateThunks = (data, modulo="") => {
 
             await dispatch( hideBackDropStore() );
             // Manejar errores
-            console.error(error);
+            console.error(error.response.data.error);
        
         }
 

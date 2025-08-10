@@ -1,34 +1,11 @@
 import React, { useState, useEffect }               from "react";
 import { Grid, Typography, Box, Card, Button }      from "@mui/material";
-import { useSelector, useDispatch }                 from "react-redux";
-import { useNavigate, useParams }                   from 'react-router-dom';
-import { DataTable } from '../components/DataTable';
 
+import { ToastContainer } from 'react-toastify';
+import { DataTable } from '../components/DataTable';
+import { ModalPagos } from "../components/ModalPagos";
 
 export const ViewsMain = () => {
-
-  const { id } = useParams();
-
-  const dispatch = useDispatch();      
-  const navigate = useNavigate();
-
-
-  const returnTramites = async() => {
-    navigate(`/registroTarjetas`);
-  };
-
- 
-  const formatoMonedaColombiana = (valor) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    })
-    .format(valor)
-    .replace('$', '') // quitar el símbolo $
-    .trim();          // eliminar espacio al inicio si queda
-  };
 
   return (
     <Grid container direction="row" justifyContent="space-between" sx={{ mb:1 }} alignItems='center'>
@@ -37,6 +14,20 @@ export const ViewsMain = () => {
             < DataTable/>
         </Grid>
 
+        <ModalPagos />
+
+              {/* START ALERT */}
+              <ToastContainer
+                  position="top-center" // Posición predeterminada
+                  autoClose={1000} // Tiempo de cierre automático
+                  hideProgressBar={false} // Mostrar barra de progreso
+                  newestOnTop={true} // Notificaciones más recientes arriba
+                  closeOnClick // Cierre al hacer clic
+                  draggable // Arrastrar para cerrar
+                  pauseOnHover // Pausar al pasar el ratón
+                  theme="colored" // Tema colorido
+              />
+              {/* END ALERT */}
     </Grid>
   )
 };
