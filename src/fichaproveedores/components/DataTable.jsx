@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-
+import {Typography, Button} from  '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 
 
-import EditIcon from '@mui/icons-material/Edit';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk } from '../../store/etiquetasStore/etiquetasThunks';
+
 import { toast } from 'react-toastify';
 import { Box, Chip } from "@mui/material";
 import { FilterData } from '../../cotizador/components/FilterData';
@@ -20,17 +18,34 @@ import { getAllThunks as getAllRegistroTarjetasThunks } from '../../store/regist
 import { getAllThunks as getAllRegistroProveedoresThunks } from '../../store/proveedoresStore/proveedoresThunks';
 import { handleFormStore } from '../../store/proveedoresStore/proveedoresStore';
 import { deleteCuentaBancariaThunks } from '../../store/fichaProveedoresStore/fichaProveedoresThunks';
+import { useParams } from "react-router-dom";
 
 export function DataTable() {
   
     const dispatch = useDispatch();
-    
-    let { firchaproveedor, id, idProveedor }    = useSelector(state => state.fichaProveedoresStore);
-    console.log(" firchaproveedor ",firchaproveedor);
+    const { id:proveedorId } = useParams();
+    let { firchaproveedor, id, idProveedor, totalGeneralConComision }    = useSelector(state => state.fichaProveedoresStore);
+    console.log(" proveedorId ",proveedorId);
+
     const columns = [
       { field: 'id', headerName: 'ID', width: 100 },
       { field: 'nombre', headerName: 'Nombre Proveedor', width: 230 },
-
+      {
+        field: 'fechaCreacion',
+        headerName: 'Fecha Creación',
+        width: 230,
+        renderCell: (params) => {
+          if (!params.value) return '';
+          const fecha = new Date(params.value);
+          const año = fecha.getFullYear();
+          const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+          const dia = String(fecha.getDate()).padStart(2, '0');
+          const horas = String(fecha.getHours()).padStart(2, '0');
+          const minutos = String(fecha.getMinutes()).padStart(2, '0');
+          const segundos = String(fecha.getSeconds()).padStart(2, '0');
+          return `${año}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
+        }
+      },
       {
         field: 'comisionproveedor',
         headerName: 'Comisión Proveedor',
@@ -53,7 +68,6 @@ export function DataTable() {
       { field: 'modelo', headerName: 'Modelo', width: 150 },
       { field: 'chasis', headerName: 'Chasis', width: 200 },
       { field: 'precioDeLey', headerName: 'Precio de Ley', width: 180 },
-      { field: 'comisionPrecioLey', headerName: 'Comisión Precio de Ley', width: 220 },
       {
         field: 'total',
         headerName: 'Total',
@@ -71,21 +85,45 @@ export function DataTable() {
         },
       },
       {
+        field: 'totalConComision',
+        headerName: 'Total Con Comision',
+        width: 180,
+        renderCell: (params) => {
+          if (params.value == null) return '';
+          const valorNegativo = -Math.abs(params.value); // Asegura que siempre sea negativo
+          return (
+            <span style={{ fontWeight: 'bold', color: 'red', fontSize: '27px' }}>
+              {new Intl.NumberFormat('es-CO', {
+                minimumFractionDigits: 0,
+              }).format(valorNegativo)}
+            </span>
+          );
+        },
+      },
+      {
+        field: 'totalConComisionPagos',
+        headerName: 'Total Pagos',
+        width: 180,
+        renderCell: (params) => {
+          if (params.value == null) return '';
+          const valorNegativo = Math.abs(params.value); // Asegura que siempre sea negativo
+          return (
+            <span style={{ fontWeight: 'bold', color: 'green', fontSize: '27px' }}>
+              {new Intl.NumberFormat('es-CO', {
+                minimumFractionDigits: 0,
+              }).format(valorNegativo)}
+            </span>
+          );
+        },
+      },
+      {
         field: "actions",
         headerName: "Actions",
         width: 250,
         sortable: false,
         renderCell: (params) => {
-          console.log("params.row.idproveedor", params.row.idproveedor);
-          console.log("params.row.id", params.row.id);
           return (
             <>
-              <Tooltip title="Hacer pagos a proveedores">
-                <IconButton aria-label="hacer pagos a proveedores" onClick={ (e) => handleOpenModal(params.row.idproveedor, params.row.id) } color="primary">
-                  <AttachMoneyIcon />
-                </IconButton>
-              </Tooltip>
-
               <Tooltip title="Eliminar registro">
                 <IconButton
                   aria-label="eliminar registro"
@@ -105,8 +143,9 @@ export function DataTable() {
   const paginationModel = { page: 0, pageSize: 15 };
 
   const handleOpenModal = async (idproveedor, id) => {
+    console.log(" === idproveedor === ",idproveedor)
     await dispatch(handleFormStore({name: 'idProveedor', value: idproveedor}));
-    await dispatch(handleFormStore({name: 'id'         , value: id}));
+    //await dispatch(handleFormStore({name: 'id'         , value: id}));
     await dispatch(getAllRegistroProveedoresThunks());
     await dispatch(getAllRegistroTarjetasThunks());
     await dispatch(openModalShared())
@@ -157,10 +196,50 @@ export function DataTable() {
 
       {/* Contenedor de filtros */}
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
-        <FilterData cotizador="fichaproveedor"/>  {/* Componente de filtros adicionales */}
-        <DateRange  cotizador="fichaproveedor" id={idProveedor}/>  {/* Componente para selección de rango de fechas */}
+        <FilterData cotizador="fichaproveedor" id={proveedorId}/>  {/* Componente de filtros adicionales */}
+        <DateRange  cotizador="fichaproveedor" id={proveedorId}/>  {/* Componente para selección de rango de fechas */}
       </Box>
       
+      <Paper 
+          elevation={3} 
+          sx={{ 
+            p: 2, 
+            mb: 3, 
+            maxWidth: 600, 
+            mx: 'auto', 
+            backgroundColor: '#e3f2fd', 
+            borderRadius: 2, 
+            boxShadow: '0 4px 10px rgba(33, 150, 243, 0.3)'
+          }}
+        >
+          <Typography variant="subtitle1" align="center" color="textSecondary">
+            Total General con Comisión
+          </Typography>
+            <Typography
+              variant="h4"
+              align="center"
+              sx={{
+                fontWeight: 'bold',
+                color: totalGeneralConComision < 0 ? 'red' : 'primary.main',
+              }}
+            >
+              {new Intl.NumberFormat("es-CO", {
+                style: "decimal",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              }).format(totalGeneralConComision)}
+            </Typography>
+
+            <Button 
+              variant="contained" 
+              color="primary" 
+              fullWidth 
+              sx={{ mt: 2 }}
+              onClick={() => handleOpenModal(proveedorId)}
+            >
+              Hacer pago a proveedor
+            </Button>
+        </Paper>
 
       <DataGrid
         rows={ firchaproveedor }

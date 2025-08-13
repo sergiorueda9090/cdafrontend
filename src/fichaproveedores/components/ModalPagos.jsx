@@ -81,19 +81,12 @@ export const ModalPagos = () => {
       idBanco         : id_tarjeta_bancaria,
       idCotizador     : '',
       valor           : valor,
-      id              : idP
+      id              : idProveedor
     };
 
     console.log("dataSend ",dataSend)
     
     dispatch(createCuentaBancariaThunks(dataSend));
-
-    /*if (id) {
-      dataSend.id = id;
-      dispatch(updateThunks(dataSend));
-    } else {
-      dispatch(createThunks(dataSend));
-    }*/
   
     dispatch(closeModalShared());
   };
@@ -131,7 +124,7 @@ export const ModalPagos = () => {
                     options={proveedores}
                     getOptionLabel={(option) => option.nombre || ""}
                     value={
-                      proveedores.find((proveedor) => proveedor.id === idProveedor) || null
+                      proveedores.find((proveedor) => proveedor.id == idProveedor) || null
                     }
                     renderInput={(params) => (
                       <TextField

@@ -54,9 +54,7 @@ export function DataTable() {
     let { cotizadores, archivo, idBanco } = useSelector(state => state.cotizadorStore);
     let { tarjetasBancarias, banco }      = useSelector(state => state.registroTarjetasStore);
     let { proveedores, nombre, etiqueta, id: idProveedor } = useSelector( state => state.proveedoresStore);
-    console.log(" == proveedores == ",proveedores)
-    console.log(" == etiqueta == ",etiqueta)
-    console.log(" == idProveedor == ",idProveedor)
+
     const [comisiones, setComisiones] = useState({});
 
     const handleComisionChange = (event, id) => {
@@ -197,7 +195,7 @@ export function DataTable() {
         dispatch(handleFormStoreThunkProveedores({name: 'id',        value:id }));
         
         if(newValue.etiqueta_nombre !== "seguros generales"){
-          console.log("INGRESA")
+
           dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:"" }));
           dispatch(handleFormStoreThunk({name: 'banco', value:"" }));
         }
@@ -266,7 +264,7 @@ export function DataTable() {
     const esEditable = etiqueta?.toUpperCase() === 'AMALFI' || etiqueta?.toUpperCase() === 'ELVIN';
 
     
-
+    const [selectedProveedores, setSelectedProveedores] = useState({}); 
     const columns = [
       { field: 'id',                    headerName: 'ID',              width: 90},
       {
@@ -321,10 +319,10 @@ export function DataTable() {
         field: 'proveedores',
         headerName: 'Proveedores',
         width: 250,
-        editable: false, // Porque manejamos la edición manualmente
+        editable: false,
         renderCell: (params) => {
           const isActive = activeRow === params.id;
-
+          const proveedorSeleccionado = selectedProveedores[params.id] || null;
           return (
             <Box width="100%">
               {isActive && proveedores.length > 0 ? (
@@ -332,14 +330,19 @@ export function DataTable() {
                   options={proveedores}
                   getOptionLabel={(option) => option.nombre}
                   isOptionEqualToValue={(option, value) => option.id === value?.id}
-                  value={
-                    proveedores.find((option) => option.nombre === nombre) || null
-                  }
+                  value={proveedorSeleccionado}
                   onChange={(_, newValue) => {
+                    setSelectedProveedores((prev) => ({
+                      ...prev,
+                      [params.id]: newValue
+                    }));
+
                     if (newValue) {
                       handleProveedorSelectionChange(newValue.id, newValue);
 
-                      const comisionColumn = columns.find(col => col.field === 'comisionProveedor');
+                      const comisionColumn = columns.find(
+                        col => col.field === 'comisionProveedor'
+                      );
                       if (comisionColumn) {
                         comisionColumn.editable = newValue.nombre === 'Link de Pago';
                       }
@@ -354,7 +357,6 @@ export function DataTable() {
                       variant="standard"
                       placeholder="Seleccione un Proveedor"
                       autoFocus
-                      // vuelve a mostrar el chip si pierde el foco
                     />
                   )}
                   fullWidth
@@ -364,11 +366,9 @@ export function DataTable() {
                 />
               ) : (
                 <Chip
-                    label={
-                      nombre && nombre !== ""
-                        ? nombre
-                        : "Seleccione un Proveedor"
-                    }
+                  label={
+                    proveedorSeleccionado?.nombre || "Seleccione un Proveedor"
+                  }
                   style={{
                     backgroundColor: "#262254",
                     color: "#ffffff",
@@ -380,21 +380,19 @@ export function DataTable() {
                   }}
                   onClick={() => {
                     dispatch(getAllProveedores());
-                    handleCellClick(params.id); // activa edición solo cuando se hace clic en el chip
+                    handleCellClick(params.id);
                   }}
                 />
               )}
             </Box>
           );
         },
-      },     
+      },
       {
         field: 'comisionProveedor',
         headerName: 'Comisión Proveedor',
         width: 180,
         renderCell: (params) => {
-          console.log("activeRow ",activeRow)
-          console.log("params.id ",params.id)
           return esEditable && activeRow == params.id? (
             <input 
               type="text"
@@ -430,8 +428,6 @@ export function DataTable() {
         editable: false, // La edición se maneja manualmente con el Chip
         renderCell: (params) => {
           const isActive = activeRow === params.id;
-          const tarjetaSeleccionada = tarjetasBancarias.find((option) => option.id === params.value?.id);
-
           return (
             <Box width="100%">
               {isActive && tarjetasBancarias.length > 0 ? (
@@ -499,11 +495,6 @@ export function DataTable() {
         renderCell: (params) => {
           const isFileUploaded = uploadedFiles[params.row.id];
           const archivoFile = params.row.archivo;
-
-              console.log(" etiqueta ",etiqueta);
-            console.log(" archivoFile ",isFileUploaded);
-            console.log(" banco ",banco);
-
           return (
             <>
               <IconButton aria-label="edit" onClick={() => handleEdit(params.row)} color="primary">
@@ -744,7 +735,7 @@ export function DataTable() {
         alert("Tipo de archivo no permitido. Sube solo imágenes con extensión .jpg, .jpeg, .png, .gif, .webp o .svg");
         return;
       }
-      console.log(" === idBanco === ",idBanco)
+
       if (!idBanco && etiqueta == "seguros generales") {
         alert("Por favor selecciona un Tarjeta.");
         return;
@@ -754,7 +745,7 @@ export function DataTable() {
         alert("Por favor selecciona un proveedor.");
         return;
       }
-      console.log(" === idBanco === ",idBanco)
+
       dispatch(updateThunks(
                               {
                                   id,

@@ -10,6 +10,7 @@ export const fichaProveedoresStore = createSlice({
     firchaproveedores : [],
     fichaProveedoresDashboard:[],
     firchaproveedor:[],
+    totalGeneralConComision:0,
   },
   reducers: {
     showStore:(state,action) => {
@@ -22,6 +23,7 @@ export const fichaProveedoresStore = createSlice({
     },
     listIdStore:(state, action) => {
       state.firchaproveedor = action.payload.firchaproveedor
+      state.totalGeneralConComision = action.payload.totalGeneralConComision
     },
     listDashboardStore:(state, action) => {
       state.fichaProveedoresDashboard = action.payload.fichaProveedoresDashboard

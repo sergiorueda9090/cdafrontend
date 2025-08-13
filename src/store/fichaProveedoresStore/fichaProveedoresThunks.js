@@ -437,8 +437,9 @@ export const getFichaProveedorByIdThunk = (proveedorId, fechaInicio, fechaFin, s
 
             if (response.status === 200) {
                 const data = response.data;
+                console.log("data ",data.registros)
                 await dispatch(saveId({ id: proveedorId }));
-                await dispatch(listIdStore({ firchaproveedor: data }));
+                await dispatch(listIdStore({ firchaproveedor: data.registros, totalGeneralConComision:data.totalGeneralConComision }));
             } else {
                 await dispatch(listIdStore({ firchaproveedor: [] }));
             }
@@ -487,7 +488,7 @@ export const createCuentaBancariaThunks = (data) => {
 
                 await dispatch(resetForm());
 
-                /*await dispatch(resetFormProveedores());*/
+                await dispatch(getFichaProveedorByIdThunk(data.id));
 
                 toast.success('Successfully created!');
 
@@ -499,26 +500,21 @@ export const createCuentaBancariaThunks = (data) => {
                 
                 await dispatch( closeModalShared() );
 
-                /*await dispatch( getAllThunks() );
+                await dispatch(resetForm());
 
-                
-
-                await dispatch( hideBackDropStore() );*/
-                //toast.error('This is an error!');;
             }
             
 
         } catch (error) {
 
-            //await dispatch ( loginFail() );
             await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
-            
-            //await dispatch ( loginFail() );
             
             await dispatch( closeModalShared() );
 
             await dispatch( hideBackDropStore() );
-            // Manejar errores
+
+            await dispatch(resetForm());
+ 
             console.error(error);
        
         }
