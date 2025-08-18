@@ -14,8 +14,8 @@ export function DataTable() {
     let { utilidades, total }                         = useSelector(state => state.utilidadStore);
 
     const columns = [
-      { field: 'id',                  headerName: 'ID',                     width: 100 },
-      { field: 'nombre',              headerName: 'Nombre Proveedor',       width: 230 },
+      { field: 'id',              headerName: 'ID',                    width: 100 },
+      { field: 'nombre',          headerName: 'Nombre Proveedor',      width: 230 },
       {
         field: 'comisionproveedor',
         headerName: 'Comisión Proveedor',
@@ -31,12 +31,11 @@ export function DataTable() {
           );
         },
       },
-      { field: 'etiquetaDos',              headerName: 'Nombre Proveedor',       width: 230 },
-      { field: 'placa',              headerName: 'Nombre Proveedor',       width: 230 },
-      { field: 'cilindraje',              headerName: 'Nombre Proveedor',       width: 230 },
-      { field: 'modelo',              headerName: 'Nombre Proveedor',       width: 230 },
-      { field: 'chasis',              headerName: 'Nombre Proveedor',       width: 230 },
-
+      { field: 'etiquetaDos', headerName: 'Etiqueta',            width: 230 },
+      { field: 'placa',       headerName: 'Placa',               width: 230 },
+      { field: 'cilindraje',  headerName: 'Cilindraje',          width: 230 },
+      { field: 'modelo',      headerName: 'Modelo',              width: 230 },
+      { field: 'chasis',      headerName: 'N° de Chasis',        width: 230 },
     ];
     
     

@@ -1,7 +1,5 @@
 import { useEffect }        from 'react';
 import { Grid, Typography } from '@mui/material';
-import Button               from '@mui/material/Button';
-import PersonAddAltIcon     from '@mui/icons-material/PersonAddAlt';
 
 import { DataTable }                    from '../components/DataTable';
 import { resetFormularioStore }         from '../../store/tramitesStore/tramitesStore';
@@ -13,6 +11,7 @@ import { useSelector, useDispatch }     from 'react-redux';
 import { SimpleBackdrop }                           from "../../components/Backdrop/BackDrop";
 import { getAllCotizadorConfirmacionPreciosThunks } from '../../store/cotizadorStore/cotizadorThunks';                           
 import { ToastContainer, toast }                    from 'react-toastify';
+import { getAllThunks } from '../../store/proveedoresStore/proveedoresThunks';
 
 export const SelectViews = () => {
 
@@ -33,6 +32,7 @@ export const SelectViews = () => {
 
     useEffect(() => {
         dispatch(getAllCotizadorConfirmacionPreciosThunks());
+        dispatch(getAllThunks())
       },[])
 
     const handleOpenModal = async () => {

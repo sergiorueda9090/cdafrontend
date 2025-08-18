@@ -1,9 +1,8 @@
 import axios from "axios";
-import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { loginFail } from "../authStore/authStore.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { showStore, listStore, resetFormularioStore, handleFormStore  } from "./proveedoresStore.js";
+import { showStore, listStore, resetFormularioStore, handleFormStore, listStoreDefaulProv  } from "./proveedoresStore.js";
 import { getAllThunks as listarEtiquetas } from "../etiquetasStore/etiquetasThunks.js";
 // Función asincrónica para obtener los Pokemons
 const parametersURL = '/proveedores/api/';
@@ -38,6 +37,18 @@ export const getAllThunks = () => {
                 if(data.length > 0){
                     
                     await dispatch(listStore({'proveedores':data}))
+
+                    const defaultProv = data.find(p => p.etiqueta_nombre?.toLowerCase() == 'seguros generales');
+                    console.log("defaultProv ",defaultProv)
+                    if (defaultProv) {await dispatch(listStoreDefaulProv({'defaultProv':defaultProv}))}
+                    
+                    await dispatch(showStore(
+                            {   id        : defaultProv.id ?? '',
+                                nombre    : defaultProv.nombre ?? '',
+                                etiqueta  : defaultProv.etiqueta_nombre ?? '',
+                            }
+                        )
+                    );
 
                     await dispatch(hideBackDropStore());
 
@@ -327,6 +338,8 @@ export const deleteThunk = (idUser = "") => {
 export const handleFormStoreThunk = (data) => {
     return async (dispatch) => {
       const { name, value } = data; // Extraer el nombre y el valor del evento
+      console.log(" === name === ",name);
+      console.log(" === value === ",value);
       dispatch(handleFormStore({ name, value })); // Despachar la acción para actualizar el estado
     };
 };

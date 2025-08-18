@@ -84,7 +84,7 @@ export function DataTable() {
           );
         },
       },
-      {
+      /*{
         field: 'totalConComision',
         headerName: 'Total Con Comision',
         width: 180,
@@ -99,7 +99,7 @@ export function DataTable() {
             </span>
           );
         },
-      },
+      },*/
       {
         field: 'totalConComisionPagos',
         headerName: 'Total Pagos',
@@ -122,19 +122,21 @@ export function DataTable() {
         width: 250,
         sortable: false,
         renderCell: (params) => {
-          return (
-            <>
-              <Tooltip title="Eliminar registro">
-                <IconButton
-                  aria-label="eliminar registro"
-                  onClick={() => handleDelete(params.row.id)}
-                  color="error"
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
-            </>
-          );
+          if(params.row.state == "cuentas"){
+            return (
+              <>
+                <Tooltip title="Eliminar registro">
+                  <IconButton
+                    aria-label="eliminar registro"
+                    onClick={() => handleDelete(params.row.id)}
+                    color="error"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            );
+          }
         },
       },
     ];

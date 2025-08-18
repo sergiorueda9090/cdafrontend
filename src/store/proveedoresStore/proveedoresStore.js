@@ -9,6 +9,7 @@ export const proveedoresStore = createSlice({
     nombre      : '',
     etiqueta    : '',
     proveedores : [],
+    defaultProv : {},
   },
   reducers: {
     showStore:(state,action) => {
@@ -17,7 +18,11 @@ export const proveedoresStore = createSlice({
       state.etiqueta    = action.payload.etiqueta;
     },
     listStore:(state, action) => {
-      state.proveedores = action.payload.proveedores
+      state.proveedores = action.payload.proveedores;
+      state.defaultProv = action.payload.defaultProv;
+    },
+    listStoreDefaulProv:(state, action) => {
+      state.defaultProv = action.payload.defaultProv;
     },
     resetFormularioStore:(state) => {
       state.id            = '';
@@ -34,4 +39,4 @@ export const proveedoresStore = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listStore, resetFormularioStore, handleFormStore } = proveedoresStore.actions;
+export const { showStore, listStore, resetFormularioStore, handleFormStore, listStoreDefaulProv } = proveedoresStore.actions;

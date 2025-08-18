@@ -53,7 +53,9 @@ export function DataTable() {
     
     let { cotizadores, archivo, idBanco } = useSelector(state => state.cotizadorStore);
     let { tarjetasBancarias, banco }      = useSelector(state => state.registroTarjetasStore);
-    let { proveedores, nombre, etiqueta, id: idProveedor } = useSelector( state => state.proveedoresStore);
+    let { proveedores, nombre, etiqueta, id: idProveedor, defaultProv } = useSelector( state => state.proveedoresStore);
+    
+    console.log(" == defaultProv == ",defaultProv)
 
     const [comisiones, setComisiones] = useState({});
 
@@ -262,9 +264,13 @@ export function DataTable() {
     }
         
     const esEditable = etiqueta?.toUpperCase() === 'AMALFI' || etiqueta?.toUpperCase() === 'ELVIN';
-
     
-    const [selectedProveedores, setSelectedProveedores] = useState({}); 
+    console.log("proveedores ",proveedores)
+    
+    const [selectedProveedores, setSelectedProveedores] = useState(defaultProv);
+    
+    console.log("selectedProveedores ",selectedProveedores);
+
     const columns = [
       { field: 'id',                    headerName: 'ID',              width: 90},
       {
@@ -355,7 +361,7 @@ export function DataTable() {
                     <TextField
                       {...paramsInput}
                       variant="standard"
-                      placeholder="Seleccione un Proveedor"
+                      placeholder="Seguros Generales"
                       autoFocus
                     />
                   )}
@@ -367,7 +373,7 @@ export function DataTable() {
               ) : (
                 <Chip
                   label={
-                    proveedorSeleccionado?.nombre || "Seleccione un Proveedor"
+                    proveedorSeleccionado?.nombre || "Seguros Generales"
                   }
                   style={{
                     backgroundColor: "#262254",
@@ -407,8 +413,8 @@ export function DataTable() {
         },
       },
     { field: 'precioDeLey',           headerName: 'Precio de ley',   width: 130, align: "right", headerAlign: "right" },
-      { field: 'comisionPrecioLey',     headerName: 'Comision',        width: 130, align: "right", headerAlign: "right" },
-      {
+    { field: 'comisionPrecioLey',     headerName: 'Comision',        width: 130, align: "right", headerAlign: "right" },
+    {
         field: 'total',
         headerName: 'Total',
         width: 130,
@@ -420,8 +426,8 @@ export function DataTable() {
             maximumFractionDigits: 0 
           }).format(params);
         }
-      },
-      {
+    },
+    {
         field: 'tarjetas',
         headerName: 'Tarjetas',
         width: 250,
