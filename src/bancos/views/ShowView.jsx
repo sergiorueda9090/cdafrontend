@@ -38,7 +38,7 @@ import { URL } from "../../constants.js/constantGlogal";
     { field: "desc_alias",  headerName: "Descripción",    width: 250 },
     {
       field: "valor_alias",
-      headerName: "Valor",
+      headerName: "Total con Cuatro por Mil",
       width: 250,
       align: "right",
       headerAlign: "right",
@@ -67,7 +67,7 @@ import { URL } from "../../constants.js/constantGlogal";
     },
     {
       field: "total_meno_cuatro_por_mil",
-      headerName: "total_meno_cuatro_por_mil",
+      headerName: "Valor",
       width: 250,
       align: "right",
       headerAlign: "right",
@@ -157,12 +157,12 @@ export const ShowView = () => {
     dispatch(downloadExcelThunk(id,startDate, endDate));
   };
 
-  const enhancedDashboardData = dashboardData.map(row => ({
+  let enhancedDashboardData = dashboardData.map(row => ({
     ...row,
-    id: uuidv4() // Usa el ID existente o genera uno nuevo
+    id: uuidv4(), // Usa el ID existente o genera uno nuevo
   }));
   
-  console.log("enhancedDashboardData ",enhancedDashboardData)
+
   return (
     <Box sx={{ height: 500, width: "100%", p: 3 }}>
      

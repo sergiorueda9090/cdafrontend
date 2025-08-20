@@ -369,7 +369,7 @@ export const dashboard_obtener_datos_cuenta = (id = "") => {
                 if(data.data.length > 0){
                     
                     const dashboardData = data.data.map(item => {
-                        const valor = parseFloat(item.valor_alias) || 0;
+                        const valor = parseFloat(item.total) || 0;
                         const cuatroPorMil = parseFloat(item.cuatro_por_mil) || 0;
                         const total_meno_cuatro_por_mil = valor < 0 ? valor + cuatroPorMil : valor - cuatroPorMil;
                     
@@ -378,7 +378,7 @@ export const dashboard_obtener_datos_cuenta = (id = "") => {
                           total_meno_cuatro_por_mil
                         };
                       });
-
+                      console.log(" === dashboardData === ",dashboardData)
                     await dispatch(
                                     listDashboard(
                                         {

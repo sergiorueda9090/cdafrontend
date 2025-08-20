@@ -116,21 +116,44 @@ export const EtapaUno = () => {
     const newErrors = {};
     if (!idCliente)   newErrors.idCliente   = "Debe seleccionar un cliente.";
     if (!placa)       newErrors.placa       = "Este campo es obligatorio.";
-    if (!cilindraje)  newErrors.cilindraje  = "Este campo es obligatorio.";
+    if (!cilindraje) {
+      newErrors.cilindraje = "Este campo es obligatorio.";
+    } else if (isNaN(cilindraje)) {
+      newErrors.cilindraje = "El cilindraje debe ser un número válido.";
+    } else if (cilindraje < 80) {
+      newErrors.cilindraje = "El cilindraje no puede ser menor a 80 cc.";
+    } else if (cilindraje > 22000) {
+      newErrors.cilindraje = "El cilindraje no puede ser mayor a 22.000 cc.";
+    }
     
     // Validar el campo modelo
     if (!modelo) {
       newErrors.modelo = "Este campo es obligatorio.";
     } else if (isNaN(modelo)) {
       newErrors.modelo = "El modelo debe ser un año válido.";
+    } else if (modelo < 1960) {
+      newErrors.modelo = "El modelo no puede ser menor a 1960.";
     } else if (modelo > nextYear) {
-      // Restringir años mayores al siguiente año
       newErrors.modelo = `El modelo no puede ser mayor a ${nextYear}.`;
     }
   
-    if (!chasis) newErrors.chasis = "Este campo es obligatorio.";
+    if (!chasis) {
+      newErrors.chasis = "Este campo es obligatorio.";
+    } else {
+      const chasisUpper = chasis.toUpperCase();  // ✅ NO reasigna const original
+
+      const alfanumericoRegex = /^[A-Z0-9]+$/;
+      if (!alfanumericoRegex.test(chasisUpper)) {
+        newErrors.chasis = "El chasis solo puede contener letras o números (sin espacios ni símbolos).";
+      }
+    }
+
     if (!tipoDocumento) newErrors.tipoDocumento = "Este campo es obligatorio.";
-    if (!numeroDocumento) newErrors.numeroDocumento = "Este campo es obligatorio.";
+    if (!numeroDocumento) {
+      newErrors.numeroDocumento = "Este campo es obligatorio.";
+    } else if (numeroDocumento.length < 5) {
+      newErrors.numeroDocumento = "El documento debe tener al menos 5 caracteres.";
+    }
     if (!nombreCompleto) newErrors.nombreCompleto = "Este campo es obligatorio.";
   
     if (!nombreCompleto) newErrors.nombreCompleto = "Este campo es obligatorio.";
