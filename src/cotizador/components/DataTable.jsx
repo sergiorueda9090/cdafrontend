@@ -23,6 +23,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import emptyDataTable from "../../assets/images/emptyDataTable.png"
 
 import { Chip } from "@mui/material";
+import { ExcelUploader } from './SubirExcel';
 
 const getContrastColor = (hexColor) => {
   // Convertir HEX a RGB
@@ -518,6 +519,7 @@ export function DataTable() {
           noRowsOverlay: NoRowsOverlay,
         }}
       />
+      
     </Paper>
   );
 }

@@ -2,10 +2,11 @@ import { useEffect }        from 'react';
 import { Grid, Typography } from '@mui/material';
 import Button               from '@mui/material/Button';
 import PersonAddAltIcon     from '@mui/icons-material/PersonAddAlt';
+import ArticleIcon          from '@mui/icons-material/Article';
 
 import { DataTable }                    from '../components/DataTable';
 import { resetFormularioStore }         from '../../store/cotizadorStore/cotizadorStore';
-import { openModalShared, clearAlert }  from '../../store/globalStore/globalStore';
+import { openModalShared, clearAlert, openModalExcel }  from '../../store/globalStore/globalStore';
 import { FormDialogUser }               from '../components/Modal';
 
 import { useSelector, useDispatch }     from 'react-redux';
@@ -16,6 +17,7 @@ import { getAllThunksTramites }         from '../../store/clientesStore/clientes
 import { getAllThunks as getAllThunksEtiqutas } from '../../store/etiquetasStore/etiquetasThunks';
 
 import { ToastContainer, toast } from 'react-toastify';
+import { ModalExcel } from '../components/ModalExcel';
 
 export const SelectViews = () => {
 
@@ -32,7 +34,7 @@ export const SelectViews = () => {
 
             // Establece el intervalo para llamar cada segundo (1000 ms)
             const intervalId = setInterval(() => {
-            dispatch(getAllThunksSecond());
+                //dispatch(getAllThunksSecond());
             }, 1000);
 
             // Limpia el intervalo al desmontar el componente
@@ -61,6 +63,10 @@ export const SelectViews = () => {
         await dispatch(resetFormularioStore());
         await dispatch(openModalShared())
     }
+
+    const handleOpenModalExcel = () => {
+        dispatch(openModalExcel());
+    }
     
     useIntervalDispatch();
 
@@ -76,6 +82,11 @@ export const SelectViews = () => {
                 <PersonAddAltIcon sx={{ fontSize:30, mr:1 }}/>
                  Crear Tramite
             </Button>
+
+            <Button color="success" variant="outlined" onClick={ (e) => handleOpenModalExcel() }>
+                <ArticleIcon sx={{ fontSize:30, ml:2 }}/>
+                Subir Documento
+            </Button>
         </Grid>
 
         <Grid container sx={{ mt:2, width:"99.99%" }}>
@@ -84,6 +95,7 @@ export const SelectViews = () => {
         
         {/* START MODAL */}
         <FormDialogUser/>
+        <ModalExcel />
         {/* END MODAL */}
 
         {/* START LOAD */}
@@ -93,7 +105,7 @@ export const SelectViews = () => {
         {/* START ALERT */}
         <ToastContainer
             position="top-center" // Posición predeterminada
-            autoClose={1000} // Tiempo de cierre automático
+            autoClose={100000} // Tiempo de cierre automático
             hideProgressBar={false} // Mostrar barra de progreso
             newestOnTop={true} // Notificaciones más recientes arriba
             closeOnClick // Cierre al hacer clic

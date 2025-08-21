@@ -952,3 +952,91 @@ export const getAllThunksSecond = () => {
         }
     };
 };
+
+
+export const createExcelThunks = (data, modulo="") => {
+
+    return async (dispatch, getState) => {
+
+        const {authStore} = getState();
+        const token       = authStore.token
+        
+        console.log(" createExcelThunks data ",data)
+
+        await dispatch(showBackDropStore());
+
+        const options = {
+            method: 'POST',
+            url: `${URL}/${urlPatter}/api/createexcel/`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            data:JSON.stringify({ registros: data })
+        }
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+
+            if(response.status == 201){
+                
+
+                await dispatch(setAlert({
+                    message: `✅ ${response.data.guardados.length} registros guardados exitosamente.`,
+                    type: 'success'
+                }));
+
+                await dispatch( getAllThunks() );
+
+                await dispatch( closeModalShared() );
+
+                await dispatch( hideBackDropStore() );
+
+            }else if(response.status == 207){
+                
+                const erroresTexto = response.data.errores
+                    .map(err => `Fila ${err.fila}: ${err.error}`)
+                    .join("\n"); // unimos en un string legible
+
+                await dispatch(
+                setAlert({
+                    message: `⚠️ Guardados: ${response.data.guardados.length}, Errores: ${response.data.errores.length}\n\n${erroresTexto}`,
+                    type: "error",
+                    autoHide: false,
+                })
+                );
+
+                await dispatch( getAllThunks() );
+
+                await dispatch( closeModalShared() );
+
+                await dispatch( hideBackDropStore() );
+
+                console.table(response.data.errores); // 🔥 ver errores en consola
+
+            }else{
+
+                await dispatch(setAlert({ message: `¡🚗 ${response.data.error}`, type: 'error'}));
+
+                await dispatch( getAllThunks() );
+
+                await dispatch( closeModalShared() );
+
+                await dispatch( hideBackDropStore() );
+       
+            }
+            
+
+        }catch (error) {
+            let errorMessage = '❌ Ha ocurrido un error.'
+            await dispatch(setAlert({ message: errorMessage, type: 'error' }));
+            await dispatch(getAllThunks());
+            await dispatch(closeModalShared());
+            await dispatch(hideBackDropStore());
+            console.error(error);
+        }
+
+    }
+
+}

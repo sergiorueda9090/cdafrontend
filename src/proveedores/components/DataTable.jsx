@@ -13,7 +13,7 @@ export function DataTable() {
     const dispatch = useDispatch();
     
     let { proveedores }    = useSelector(state => state.proveedoresStore);
-
+    console.log(proveedores);
     const columns = [
       { field: 'id',              headerName: 'ID',         width: 100 },
       { field: 'nombre',          headerName: 'Nombres',    width: 530 },
@@ -42,24 +42,34 @@ export function DataTable() {
         headerName: 'Actions',
         width: 150,
         sortable: false,
-        renderCell: (params) => (
-          <>
-            <IconButton
-              aria-label="edit"
-              onClick={() => handleEdit(params.row)}
-              color="primary"
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              onClick={() => handleDelete(params.row.id)}
-              color="error"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </>
-        ),
+        renderCell: (params) => {
+          const etiqueta = (params.row.etiqueta_nombre || "").toLowerCase();
+          if (etiqueta === "seguros generales") {
+            return (
+              <span style={{ textTransform: "lowercase", color: "#888" }}>
+                {etiqueta}
+              </span>
+            );
+          }
+          return (
+            <>
+              <IconButton
+                aria-label="edit"
+                onClick={() => handleEdit(params.row)}
+                color="primary"
+              >
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                aria-label="delete"
+                onClick={() => handleDelete(params.row.id)}
+                color="error"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </>
+          );
+        },
       },
     ];
     

@@ -55,8 +55,6 @@ export function DataTable() {
     let { tarjetasBancarias, banco }      = useSelector(state => state.registroTarjetasStore);
     let { proveedores, nombre, etiqueta, id: idProveedor, defaultProv } = useSelector( state => state.proveedoresStore);
     
-    console.log(" == defaultProv == ",defaultProv)
-
     const [comisiones, setComisiones] = useState({});
 
     const handleComisionChange = (event, id) => {

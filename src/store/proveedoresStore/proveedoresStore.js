@@ -19,7 +19,6 @@ export const proveedoresStore = createSlice({
     },
     listStore:(state, action) => {
       state.proveedores = action.payload.proveedores;
-      state.defaultProv = action.payload.defaultProv;
     },
     listStoreDefaulProv:(state, action) => {
       state.defaultProv = action.payload.defaultProv;

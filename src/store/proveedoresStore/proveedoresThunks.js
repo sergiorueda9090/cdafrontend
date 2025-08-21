@@ -35,20 +35,20 @@ export const getAllThunks = () => {
                 let data = response.data;
 
                 if(data.length > 0){
-                    
+                    console.log("data ",data)
                     await dispatch(listStore({'proveedores':data}))
 
                     const defaultProv = data.find(p => p.etiqueta_nombre?.toLowerCase() == 'seguros generales');
                     console.log("defaultProv ",defaultProv)
-                    if (defaultProv) {await dispatch(listStoreDefaulProv({'defaultProv':defaultProv}))}
-                    
-                    await dispatch(showStore(
-                            {   id        : defaultProv.id ?? '',
-                                nombre    : defaultProv.nombre ?? '',
-                                etiqueta  : defaultProv.etiqueta_nombre ?? '',
-                            }
-                        )
+                    if (defaultProv) {
+                        await dispatch(listStoreDefaulProv({'defaultProv':defaultProv}))
+                        await dispatch(showStore({id        : defaultProv.id ?? '',
+                                                  nombre    : defaultProv.nombre ?? '',
+                                                  etiqueta  : defaultProv.etiqueta_nombre ?? '',})
                     );
+
+                    }
+                    
 
                     await dispatch(hideBackDropStore());
 
