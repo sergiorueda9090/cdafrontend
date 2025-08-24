@@ -39,6 +39,8 @@ import { PageMain as ArchivoCotizacionesAntiguas }      from '../archivocotizaci
 import { PageMain as Historialtramitesemitidos }        from '../historialtramitesemitidos/pages/PageMain';
 
 
+import { PageMain as CargosNoRegistrados }     from '../cargosNoRegistrados/pages/PageMain';
+
 export const AppRouter = () => {
  
   const data = useSelector(state => state.authStore);
@@ -71,6 +73,7 @@ export const AppRouter = () => {
 
                 <Route path="/recepcionpago"          element={ <RecepcionPago />} />
                 <Route path="/devolucion"             element={ <Devoliciones />} />
+                <Route path="/cargosnoregistrados"    element={ <CargosNoRegistrados />} />
                 <Route path="/ajustesaldo"            element={ <AjusteSaldo />} />
                 <Route path="/gastos"                 element={ <Gastos />} />
                 <Route path="/gastosgenerales"        element={ <GastosGenerales />} />

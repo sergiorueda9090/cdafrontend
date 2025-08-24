@@ -98,6 +98,7 @@ import { URL } from "../../constants.js/constantGlogal";
         if (origen === "Recepcion de Pago") backgroundColor = "#D1ECF1";
         if (origen === "Utilidad Ocasional") backgroundColor = "#F6F0ED"; // Rojo claro
         if (origen === "Cuatro Por Mil") backgroundColor = "#B8D3BB"; // Rojo claro
+        if (origen === "Cargos no registrados") backgroundColor = "#a9f3efff"; // Rojo claro
     
         return (
           <span style={{ 
@@ -123,7 +124,7 @@ export const ShowView = () => {
   let { dashboardData, total_cuenta_bancaria, total_devoluciones, 
         total_gastos_generales, total_utilidad_ocacional, total,
         nombre_cuenta, descripcion_cuenta, 
-        numero_cuenta, total_recepcionDePagos, banco, total_cuatro_por_mil }    = useSelector(state => state.cuentasBancariasStore);
+        numero_cuenta, total_recepcionDePagos, total_cargosNoDeseados, banco, total_cuatro_por_mil }    = useSelector(state => state.cuentasBancariasStore);
 
   const { startDate, endDate } = useSelector(state => state.globalStore);
 
@@ -133,7 +134,8 @@ export const ShowView = () => {
     { name: "Devoluciones",       value: total_devoluciones, color: "#FF9800" }, // Naranja
     { name: "Gastos Generales",   value: total_gastos_generales, color: "#E91E63" }, // Rosa oscuro
     { name: "Utilidad Ocacional", value: total_utilidad_ocacional, color: "#4CAF50" },
-    { name: "Recepcion de Pagos", value: total_recepcionDePagos, color: "#4CAF50" }, // Verde fuertetotal_recepcionDePagos
+    { name: "Recepcion de Pagos",         value: total_recepcionDePagos, color: "#4CAF50" }, // Verde fuertetotal_recepcionDePagos
+    { name: "Cargos no registrados",      value: total_cargosNoDeseados, color: "#9C27B0" } // Morado
 ];
 
   
@@ -292,7 +294,7 @@ export const ShowView = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
@@ -310,7 +312,7 @@ export const ShowView = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
@@ -328,7 +330,7 @@ export const ShowView = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
@@ -345,6 +347,24 @@ export const ShowView = () => {
             </Box>
           </Card>
         </Grid>
+        
+        <Grid item xs={3}>
+          <Card elevation={0} sx={{
+                                borderRadius: 2,
+                                p: 2,
+                                backgroundColor: "#a9f3efff", // 🎨 Fondo suave
+                              }}>
+            <Box display="flex" justifyContent="space-between">
+              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+            </Box>
+            <Box mt={2}>
+              <Typography variant="subtitle2" color="text.secondary">
+                Cargos no registrados
+              </Typography>
+              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_cargosNoDeseados)}</Typography>
+            </Box>
+          </Card>
+        </Grid> 
     
 
         <Grid item xs={6}>

@@ -91,8 +91,7 @@ export const ShowView = () => {
         totalComisionesProveedores,
         totalTarjetas,
         sumaTotal, utilidades, tarjetas }    = useSelector(state => state.balancegeneralStore);
-  console.log("balanceGeneral ", balanceGeneral)
-  console.log("totalTarjetas ",totalTarjetas)
+
   const { startDate, endDate } = useSelector(state => state.globalStore);
 
 
@@ -116,6 +115,11 @@ const data = [
     name: "Total Tarjetas",
     value: totalTarjetas,
     color: "#FF8042"
+  },
+  {
+    name: "Cargos no registrados",
+    value: totalTarjetas,
+    color: "#a9f3efff",
   }
 ];
 
@@ -310,6 +314,25 @@ const dataBalanceUtilidad = [
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
                 Recepción de pagos
+              </Typography>
+              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_recepcionDePagos)}</Typography>
+            </Box>
+          </Card>
+        </Grid>
+
+
+        <Grid item xs={4}>
+          <Card elevation={0} sx={{
+                                borderRadius: 2,
+                                p: 2,
+                                backgroundColor: "#a9f3efff", // 🎨 Fondo suave
+                              }}>
+            <Box display="flex" justifyContent="space-between">
+              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+            </Box>
+            <Box mt={2}>
+              <Typography variant="subtitle2" color="text.secondary">
+                Cargos no registrados
               </Typography>
               <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_recepcionDePagos)}</Typography>
             </Box>

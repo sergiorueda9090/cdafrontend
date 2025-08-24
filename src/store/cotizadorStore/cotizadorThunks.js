@@ -76,7 +76,7 @@ export const createThunks = (data, modulo="") => {
 
         const {authStore} = getState();
         const token       = authStore.token
-        console.log("data ",data)
+
         await dispatch(showBackDropStore());
 
         const options = {
@@ -493,8 +493,6 @@ export const getAllCotizadorTramitesThunks = () => {
 
                 let data = response.data;
                 
-                console.log("datos ",data);
-
                 if(data.length > 0){
                     
                     await dispatch(listStore({'cotizadores':data}))
@@ -556,8 +554,6 @@ export const getAllCotizadorConfirmacionPreciosThunks = () => {
             if(response.status === 200){
 
                 let data = response.data;
-                
-                console.log("datos ",data);
 
                 if(data.length > 0){
                     
@@ -779,8 +775,6 @@ export const getAllFilterDatePdfThunks = (fechaInicio, fechaFin, query = "") => 
             if(response.status === 200){
 
                 let data = response.data;
-                
-                console.log("datos confirmacion filter ",data);
 
                 if(data.length > 0){
                     
@@ -812,7 +806,7 @@ export const getAllFilterDatePdfThunks = (fechaInicio, fechaFin, query = "") => 
 export const update_cotizador_devolver = (data) => {
     
     return async (dispatch, getState) => {
-        console.log("update_cotizador_devolver ",data)
+
         const {authStore} = getState();
         const token       = authStore.token
     
@@ -960,8 +954,6 @@ export const createExcelThunks = (data, modulo="") => {
 
         const {authStore} = getState();
         const token       = authStore.token
-        
-        console.log(" createExcelThunks data ",data)
 
         await dispatch(showBackDropStore());
 

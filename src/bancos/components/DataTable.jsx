@@ -172,6 +172,7 @@ export function DataTable() {
           if (origen === "Devoluciones") backgroundColor = "#F8D7DA"; // Rojo claro
           if (origen === "Gastos generales") backgroundColor = "#D1ECF1"; // Rojo claro
           if (origen === "Utilidad ocacional") backgroundColor = "#D6D8DB";
+          if (origen === "Cargos no registrados") backgroundColor = "#a9f3efff"; // Rojo claro
           
           return (
             <span style={{ 

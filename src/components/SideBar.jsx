@@ -29,6 +29,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import GroupsIcon from '@mui/icons-material/Groups';
+import MoneyOffIcon from '@mui/icons-material/MoneyOff';
 
 import { useSelector } from 'react-redux';
 
@@ -86,6 +87,7 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
     const gestionMovimientos = [
         { text: 'Recepción de Pago', icon: <MonetizationOnIcon />, route: '/recepcionpago' },
         { text: 'Devolución', icon: <ReplayIcon />, route: '/devolucion' },
+        { text: 'Cargos no registrados', icon: <MoneyOffIcon />, route: '/cargosnoregistrados' },
         { text: 'Ajuste de Saldo', icon: <AccountBalanceWalletIcon />, route: '/ajustesaldo' },
         { text: 'Lista de Gastos', icon: <ShoppingBagIcon />, route: '/gastos' },
         { text: 'Relacionar Gasto', icon: <ReceiptIcon />, route: '/gastosgenerales' },

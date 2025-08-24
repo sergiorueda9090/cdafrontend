@@ -35,11 +35,11 @@ export const getAllThunks = () => {
                 let data = response.data;
 
                 if(data.length > 0){
-                    console.log("data ",data)
+               
                     await dispatch(listStore({'proveedores':data}))
 
                     const defaultProv = data.find(p => p.etiqueta_nombre?.toLowerCase() == 'seguros generales');
-                    console.log("defaultProv ",defaultProv)
+                    
                     if (defaultProv) {
                         await dispatch(listStoreDefaulProv({'defaultProv':defaultProv}))
                         await dispatch(showStore({id        : defaultProv.id ?? '',
@@ -104,8 +104,6 @@ export const createThunks = (data) => {
         try {
             // Hacer la solicitud
             const response = await axios.request(options);
-            
-            console.log("response.data ",response);
 
             if(response.status == 201){
                 
@@ -338,8 +336,6 @@ export const deleteThunk = (idUser = "") => {
 export const handleFormStoreThunk = (data) => {
     return async (dispatch) => {
       const { name, value } = data; // Extraer el nombre y el valor del evento
-      console.log(" === name === ",name);
-      console.log(" === value === ",value);
       dispatch(handleFormStore({ name, value })); // Despachar la acción para actualizar el estado
     };
 };

@@ -1,17 +1,17 @@
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { loginFail } from "../authStore/authStore.js";
-import { showThunk as precioClientesShow } from "../clientesStore/clientesThunks.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { showStore, listStore, resetFormularioStore  } from "./confirmacionPreciosStore.js";
-import { listStore as listStoreClientes } from "../cotizadorStore/cotizadorStore.js"
+import { showStore, listStore, resetFormularioStore, handleFormStore  } from "./cargosNoRegistradostore.js";
 
 // Función asincrónica para obtener los Pokemons
+const parametersURL = 'cargosnoregistrados/api/';
+
 export const getAllThunks = () => {
 
     return async (dispatch, getState) => {
-    
+        
         await dispatch(showBackDropStore());
         
         const {authStore} = getState();
@@ -20,7 +20,7 @@ export const getAllThunks = () => {
         // Iniciar la carga
         const options = {
             method: 'GET',
-            url: `${ URL}/cotizador/get_cotizadores_confirmacion_precios/api`,
+            url: `${ URL}/${parametersURL}cargosnoregistrados/`,
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -37,13 +37,13 @@ export const getAllThunks = () => {
 
                 if(data.length > 0){
                     
-                    await dispatch(listStore({'tramites':data}))
+                    await dispatch(listStore({'cargoNoDeseadoArray':data}))
 
                     await dispatch(hideBackDropStore());
 
                 }else{
 
-                    await dispatch(listStore({'tramites':[]}))
+                    await dispatch(listStore({'cargoNoDeseadoArray':[]}))
 
                     await dispatch(hideBackDropStore());
                 }
@@ -81,7 +81,7 @@ export const createThunks = (data) => {
 
         const options = {
             method: 'POST',
-            url: `${URL}/tramites/api/create/`,
+            url: `${URL}/${parametersURL}cargosnoregistrados/crear/`,
             headers: {
                 Authorization: `Bearer ${token}`,
                 'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
@@ -92,7 +92,7 @@ export const createThunks = (data) => {
         try {
             // Hacer la solicitud
             const response = await axios.request(options);
-
+            
             if(response.status == 201){
                 
                 await dispatch(resetFormularioStore());
@@ -104,16 +104,6 @@ export const createThunks = (data) => {
                 await dispatch( closeModalShared() );
 
                 await dispatch( hideBackDropStore() );
-                //toast.success('Successfully created!');
-            }else if(response.status == 200){
-                
-                await dispatch(resetFormularioStore());
-
-                await dispatch(setAlert({ message: `¡🚗 ${response.data.error}`, type: 'error'}));
-
-                await dispatch( getAllThunks() );
-
-                await dispatch( closeModalShared() );
 
             }else{
 
@@ -124,19 +114,17 @@ export const createThunks = (data) => {
                 await dispatch( closeModalShared() );
 
                 await dispatch( hideBackDropStore() );
-                //toast.error('This is an error!');;
+
             }
             
 
         } catch (error) {
 
-            // Mostrar una alerta con el mensaje de error
-            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
-
-            await dispatch( getAllThunks() );
-
             //await dispatch ( loginFail() );
-
+            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
+            
+            //await dispatch ( loginFail() );
+            
             await dispatch( closeModalShared() );
 
             await dispatch( hideBackDropStore() );
@@ -160,7 +148,7 @@ export const showThunk= (id = "") => {
         
         const options = {
             method: 'GET',
-            url: `${ URL}/tramites/api/${id}/`,
+            url: `${ URL}/${parametersURL}cargosnoregistrados/${id}/`,
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -171,14 +159,17 @@ export const showThunk= (id = "") => {
             const response = await axios.request(options);
             
             if(response.status == 200){
-                
-                await dispatch(showStore(response.data) );
-
-                if(response.data.idCliente){
-
-                    await dispatch(precioClientesShow(response.data.idCliente));
-                    
-                }
+                console.log("response.data ",response.data)
+                await dispatch(showStore(
+                                            { id                    : response.data.id ?? '',
+                                              id_tarjeta_bancaria   : response.data.id_tarjeta_bancaria ?? '',
+                                              fecha_transaccion     : response.data.fecha_transaccion ?? '',
+                                              valor                 : response.data.valor ?? '',
+                                              observacion           : response.data.observacion ?? '',
+                                              id_cliente            : response.data.id_cliente ?? '',
+                                            }
+                                        )
+                                );
 
                 await dispatch(openModalShared());
 
@@ -195,7 +186,7 @@ export const showThunk= (id = "") => {
 
         } catch (error) {
 
-            await dispatch ( loginFail() );
+            //await dispatch ( loginFail() );
 
             await dispatch( hideBackDropStore() );
             // Manejar errores
@@ -213,24 +204,26 @@ export const updateThunks = (data) => {
 
         const {authStore} = getState();
         const token       = authStore.token
-        
+   
         await dispatch(showBackDropStore());
 
+        console.log(" updateThunks data ",data)
+        
         const options = {
             method: 'PUT',
-            url: `${URL}/tramites/api/${data.id}/update/`,
+            url: `${URL}/${parametersURL}cargosnoregistrados/${data.id}/update/`,
             headers: {
                 Authorization: `Bearer ${token}`,
                 'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
               },
             data:data
         }
-        /******************************** */
+ 
 
         try {
             // Hacer la solicitud
             const response = await axios.request(options);
-
+            
             if(response.status == 201 || response.status == 200){
                 
                 await dispatch(resetFormularioStore());
@@ -239,31 +232,31 @@ export const updateThunks = (data) => {
 
                 await dispatch( getAllThunks() );
 
-                //await dispatch( closeModalShared() );
+                await dispatch( closeModalShared() );
 
                 await dispatch( hideBackDropStore() );
-                //toast.success('Successfully created!');
+              
             }else{
 
                 await dispatch(setAlert({ message: '❌ Ocurrió un error.', type: 'error'}));
 
                 await dispatch( getAllThunks() );
 
-                //await dispatch( closeModalShared() );
+                await dispatch( closeModalShared() );
 
                 await dispatch( hideBackDropStore() );
-                //toast.error('This is an error!');;
+           
             }
             
 
         } catch (error) {
 
-            
+            //await dispatch ( loginFail() );
             await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
             
-            await dispatch ( loginFail() );
+            //await dispatch ( loginFail() );
 
-            //await dispatch( closeModalShared() );
+            await dispatch( closeModalShared() );
 
             await dispatch( hideBackDropStore() );
             // Manejar errores
@@ -286,7 +279,7 @@ export const deleteThunk = (idUser = "") => {
 
         const options = {
             method: 'DELETE',
-            url: `${ URL}/clientes/api/${idUser}/delete/`,
+            url: `${ URL}/${parametersURL}cargosnoregistrados/${idUser}/delete`,
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -314,12 +307,11 @@ export const deleteThunk = (idUser = "") => {
 
         } catch (error) {
 
+            await dispatch ( loginFail() );
+            
             await dispatch( hideBackDropStore() );
 
             await dispatch(setAlert({ message: 'Ocurrió un error.', type: 'error'}));
-            
-            await dispatch ( loginFail() );
-            
             // Manejar errores
             console.error(error);
         }
@@ -329,128 +321,57 @@ export const deleteThunk = (idUser = "") => {
 }
 
 
-export const getAllCotizadorTramitesThunks = () => {
-
-    return async (dispatch, getState) => {
-        
-        await dispatch(showBackDropStore());
-        
-        const {authStore} = getState();
-        const token = authStore.token
-
-        // Iniciar la carga
-        const options = {
-            method: 'GET',
-            url: `${ URL}/cotizador/get_logs_cotizador_tramites/api`,
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          };
-          
-
-        try {
-            // Hacer la solicitud
-            const response = await axios.request(options);
-        
-            if(response.status === 200){
-
-                let data = response.data;
-
-
-                if(data.length > 0){
-                    
-                    await dispatch(listStore({'tramites':data}))
-
-                    await dispatch(hideBackDropStore());
-
-                }else{
-
-                    await dispatch(listStore({'tramites':[]}))
-
-                    await dispatch(hideBackDropStore());
-                }
-
-            }else{
-
-                await dispatch(hideBackDropStore());
-
-            }
-
-
-        } catch (error) {
-            
-            await dispatch(hideBackDropStore());
-
-            // Manejar errores
-            console.error(error);
-            
-            await dispatch ( loginFail() );
-            
-            await dispatch( hideBackDropStore() );
-
-        }
+export const handleFormStoreThunk = (data) => {
+    return async (dispatch) => {
+      const { name, value } = data; // Extraer el nombre y el valor del evento
+      dispatch(handleFormStore({ name, value })); // Despachar la acción para actualizar el estado
     };
 };
 
-export const getAllFilterDateThunks = (fechaInicio, fechaFin, query = "") => {
+export const getAllThunksFilter = (fechaInicio, fechaFin) => {
+
     return async (dispatch, getState) => {
-
         await dispatch(showBackDropStore());
-
+        
         const { authStore } = getState();
-        const token = authStore.token;
+        const token         = authStore.token;
 
-        let url = `${URL}/cotizador/get_cotizadores_confirmacion_filter_date/api/`;
-
-        // Construcción de parámetros
-        const params = new URLSearchParams();
-        if (fechaInicio) params.append("fechaInicio", fechaInicio);
-        if (fechaFin)    params.append("fechaFin", fechaFin);
-        if (query.trim()) params.append("q", query.trim());
-
-        // Agregar parámetros si existen
-        if ([...params].length > 0) {
+        // Construir la URL con los parámetros de fecha
+        let url = `${ URL}/${parametersURL}cargosnoregistrados/filtro/`;
+  
+        // Agregar las fechas a los parámetros de la URL si existen
+        if (fechaInicio || fechaFin) {
+            const params = new URLSearchParams();
+            if (fechaInicio) params.append("fechaInicio", fechaInicio);
+            if (fechaFin) params.append("fechaFin", fechaFin);
             url += `?${params.toString()}`;
         }
 
         const options = {
             method: "GET",
-            url,
+            url: url,
             headers: {
                 Authorization: `Bearer ${token}`
             }
         };
 
         try {
+            // Hacer la solicitud
             const response = await axios.request(options);
 
-            if(response.status === 200){
-
+            if (response.status === 200) {
                 let data = response.data;
-
-                if(data.length > 0){
-                    
-                    await dispatch(listStoreClientes({'cotizadores':data}))
-
-                    await dispatch(hideBackDropStore());
-
-                }else{
-
-                    await dispatch(listStoreClientes({'cotizadores':[]}))
-
-                    await dispatch(hideBackDropStore());
-                }
-
-            }else{
+                // Si hay datos, actualizar el store
+                await dispatch(listStore({'cargoNoDeseadoArray':data}))
 
                 await dispatch(hideBackDropStore());
-
             }
 
         } catch (error) {
-            console.error("Error al obtener cotizadores:", error);
+            console.error("Error al obtener devoluciones:", error);
         }
 
+        // Ocultar el loader sin importar si hubo éxito o error
         await dispatch(hideBackDropStore());
     };
 };

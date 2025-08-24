@@ -29,6 +29,7 @@ import { DateRange } from '../../cotizador/components/DateRange';
 import emptyDataTable from "../../assets/images/emptyDataTable.png"
 
 import { Chip } from "@mui/material";
+import { handleFormColumnsConfirmacionPrecioStore } from '../../store/proveedoresStore/proveedoresStore';
 
 
 const getContrastColor = (hexColor) => {
@@ -51,13 +52,27 @@ export function DataTable() {
 
     const dispatch = useDispatch();
     
-    let { cotizadores, archivo, idBanco } = useSelector(state => state.cotizadorStore);
+    let { cotizadores, idBanco } = useSelector(state => state.cotizadorStore);
     let { tarjetasBancarias, banco }      = useSelector(state => state.registroTarjetasStore);
-    let { proveedores, nombre, etiqueta, id: idProveedor, defaultProv } = useSelector( state => state.proveedoresStore);
+    let { proveedores, etiqueta, id: idProveedor, defaultProv, columnsConfirmacionPrecios } = useSelector( state => state.proveedoresStore);
+
+    console.log("columnsConfirmacionPrecios ",columnsConfirmacionPrecios)
+
+    const [activeRow, setActiveRow] = useState(null); // Guarda la fila activa
+
+    const handleCellClick = (rowId) => {
+      console.log("rowId ",rowId)
+      setActiveRow(rowId); // Activa solo la celda seleccionada
+    };
+
+    const handleBlur = () => {
+      setActiveRow(null); // Cierra el Autocomplete al hacer clic afuera
+    };
     
     const [comisiones, setComisiones] = useState({});
 
     const handleComisionChange = (event, id) => {
+
       let value = event.target.value.replace(/\D/g, ''); // Permite solo números
       value = Number(value).toLocaleString('es-CO'); // Formato moneda COP
     
@@ -65,22 +80,43 @@ export function DataTable() {
         ...prev,
         [id]: value, // Solo actualiza la fila seleccionada
       }));
+
+
+      let dataConfirmacionPrecios = {
+        id_row            : activeRow,
+        comisionProveedor : value,
+      }
+
+      dispatch(handleFormColumnsConfirmacionPrecioStore({
+                                                            name: 'columnsConfirmacionPrecios',
+                                                            value: dataConfirmacionPrecios
+                                                          }));
+
+
     };
     
 
     const [selectedRow, setSelectedRow]     = useState(null);
     const [uploadedFiles, setUploadedFiles] = useState({}); // Estado para archivos subidos
-
+    console.log(" ***** uploadedFiles ***** ",uploadedFiles)
     const fileInputRef = useRef(null);
 
-    const [fileUpload, setFileUpload] = useState('');
-  
+    const [fileUpload, setFileUpload] = useState({});
+    console.log(" ===*** fileUpload ===***", fileUpload);
+
     const handleUpload = (event) => {
       
       const file = event.target.files[0];
-   
-      
-      setFileUpload(file);
+      console.log("file ",file)
+      console.log(" activeRow ", selectedRow.id)
+
+      //este
+      //setFileUpload(file);
+
+        setFileUpload((prev) => ({
+          ...prev,
+          [selectedRow.id]: file, // Almacenar el nombre del archivo
+        }));
 
       if (file && selectedRow) {
 
@@ -94,12 +130,12 @@ export function DataTable() {
   
         // Limpiar el input después de seleccionar el archivo
         fileInputRef.current.value = "";
+        
       }
 
     };
 
     
-  
     const handleOpenFileDialog = (row) => {
       setSelectedRow(row);
       fileInputRef.current?.click();
@@ -181,6 +217,18 @@ export function DataTable() {
       if(newValue){
         dispatch(handleFormStoreThunk({name: 'banco', value:newValue.nombre_cuenta }));
         dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:id }));
+
+        let dataConfirmacionPrecios = {
+          id_row            : activeRow,
+          banco             : newValue.nombre_cuenta,
+          idBanco           : id,
+        }
+
+        dispatch(handleFormColumnsConfirmacionPrecioStore({
+                                                              name: 'columnsConfirmacionPrecios',
+                                                              value: dataConfirmacionPrecios
+                                                            }));
+
       }else{
         dispatch(handleFormStoreThunk({name: 'banco', value:"" }));
         dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:"" }));
@@ -188,11 +236,29 @@ export function DataTable() {
 
     };
 
-    const handleProveedorSelectionChange = (id, newValue) => {
+
+      const handleProveedorSelectionChange = (id, newValue) => {
+
       if(newValue){
         dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:newValue.nombre }));
         dispatch(handleFormStoreThunkProveedores({name: 'etiqueta',  value:newValue.etiqueta_nombre }));
         dispatch(handleFormStoreThunkProveedores({name: 'id',        value:id }));
+
+        let dataConfirmacionPrecios = {
+          id_row      : activeRow,
+          idProveedor : id,
+          nombre      : newValue.nombre,
+          etiqueta    : newValue.etiqueta_nombre,
+          comisionProveedor: 0,
+          banco       : "",
+          idBanco     : "",
+        }
+        console.log("dataConfirmacionPrecios ",dataConfirmacionPrecios)
+        dispatch(handleFormColumnsConfirmacionPrecioStore({
+                                                              name: 'columnsConfirmacionPrecios',
+                                                              value: dataConfirmacionPrecios
+                                                            }));
+
         
         if(newValue.etiqueta_nombre !== "seguros generales"){
 
@@ -204,18 +270,9 @@ export function DataTable() {
         dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:"" }));
         dispatch(handleFormStoreThunkProveedores({name: 'etiqueta',  value:"" }));
         dispatch(handleFormStoreThunkProveedores({name: 'id',        value:"" }));
-
       }
-    };
 
-    const [activeRow, setActiveRow] = useState(null); // Guarda la fila activa
 
-    const handleCellClick = (rowId) => {
-      setActiveRow(rowId); // Activa solo la celda seleccionada
-    };
-
-    const handleBlur = () => {
-      setActiveRow(null); // Cierra el Autocomplete al hacer clic afuera
     };
     
     const handleDevolver = (data="") => {
@@ -263,11 +320,8 @@ export function DataTable() {
         
     const esEditable = etiqueta?.toUpperCase() === 'AMALFI' || etiqueta?.toUpperCase() === 'ELVIN';
     
-    console.log("proveedores ",proveedores)
-    
     const [selectedProveedores, setSelectedProveedores] = useState(defaultProv);
-    
-    console.log("selectedProveedores ",selectedProveedores);
+  
 
     const columns = [
       { field: 'id',                    headerName: 'ID',              width: 90},
@@ -293,7 +347,6 @@ export function DataTable() {
           );
         },
       },
-
       { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 170,       
           renderCell: (params) => {
           const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
@@ -326,7 +379,20 @@ export function DataTable() {
         editable: false,
         renderCell: (params) => {
           const isActive = activeRow === params.id;
-          const proveedorSeleccionado = selectedProveedores[params.id] || null;
+
+          // Buscar si ya hay un proveedor asignado en columnsConfirmacionPrecios
+          const proveedorAsignado = columnsConfirmacionPrecios.find(
+            item => item.id_row === params.id
+          );
+
+          // Si ya lo tienes guardado, úsalo
+          const proveedorSeleccionado = proveedorAsignado
+            ? {
+                id: proveedorAsignado.idProveedor,
+                nombre: proveedorAsignado.nombre,
+              }
+            : null;
+
           return (
             <Box width="100%">
               {isActive && proveedores.length > 0 ? (
@@ -334,24 +400,24 @@ export function DataTable() {
                   options={proveedores}
                   getOptionLabel={(option) => option.nombre}
                   isOptionEqualToValue={(option, value) => option.id === value?.id}
+                  // Muestra el ya seleccionado si existe
                   value={proveedorSeleccionado}
                   onChange={(_, newValue) => {
-                    setSelectedProveedores((prev) => ({
-                      ...prev,
-                      [params.id]: newValue
-                    }));
-
                     if (newValue) {
-                      handleProveedorSelectionChange(newValue.id, newValue);
-
-                      const comisionColumn = columns.find(
-                        col => col.field === 'comisionProveedor'
+                      // guardar en redux
+                      dispatch(
+                        handleFormColumnsConfirmacionPrecioStore({
+                          name: "columnsConfirmacionPrecios",
+                          value: {
+                            id_row: params.id,
+                            idProveedor: newValue.id,
+                            nombre: newValue.nombre,
+                            etiqueta: newValue.etiqueta_nombre,
+                          },
+                        })
                       );
-                      if (comisionColumn) {
-                        comisionColumn.editable = newValue.nombre === 'Link de Pago';
-                      }
                     } else {
-                      handleProveedorSelectionChange(null, null);
+                      // si limpian el valor, elimino el registro o muestro todo
                       handleShowAllProveedores();
                     }
                   }}
@@ -359,7 +425,7 @@ export function DataTable() {
                     <TextField
                       {...paramsInput}
                       variant="standard"
-                      placeholder="Seguros Generales"
+                      placeholder="Seleccione proveedor"
                       autoFocus
                     />
                   )}
@@ -370,9 +436,7 @@ export function DataTable() {
                 />
               ) : (
                 <Chip
-                  label={
-                    proveedorSeleccionado?.nombre || "Seguros Generales"
-                  }
+                  label={proveedorSeleccionado?.nombre || "Seleccione proveedor"}
                   style={{
                     backgroundColor: "#262254",
                     color: "#ffffff",
@@ -397,17 +461,31 @@ export function DataTable() {
         headerName: 'Comisión Proveedor',
         width: 180,
         renderCell: (params) => {
-          return esEditable && activeRow == params.id? (
+
+          const proveedorAsignado = columnsConfirmacionPrecios.find(
+            item => item.id_row === params.id
+          );
+
+          const etiqueta = proveedorAsignado ? proveedorAsignado.etiqueta : '';
+
+          return (etiqueta && (etiqueta === 'Elvin' || etiqueta === 'AMALFI')) ? (
             <input 
               type="text"
+              name="comisionProveedor"
               value={comisiones[params.id] || ''}
               onChange={(event) => handleComisionChange(event, params.id)}
               placeholder="Ingrese la comisión"
-              style={{ width: '100%', textAlign: 'right', border: 'none', background: 'transparent' }}
+              style={{ 
+                width: '100%', 
+                textAlign: 'right', 
+                border: 'none', 
+                background: 'transparent' 
+              }}
             />
           ) : (
-            <span>0</span> // Si no es editable, muestra "0"
+            <span>0</span>
           );
+
         },
       },
     { field: 'precioDeLey',           headerName: 'Precio de ley',   width: 130, align: "right", headerAlign: "right" },
@@ -426,71 +504,107 @@ export function DataTable() {
         }
     },
     {
-        field: 'tarjetas',
-        headerName: 'Tarjetas',
-        width: 250,
-        editable: false, // La edición se maneja manualmente con el Chip
-        renderCell: (params) => {
-          const isActive = activeRow === params.id;
-          return (
-            <Box width="100%">
-              {isActive && tarjetasBancarias.length > 0 ? (
-                <Autocomplete
-                    options={tarjetasBancarias}
-                    getOptionLabel={(option) => option.nombre_cuenta}
-                    isOptionEqualToValue={(option, value) => option.id === value?.id}
-                    value={tarjetasBancarias.find((option) => option.nombre_cuenta === banco) || null}
-                    onChange={(_, newValue) => {
-                      if (newValue) {
-                        handleSelectionChange(newValue.id, newValue);
-                      } else {
-                        handleSelectionChange(null, null); // Limpia selección
-                        handleDisplayAllTarjetas();
-                      }
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="standard"
-                        placeholder="Seleccione una tarjeta"
-                        InputProps={{
-                          ...params.InputProps,
-                          endAdornment: (
-                            <>
-                              {params.InputProps.endAdornment}
-                            </>
-                          ),
-                        }}
-                        autoFocus
-                      />
-                    )}
-                    fullWidth
-                    clearOnEscape
-                    disableClearable={false} // permite que aparezca la "X"
-                    disabled={etiqueta !== "seguros generales"}
+      field: 'tarjetas',
+      headerName: 'Tarjetas',
+      width: 250,
+      editable: false,
+      renderCell: (params) => {
+        const isActive = activeRow === params.id;
+
+        const proveedorAsignado = columnsConfirmacionPrecios.find(
+          item => item.id_row === params.id
+        );
+
+        // aquí convertimos a minúsculas
+        const etiqueta = proveedorAsignado?.etiqueta?.toLowerCase() || "";
+        const bancoAsignadoId = proveedorAsignado ? proveedorAsignado.idBanco : "";
+
+        const tarjetaSeleccionada = tarjetasBancarias.find(
+          (option) => option.id === bancoAsignadoId
+        ) || null;
+
+        return (
+          <Box width="100%">
+            {isActive && tarjetasBancarias.length > 0 ? (
+              <Autocomplete
+                options={tarjetasBancarias}
+                getOptionLabel={(option) => option.nombre_cuenta}
+                isOptionEqualToValue={(option, value) => option.id === value?.id}
+                value={tarjetaSeleccionada}
+                onChange={(_, newValue) => {
+                  if (etiqueta === "seguros generales") { // ✅ ya está en minúsculas
+                    if (newValue) {
+                      dispatch(
+                        handleFormColumnsConfirmacionPrecioStore({
+                          name: "columnsConfirmacionPrecios",
+                          value: {
+                            id_row: params.id,
+                            idBanco: newValue.id,
+                            banco: newValue.nombre_cuenta,
+                          },
+                        })
+                      );
+                    } else {
+                      dispatch(
+                        handleFormColumnsConfirmacionPrecioStore({
+                          name: "columnsConfirmacionPrecios",
+                          value: {
+                            id_row: params.id,
+                            idBanco: null,
+                            banco: null,
+                          },
+                        })
+                      );
+                      handleDisplayAllTarjetas();
+                    }
+                  }
+                }}
+                renderInput={(paramsInput) => (
+                  <TextField
+                    {...paramsInput}
+                    variant="standard"
+                    placeholder={
+                      etiqueta === "seguros generales"
+                        ? "Seleccione una tarjeta"
+                        : "No disponible"
+                    }
+                    autoFocus
                   />
-              ) : (
-                <Chip
-                  label={params.value ? params.value.nombre_cuenta : "Seleccionar Tarjeta"}
-                  style={{
-                    backgroundColor: "#262254",
-                    color: "#ffffff",
-                    padding: "5px",
-                    borderRadius: "5px",
-                    textAlign: "center",
-                    width: "100%",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    handleShowAllTarjetas(); // si necesitas cargar tarjetas desde Redux
+                )}
+                fullWidth
+                clearOnEscape
+                disableClearable={false}
+                disabled={etiqueta !== "seguros generales"} // ✅ compara en minúsculas
+              />
+            ) : (
+              <Chip
+                label={
+                  etiqueta === "seguros generales"
+                    ? tarjetaSeleccionada?.nombre_cuenta || "Seleccionar Tarjeta"
+                    : "No disponible"
+                }
+                style={{
+                  backgroundColor: "#262254",
+                  color: "#ffffff",
+                  padding: "5px",
+                  borderRadius: "5px",
+                  textAlign: "center",
+                  width: "100%",
+                  cursor: etiqueta === "seguros generales" ? "pointer" : "not-allowed",
+                  opacity: etiqueta === "seguros generales" ? 1 : 0.6,
+                }}
+                onClick={() => {
+                  if (etiqueta === "seguros generales") {
+                    handleShowAllTarjetas();
                     handleCellClick(params.id);
-                  }}
-                />
-              )}
-            </Box>
-          );
-        },
+                  }
+                }}
+              />
+            )}
+          </Box>
+        );
       },
+    },
       {
         field: "actions",
         headerName: "Actions",
@@ -499,6 +613,18 @@ export function DataTable() {
         renderCell: (params) => {
           const isFileUploaded = uploadedFiles[params.row.id];
           const archivoFile = params.row.archivo;
+
+          const proveedorAsignado = columnsConfirmacionPrecios.find(
+            (item) => item.id_row === params.id
+          );
+
+          // Convertir a minúsculas
+          const etiqueta = proveedorAsignado?.etiqueta?.toLowerCase() || "";
+          const bancoAsignadoId = proveedorAsignado ? proveedorAsignado.idBanco : "";
+
+          const comisionProveedor = proveedorAsignado?.comisionProveedor ?? "";
+
+          console.log("comisionProveedor ",comisionProveedor)
           return (
             <>
               <IconButton aria-label="edit" onClick={() => handleEdit(params.row)} color="primary">
@@ -563,28 +689,54 @@ export function DataTable() {
                     >
                       <HighlightOffIcon />
                     </IconButton>
-                  </Tooltip>
-
-                {(
-                  etiqueta !== "" && (
-                    (etiqueta !== "seguros generales" && isFileUploaded) || 
-                    (etiqueta == "seguros generales" && isFileUploaded && banco !== "")
-                  )
-                ) && (
-                  <Tooltip title="Confirmar">
-                    <IconButton
-                      aria-label="confirmar-archivo"
-                      color="success"
-                      onClick={() => handleUploadFile(params.row.id)}
-                    >
-                      <AutoStoriesIcon />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              
-                  
+                  </Tooltip> 
                 </>
               )}
+
+                <>
+
+                  {
+                    (() => {
+                      const label = etiqueta?.toLowerCase(); // normalizamos
+                      let canConfirm = false;
+
+                      if (label === "seguros generales") {
+                        canConfirm = !!bancoAsignadoId;
+                      } else if (label === "amalfi" || label === "elvin") {
+                        canConfirm = comisionProveedor !== "" && comisionProveedor !== undefined && comisionProveedor !== null;
+                      } else if (label) {
+                        canConfirm = true;
+}
+
+                      return canConfirm ? (
+                        <Tooltip title="Confirmar">
+                          <IconButton
+                            aria-label="confirmar-archivo"
+                            color="success"
+                            onClick={() => handleUploadFile(params.row.id)}
+                          >
+                            <AutoStoriesIcon />
+                          </IconButton>
+                        </Tooltip>
+                      ) : null;
+                    })()
+                  }
+
+                  {/*(etiqueta.toLowerCase() !== "" &&
+                    (etiqueta.toLowerCase() !== "seguros generales" ||
+                      (etiqueta.toLowerCase() === "seguros generales" && bancoAsignadoId !== ""))) && (
+                    <Tooltip title="Confirmar">
+                      <IconButton
+                        aria-label="confirmar-archivo"
+                        color="success"
+                        onClick={() => handleUploadFile(params.row.id)}
+                      >
+                        <AutoStoriesIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )*/}
+                </>
+              
             </>
           );
         },
@@ -660,6 +812,8 @@ export function DataTable() {
     };
 
     const handleUploadFile = (id) => {
+      console.log("handleUploadFile ",id);
+ 
       toast(
         ({ closeToast }) => (
           <div>
@@ -699,23 +853,55 @@ export function DataTable() {
     }
 
     const handleUploadFileConfirmar = (id) => {
-      
-      let comisionproveedor = Object.values(comisiones);
+      //sergio
+
+      let comisionproveedor = columnsConfirmacionPrecios.filter(item => item.id_row === id)[0]?.comisionProveedor || 0;
+      let etiqueta          = columnsConfirmacionPrecios.filter(item => item.id_row === id)[0]?.etiqueta || '';
+      let idBanco           = columnsConfirmacionPrecios.filter(item => item.id_row === id)[0]?.idBanco || '';
+      let idProveedor       =  columnsConfirmacionPrecios.filter(item => item.id_row === id)[0]?.idProveedor || '';  
+
+      //let comisionproveedor = Object.values(comisiones);
 
       // Si no existe o es vacío, asignar "0"
-      let comisionRaw = comisionproveedor[0] ? comisionproveedor[0] : "0";
+      //let comisionRaw = comisionproveedor[0] ? comisionproveedor[0] : "0";
+      let comision = 0;
+
+      if(comisionproveedor == "" || comisionproveedor == undefined){
       
-      // Eliminar separadores de miles y convertir a número
-      let comision = parseFloat(comisionRaw.replace(/\./g, ''));
-     
+        comisionproveedor = "0";
+      
+      }else{
+      
+        comision = parseFloat(comisionproveedor.replace(/\./g, ''));
+      
+        if (etiqueta.toLowerCase() != "seguros generales"){
+      
+          comision = -Math.abs(comision); // Asegura que sea negativo
+      
+        }
+      
+      }
+       
       if (etiqueta.toLowerCase() != "seguros generales"){
           comision = -Math.abs(comision); // Asegura que sea negativo
       }
 
-      if (!fileUpload) {
+      let dataSend = {
+        id_row            : id,
+        comisionProveedor : comisionproveedor,
+        comision          : comision,
+        etiqueta          : etiqueta,
+        idBanco           : idBanco,
+        idProveedor       : idProveedor
+      }
+
+    const entries = Object.entries(fileUpload); // [[13, File], [12, File], ...]
+    const file = entries.find(([key]) => Number(key) === id)?.[1];
+
+      if (!file) {
         alert("Por favor selecciona un archivo.");
         return;
-      }
+    }
 
       const allowedImageTypes = [
                                   'image/jpeg',
@@ -725,11 +911,11 @@ export function DataTable() {
                                   'image/svg+xml'
                                 ];
 
-      const fileName = fileUpload.name;
+      const fileName      = file.name;
       const fileExtension = fileName.split('.').pop().toLowerCase();
       const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
 
-      if (!allowedImageTypes.includes(fileUpload.type)) {
+      if (!allowedImageTypes.includes(file.type)) {
         alert("Por favor sube solo archivos de imagen (JPEG, PNG, GIF, WEBP o SVG).");
         return;
       }
@@ -753,14 +939,14 @@ export function DataTable() {
       dispatch(updateThunks(
                               {
                                   id,
-                                  archivo: fileUpload,
+                                  archivo: file,
                                   idBanco: idBanco,
                                   confirmacionPreciosModulo: 0,
-                                  cotizadorModulo: 0,
-                                  pdfsModulo: 1,
-                                  tramiteModulo: 0,
-                                  idProveedor: idProveedor,
-                                  comisionproveedor: comision
+                                  cotizadorModulo : 0,
+                                  pdfsModulo      : 1,
+                                  tramiteModulo   : 0,
+                                  idProveedor       : idProveedor,
+                                  comisionproveedor : comision
                               },
                               'confirmarprecio'
                           ));

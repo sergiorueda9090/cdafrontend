@@ -10,6 +10,7 @@ export const proveedoresStore = createSlice({
     etiqueta    : '',
     proveedores : [],
     defaultProv : {},
+    columnsConfirmacionPrecios: [],
   },
   reducers: {
     showStore:(state,action) => {
@@ -33,9 +34,24 @@ export const proveedoresStore = createSlice({
       const { name, value } = action.payload; // Obtener el nombre y el valor
       console.log( name, value )
       state[name] = value; // Actualizar dinámicamente la propiedad en el estado
+    },
+    handleFormColumnsConfirmacionPrecioStore: (state, action) => {
+      const { name, value } = action.payload; 
+
+      const index = state[name].findIndex(item => item.id_row === value.id_row);
+
+      if (index !== -1) {
+        state[name][index] = {
+          ...state[name][index],
+          ...value,
+        };
+      } else {
+        state[name].push(value);
+      }
     }
+
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listStore, resetFormularioStore, handleFormStore, listStoreDefaulProv } = proveedoresStore.actions;
+export const { showStore, listStore, resetFormularioStore, handleFormStore, listStoreDefaulProv, handleFormColumnsConfirmacionPrecioStore } = proveedoresStore.actions;

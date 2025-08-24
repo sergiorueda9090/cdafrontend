@@ -52,9 +52,9 @@ export function DataTable() {
 
     const dispatch = useDispatch();
     
-    let { cotizadores, archivo, idBanco } = useSelector(state => state.cotizadorStore);
+    let { cotizadores, idBanco } = useSelector(state => state.cotizadorStore);
     let { tarjetasBancarias, banco }      = useSelector(state => state.registroTarjetasStore);
-    let { proveedores, nombre, etiqueta, id: idProveedor, defaultProv, columnsConfirmacionPrecios } = useSelector( state => state.proveedoresStore);
+    let { proveedores, etiqueta, id: idProveedor, defaultProv, columnsConfirmacionPrecios } = useSelector( state => state.proveedoresStore);
 
     console.log("columnsConfirmacionPrecios ",columnsConfirmacionPrecios)
 
@@ -122,12 +122,12 @@ export function DataTable() {
   
         // Limpiar el input después de seleccionar el archivo
         fileInputRef.current.value = "";
+        
       }
 
     };
 
     
-  
     const handleOpenFileDialog = (row) => {
       setSelectedRow(row);
       fileInputRef.current?.click();
@@ -370,11 +370,20 @@ export function DataTable() {
         width: 250,
         editable: false,
         renderCell: (params) => {
-
           const isActive = activeRow === params.id;
-          const proveedorSeleccionado = selectedProveedores[params.id] || null;
 
-          console.log("params.id ",params.id)
+          // Buscar si ya hay un proveedor asignado en columnsConfirmacionPrecios
+          const proveedorAsignado = columnsConfirmacionPrecios.find(
+            item => item.id_row === params.id
+          );
+
+          // Si ya lo tienes guardado, úsalo
+          const proveedorSeleccionado = proveedorAsignado
+            ? {
+                id: proveedorAsignado.idProveedor,
+                nombre: proveedorAsignado.nombre,
+              }
+            : null;
 
           return (
             <Box width="100%">
@@ -383,24 +392,24 @@ export function DataTable() {
                   options={proveedores}
                   getOptionLabel={(option) => option.nombre}
                   isOptionEqualToValue={(option, value) => option.id === value?.id}
+                  // Muestra el ya seleccionado si existe
                   value={proveedorSeleccionado}
                   onChange={(_, newValue) => {
-                    setSelectedProveedores((prev) => ({
-                      ...prev,
-                      [params.id]: newValue
-                    }));
-
                     if (newValue) {
-                      handleProveedorSelectionChange(newValue.id, newValue);
-
-                      const comisionColumn = columns.find(
-                        col => col.field === 'comisionProveedor'
+                      // guardar en redux
+                      dispatch(
+                        handleFormColumnsConfirmacionPrecioStore({
+                          name: "columnsConfirmacionPrecios",
+                          value: {
+                            id_row: params.id,
+                            idProveedor: newValue.id,
+                            nombre: newValue.nombre,
+                            etiqueta: newValue.etiqueta_nombre,
+                          },
+                        })
                       );
-                      if (comisionColumn) {
-                        comisionColumn.editable = newValue.nombre === 'Link de Pago';
-                      }
                     } else {
-                      handleProveedorSelectionChange(null, null);
+                      // si limpian el valor, elimino el registro o muestro todo
                       handleShowAllProveedores();
                     }
                   }}
@@ -408,7 +417,7 @@ export function DataTable() {
                     <TextField
                       {...paramsInput}
                       variant="standard"
-                      placeholder="Seguros Generales"
+                      placeholder="Seleccione proveedor"
                       autoFocus
                     />
                   )}
@@ -419,9 +428,7 @@ export function DataTable() {
                 />
               ) : (
                 <Chip
-                  label={
-                    proveedorSeleccionado?.nombre || "Seguros Generales"
-                  }
+                  label={proveedorSeleccionado?.nombre || "Seleccione proveedor"}
                   style={{
                     backgroundColor: "#262254",
                     color: "#ffffff",
@@ -446,18 +453,31 @@ export function DataTable() {
         headerName: 'Comisión Proveedor',
         width: 180,
         renderCell: (params) => {
-          return esEditable && activeRow == params.id? (
+
+          const proveedorAsignado = columnsConfirmacionPrecios.find(
+            item => item.id_row === params.id
+          );
+
+          const etiqueta = proveedorAsignado ? proveedorAsignado.etiqueta : '';
+
+          return (etiqueta && (etiqueta === 'Elvin' || etiqueta === 'AMALFI')) ? (
             <input 
               type="text"
               name="comisionProveedor"
               value={comisiones[params.id] || ''}
               onChange={(event) => handleComisionChange(event, params.id)}
               placeholder="Ingrese la comisión"
-              style={{ width: '100%', textAlign: 'right', border: 'none', background: 'transparent' }}
+              style={{ 
+                width: '100%', 
+                textAlign: 'right', 
+                border: 'none', 
+                background: 'transparent' 
+              }}
             />
           ) : (
-            <span>0</span> // Si no es editable, muestra "0"
+            <span>0</span>
           );
+
         },
       },
     { field: 'precioDeLey',           headerName: 'Precio de ley',   width: 130, align: "right", headerAlign: "right" },
@@ -476,71 +496,107 @@ export function DataTable() {
         }
     },
     {
-        field: 'tarjetas',
-        headerName: 'Tarjetas',
-        width: 250,
-        editable: false, // La edición se maneja manualmente con el Chip
-        renderCell: (params) => {
-          const isActive = activeRow === params.id;
-          return (
-            <Box width="100%">
-              {isActive && tarjetasBancarias.length > 0 ? (
-                <Autocomplete
-                    options={tarjetasBancarias}
-                    getOptionLabel={(option) => option.nombre_cuenta}
-                    isOptionEqualToValue={(option, value) => option.id === value?.id}
-                    value={tarjetasBancarias.find((option) => option.nombre_cuenta === banco) || null}
-                    onChange={(_, newValue) => {
-                      if (newValue) {
-                        handleSelectionChange(newValue.id, newValue);
-                      } else {
-                        handleSelectionChange(null, null); // Limpia selección
-                        handleDisplayAllTarjetas();
-                      }
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="standard"
-                        placeholder="Seleccione una tarjeta"
-                        InputProps={{
-                          ...params.InputProps,
-                          endAdornment: (
-                            <>
-                              {params.InputProps.endAdornment}
-                            </>
-                          ),
-                        }}
-                        autoFocus
-                      />
-                    )}
-                    fullWidth
-                    clearOnEscape
-                    disableClearable={false} // permite que aparezca la "X"
-                    disabled={etiqueta !== "seguros generales"}
+      field: 'tarjetas',
+      headerName: 'Tarjetas',
+      width: 250,
+      editable: false,
+      renderCell: (params) => {
+        const isActive = activeRow === params.id;
+
+        const proveedorAsignado = columnsConfirmacionPrecios.find(
+          item => item.id_row === params.id
+        );
+
+        // aquí convertimos a minúsculas
+        const etiqueta = proveedorAsignado?.etiqueta?.toLowerCase() || "";
+        const bancoAsignadoId = proveedorAsignado ? proveedorAsignado.idBanco : "";
+
+        const tarjetaSeleccionada = tarjetasBancarias.find(
+          (option) => option.id === bancoAsignadoId
+        ) || null;
+
+        return (
+          <Box width="100%">
+            {isActive && tarjetasBancarias.length > 0 ? (
+              <Autocomplete
+                options={tarjetasBancarias}
+                getOptionLabel={(option) => option.nombre_cuenta}
+                isOptionEqualToValue={(option, value) => option.id === value?.id}
+                value={tarjetaSeleccionada}
+                onChange={(_, newValue) => {
+                  if (etiqueta === "seguros generales") { // ✅ ya está en minúsculas
+                    if (newValue) {
+                      dispatch(
+                        handleFormColumnsConfirmacionPrecioStore({
+                          name: "columnsConfirmacionPrecios",
+                          value: {
+                            id_row: params.id,
+                            idBanco: newValue.id,
+                            banco: newValue.nombre_cuenta,
+                          },
+                        })
+                      );
+                    } else {
+                      dispatch(
+                        handleFormColumnsConfirmacionPrecioStore({
+                          name: "columnsConfirmacionPrecios",
+                          value: {
+                            id_row: params.id,
+                            idBanco: null,
+                            banco: null,
+                          },
+                        })
+                      );
+                      handleDisplayAllTarjetas();
+                    }
+                  }
+                }}
+                renderInput={(paramsInput) => (
+                  <TextField
+                    {...paramsInput}
+                    variant="standard"
+                    placeholder={
+                      etiqueta === "seguros generales"
+                        ? "Seleccione una tarjeta"
+                        : "No disponible"
+                    }
+                    autoFocus
                   />
-              ) : (
-                <Chip
-                  label={params.value ? params.value.nombre_cuenta : "Seleccionar Tarjeta"}
-                  style={{
-                    backgroundColor: "#262254",
-                    color: "#ffffff",
-                    padding: "5px",
-                    borderRadius: "5px",
-                    textAlign: "center",
-                    width: "100%",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    handleShowAllTarjetas(); // si necesitas cargar tarjetas desde Redux
+                )}
+                fullWidth
+                clearOnEscape
+                disableClearable={false}
+                disabled={etiqueta !== "seguros generales"} // ✅ compara en minúsculas
+              />
+            ) : (
+              <Chip
+                label={
+                  etiqueta === "seguros generales"
+                    ? tarjetaSeleccionada?.nombre_cuenta || "Seleccionar Tarjeta"
+                    : "No disponible"
+                }
+                style={{
+                  backgroundColor: "#262254",
+                  color: "#ffffff",
+                  padding: "5px",
+                  borderRadius: "5px",
+                  textAlign: "center",
+                  width: "100%",
+                  cursor: etiqueta === "seguros generales" ? "pointer" : "not-allowed",
+                  opacity: etiqueta === "seguros generales" ? 1 : 0.6,
+                }}
+                onClick={() => {
+                  if (etiqueta === "seguros generales") {
+                    handleShowAllTarjetas();
                     handleCellClick(params.id);
-                  }}
-                />
-              )}
-            </Box>
-          );
-        },
+                  }
+                }}
+              />
+            )}
+          </Box>
+        );
       },
+    },
       {
         field: "actions",
         headerName: "Actions",
@@ -549,6 +605,18 @@ export function DataTable() {
         renderCell: (params) => {
           const isFileUploaded = uploadedFiles[params.row.id];
           const archivoFile = params.row.archivo;
+
+          const proveedorAsignado = columnsConfirmacionPrecios.find(
+            (item) => item.id_row === params.id
+          );
+
+          // Convertir a minúsculas
+          const etiqueta = proveedorAsignado?.etiqueta?.toLowerCase() || "";
+          const bancoAsignadoId = proveedorAsignado ? proveedorAsignado.idBanco : "";
+
+          const comisionProveedor = proveedorAsignado?.comisionProveedor ?? "";
+
+          console.log("comisionProveedor ",comisionProveedor)
           return (
             <>
               <IconButton aria-label="edit" onClick={() => handleEdit(params.row)} color="primary">
@@ -613,28 +681,54 @@ export function DataTable() {
                     >
                       <HighlightOffIcon />
                     </IconButton>
-                  </Tooltip>
-
-                {(
-                  etiqueta !== "" && (
-                    (etiqueta !== "seguros generales" && isFileUploaded) || 
-                    (etiqueta == "seguros generales" && isFileUploaded && banco !== "")
-                  )
-                ) && (
-                  <Tooltip title="Confirmar">
-                    <IconButton
-                      aria-label="confirmar-archivo"
-                      color="success"
-                      onClick={() => handleUploadFile(params.row.id)}
-                    >
-                      <AutoStoriesIcon />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              
-                  
+                  </Tooltip> 
                 </>
               )}
+
+                <>
+
+                  {
+                    (() => {
+                      const label = etiqueta?.toLowerCase(); // normalizamos
+                      let canConfirm = false;
+
+                      if (label === "seguros generales") {
+                        canConfirm = !!bancoAsignadoId;
+                      } else if (label === "amalfi" || label === "elvin") {
+                        canConfirm = comisionProveedor !== "" && comisionProveedor !== undefined && comisionProveedor !== null;
+                      } else if (label) {
+                        canConfirm = true;
+}
+
+                      return canConfirm ? (
+                        <Tooltip title="Confirmar">
+                          <IconButton
+                            aria-label="confirmar-archivo"
+                            color="success"
+                            onClick={() => handleUploadFile(params.row.id)}
+                          >
+                            <AutoStoriesIcon />
+                          </IconButton>
+                        </Tooltip>
+                      ) : null;
+                    })()
+                  }
+
+                  {/*(etiqueta.toLowerCase() !== "" &&
+                    (etiqueta.toLowerCase() !== "seguros generales" ||
+                      (etiqueta.toLowerCase() === "seguros generales" && bancoAsignadoId !== ""))) && (
+                    <Tooltip title="Confirmar">
+                      <IconButton
+                        aria-label="confirmar-archivo"
+                        color="success"
+                        onClick={() => handleUploadFile(params.row.id)}
+                      >
+                        <AutoStoriesIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )*/}
+                </>
+              
             </>
           );
         },

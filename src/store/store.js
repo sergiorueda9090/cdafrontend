@@ -26,6 +26,7 @@ import { fichaProveedoresStore }      from './fichaProveedoresStore/fichaProveed
 import { balancegeneralStore }        from './balancegeneralStore/balancegeneralStore';
 import { utilidadStore }              from './utilidadStore/utilidadStore';
 import { authCustomerStore }          from './authCustomers/authCustomers';
+import { cargosNoRegistradostore }    from './cargosNoRegistradostore/cargosNoRegistradostore';
 
 export const store = configureStore({
   reducer: {
@@ -55,6 +56,7 @@ export const store = configureStore({
     fichaProveedoresStore : fichaProveedoresStore.reducer,
     balancegeneralStore   : balancegeneralStore.reducer,
     utilidadStore         : utilidadStore.reducer,
-    authCustomerStore     : authCustomerStore.reducer
+    authCustomerStore     : authCustomerStore.reducer,
+    cargosNoRegistradostore : cargosNoRegistradostore.reducer,
   }
 })

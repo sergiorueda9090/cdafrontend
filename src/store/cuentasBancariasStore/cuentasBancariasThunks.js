@@ -389,6 +389,7 @@ export const dashboard_obtener_datos_cuenta = (id = "") => {
                                             total_utilidad_ocacional: data.totales.total_utilidad_ocacional,
                                             total_recepcionDePagos  : data.totales.total_recepcionDePagos,
                                             total_cuatro_por_mil    : data.totales.total_cuatro_por_mil,
+                                            total_cargosNoDeseados  : data.totales.total_cargosNoDeseados,
                                             total                   : data.totales.total,
                                             total_meno_cuatro_por_mil: data.totales.total_meno_cuatro_por_mil,
                                             cuatro_por_mil          : data.totales.cuatro_por_mil,
