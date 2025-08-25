@@ -81,7 +81,7 @@ export const ExcelUploader = () => {
           index: index + 2,
           nombre_cliente: row["nombre cliente"] || "",
           etiqueta: row.etiqueta || "",
-          placa: row.placa || "",
+          placa: row.placa?.toString().toUpperCase() || "",
           cilindraje,
           modelo,
           chasis,

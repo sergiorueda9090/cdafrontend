@@ -325,6 +325,24 @@ export function DataTable() {
 
     const columns = [
       { field: 'id',                    headerName: 'ID',              width: 90},
+{
+  field: 'fechaTramite',
+  headerName: 'Fecha',
+  width: 160,
+  valueFormatter: (params) => {
+    console.log("📌 Valor recibido:", params);
+    if (!params) return "";
+    const date = new Date(params);
+    return (
+      date.getFullYear() + "-" +
+      String(date.getMonth() + 1).padStart(2, "0") + "-" +
+      String(date.getDate()).padStart(2, "0") + " " +
+      String(date.getHours()).padStart(2, "0") + ":" +
+      String(date.getMinutes()).padStart(2, "0") + ":" +
+      String(date.getSeconds()).padStart(2, "0")
+    );
+  }
+},
       {
         field: "nombre_cliente",
         headerName: "Cliente",
