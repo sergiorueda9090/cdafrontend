@@ -82,6 +82,7 @@ import { URL } from "../../constants.js/constantGlogal";
       }
     },
     { field: "placa",  headerName: "placa",    width: 150 },
+    { field: "cliente_nombre",  headerName: "Cliente nombre",    width: 150 },
     {
       field: "origen",
       headerName: "Origen",
@@ -243,7 +244,7 @@ export const ShowView = () => {
               sx={{
                 borderRadius: 2,
                 p: 2,
-                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
+                backgroundColor: "#f7d39dff", // 🎨 Fondo suave
               }}>
               <Box display="flex" justifyContent="space-between">
                 <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
@@ -262,7 +263,7 @@ export const ShowView = () => {
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
-                                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
+                                backgroundColor: "#d3e5f7ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
               <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
@@ -280,7 +281,7 @@ export const ShowView = () => {
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
-                                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
+                                backgroundColor: "#fae8f9ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
               <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
@@ -298,7 +299,7 @@ export const ShowView = () => {
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
-                                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
+                                backgroundColor: "#f3edf8ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
               <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
@@ -316,7 +317,7 @@ export const ShowView = () => {
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
-                                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
+                                backgroundColor: "#f8f4e6ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
               <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
@@ -334,7 +335,7 @@ export const ShowView = () => {
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
-                                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
+                                backgroundColor: "#ecf1a5ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
               <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
@@ -422,7 +423,7 @@ export const ShowView = () => {
           <Grid item xs={12}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6" align="center">
-                  Historial Bancario
+                  Historial Bancario sss
               </Typography>
               <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
         <Button

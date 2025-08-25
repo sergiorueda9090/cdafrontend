@@ -57,16 +57,37 @@ export const FormDialogUser = () => {
   const dispatch = useDispatch();
 
   const { openModalStore }    = useSelector((state) => state.globalStore);
-  const { id, numero_cuenta, nombre_cuenta, descripcion, saldo, imagen, banco, transMoneyState, tarjetasBancarias, idTarTranMoney, is_daviplata } = useSelector((state) => state.registroTarjetasStore);
+  const { id, numero_cuenta, nombre_cuenta, descripcion, saldo, imagen, banco, transMoneyState, tarjetasBancarias, idTarTranMoney, is_daviplata, soldoTransferencia } = useSelector((state) => state.registroTarjetasStore);
   const [errors, setErrors]   = useState({});
   console.log("tarjetasBancarias ",tarjetasBancarias);
   console.log("is_daviplata ",is_daviplata);
+  console.log("saldo ",saldo);
   /*const handleChange = (e) => {
     dispatch(handleFormStoreThunk(e.target));
   };*/
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
+
+    if (name === "soldoTransferencia") {
+      // Permitir signo negativo solo al inicio
+      let numericValue = value.replace(/(?!^-)[^0-9]/g, ""); 
+      
+      // Si empieza con "-", mantenerlo
+      if (value.startsWith("-")) {
+        numericValue = "-" + numericValue;
+      }
+
+      // Si está vacío, lo dejamos vacío
+      if (numericValue === "" || numericValue === "-") {
+        dispatch(handleFormStoreThunk({ name, value: numericValue }));
+      } else {
+        dispatch(handleFormStoreThunk({ name, value: numericValue }));
+      }
+
+      return;
+    }
+
     const finalValue = type === "checkbox" ? checked : value;
     dispatch(handleFormStoreThunk({ name, value: finalValue }));
   };
@@ -96,7 +117,12 @@ export const FormDialogUser = () => {
     if (!banco) {
       newErrors.banco = "El tipo del banco es obligatorio";
     }
-    
+
+      // ✅ Validar que saldoTransferencia no sea mayor a saldo
+    if (Number(soldoTransferencia) > Number(saldo)) {
+      newErrors.soldoTransferencia = "El saldo a transferir no puede ser mayor al saldo disponible";
+    }
+      
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -146,13 +172,13 @@ export const FormDialogUser = () => {
     e.preventDefault();
     
     if (!validateForm()) return;
-    console.log("id ",id);
-    console.log("idTarTranMoney ",idTarTranMoney);
+
     if (id && idTarTranMoney) {
      
       const dataSend = {
         id : id,
         idTarTranMoney : idTarTranMoney,
+        soldoTransferencia : soldoTransferencia,
       };
 
       dispatch(updateTranferirThunks(dataSend));
@@ -219,41 +245,77 @@ export const FormDialogUser = () => {
                 />
               </Grid>
 
-              {transMoneyState ? (<Grid item xs={6}>
-                <FormControl fullWidth>
-                    <Autocomplete
-                        options={tarjetasBancarias}
-                        getOptionLabel={(option) => option.nombre_cuenta+' '+option.numero_cuenta}
-                        onChange={(event, newValue) => handleTypeTranMoney(newValue)}
+              {transMoneyState ? (
+                <>
+                    <Grid item xs={6}>
+                      <FormControl fullWidth>
+                          <Autocomplete
+                              options={tarjetasBancarias}
+                              getOptionLabel={(option) => option.nombre_cuenta+' '+option.numero_cuenta}
+                              onChange={(event, newValue) => handleTypeTranMoney(newValue)}
+                              renderOption={(props, option) => (
+                                <Box component="li" {...props} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                  <Typography>{option.nombre_cuenta+' '+option.numero_cuenta}</Typography>
+                                </Box>
+                              )}
+                              renderInput={(params) => <TextField {...params} label="Seleccione la tarjeta a la que desea transferir dinero" />}
+                            />
+                      </FormControl>
+                    </Grid>
+
+                                      <Grid item xs={6}>
+                    <TextField
+                      autoComplete="off"
+                      fullWidth
+                      name="saldo"
+                      label="📄 Saldo Actual"
+                      type="text"
+                      value={ new Intl.NumberFormat("es-CO").format(saldo) } 
+                      onChange={handleChange}
+                      disabled={true}
+                    />
+                  </Grid>
+
+                
+                  <Grid item xs={6}>
+                    <TextField
+                      autoComplete="off"
+                      fullWidth
+                      name="soldoTransferencia"
+                      label="📄 Saldo Tranferencia"
+                      type="text"
+                      value={ new Intl.NumberFormat("es-CO").format(soldoTransferencia) } 
+                      onChange={handleChange}
+                      error={!!errors.soldoTransferencia}
+                      helperText={errors.soldoTransferencia}
+                    />
+                  </Grid>
+                </>
+                ):(
+                <>
+                
+                  <Grid item xs={6}>
+                    <FormControl fullWidth>
+                      <Autocomplete
+                        options={paymentMethods}
+                        getOptionLabel={(option) => option.name}
+                        value={paymentMethods.find((option) => option.name === banco) || null}
+                        onChange={(event, newValue) => handleTypeBank(newValue)}
                         renderOption={(props, option) => (
                           <Box component="li" {...props} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                            <Typography>{option.nombre_cuenta+' '+option.numero_cuenta}</Typography>
+                            <Avatar src={option.image} alt={option.name} sx={{ width: 30, height: 30 }} />
+                            <Typography>{option.name}</Typography>
                           </Box>
                         )}
-                        renderInput={(params) => <TextField {...params} label="Seleccione la tarjeta a la que desea transferir dinero" />}
+                        renderInput={(params) => <TextField {...params} label="Selecciona un método de pago" />}
                       />
-                  </FormControl>
+                    </FormControl>
 
-              </Grid>):(
-                <Grid item xs={6}>
-                  <FormControl fullWidth>
-                    <Autocomplete
-                      options={paymentMethods}
-                      getOptionLabel={(option) => option.name}
-                      value={paymentMethods.find((option) => option.name === banco) || null}
-                      onChange={(event, newValue) => handleTypeBank(newValue)}
-                      renderOption={(props, option) => (
-                        <Box component="li" {...props} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                          <Avatar src={option.image} alt={option.name} sx={{ width: 30, height: 30 }} />
-                          <Typography>{option.name}</Typography>
-                        </Box>
-                      )}
-                      renderInput={(params) => <TextField {...params} label="Selecciona un método de pago" />}
-                    />
-                  </FormControl>
-
-              </Grid>)
+                  </Grid>
+                </>)
               }
+
+
 
               <Grid item xs={6}>
                 <FormControlLabel

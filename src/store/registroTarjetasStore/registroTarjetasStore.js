@@ -15,6 +15,7 @@ export const registroTarjetasStore = createSlice({
     is_daviplata      : false,
     tarjetasBancarias : [],
     getTotalTarjetas  : [],
+    soldoTransferencia: 0,
   },
   reducers: {
     showStore:(state,action) => {
