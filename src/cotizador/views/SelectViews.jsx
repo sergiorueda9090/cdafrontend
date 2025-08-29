@@ -18,7 +18,7 @@ import { getAllThunks as getAllThunksEtiqutas } from '../../store/etiquetasStore
 
 import { ToastContainer, toast } from 'react-toastify';
 import { ModalExcel } from '../components/ModalExcel';
-
+import { URL } from "../../constants.js/constantGlogal";
 export const SelectViews = () => {
 
     const dispatch = useDispatch();
@@ -77,7 +77,7 @@ export const SelectViews = () => {
     if (!token) return;
 
     // Consumir endpoint /chat/api/me/ para obtener el username
-    fetch("http://127.0.0.1:8000/cotizador/me/api/me/", {
+    fetch(`${URL}/cotizador/me/api/me/`, {
         method: "GET",
         headers: {
         "Authorization": `Bearer ${token}`,
