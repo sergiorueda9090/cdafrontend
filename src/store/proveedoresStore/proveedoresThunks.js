@@ -5,7 +5,7 @@ import { URL } from "../../constants.js/constantGlogal.js";
 import { showStore, listStore, resetFormularioStore, handleFormStore, listStoreDefaulProv  } from "./proveedoresStore.js";
 import { getAllThunks as listarEtiquetas } from "../etiquetasStore/etiquetasThunks.js";
 // Función asincrónica para obtener los Pokemons
-const parametersURL = '/proveedores/api/';
+const parametersURL = 'proveedores/api/';
 
 export const getAllThunks = () => {
 

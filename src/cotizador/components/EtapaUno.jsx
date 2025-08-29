@@ -334,7 +334,7 @@ export const EtapaUno = () => {
               label="🚗 Placa (Clave Única)"
               name="placa"
               variant="outlined"
-              value={placa.trimStart().toUpperCase()}
+              value={(placa ?? "").trimStart().toUpperCase()}
               onInput={(e) => e.target.value = e.target.value.toUpperCase()}
               onChange={handleChange}
               error={!!errors.placa}
@@ -350,7 +350,7 @@ export const EtapaUno = () => {
               label="🔧 Cilindraje"
               name="cilindraje"
               variant="outlined"
-              value={cilindraje.trimStart()}
+              value={(cilindraje ?? "").trimStart()}
               onChange={handleChange}
               error={!!errors.cilindraje}
               helperText={errors.cilindraje}
@@ -367,7 +367,7 @@ export const EtapaUno = () => {
               label="📅 Modelo"
               name="modelo"
               variant="outlined"
-              value={modelo.trimStart()}
+              value={(modelo ?? "").trimStart()}
               onChange={handleChange}
               error={!!errors.modelo}
               helperText={errors.modelo}
@@ -384,7 +384,7 @@ export const EtapaUno = () => {
                 name="chasis"
                 variant="outlined"
                 inputProps={{ maxLength: 17 }}
-                value={chasis.trimStart()}
+                value={(chasis ?? "").trimStart()}
                 onChange={handleChange}
                 error={!!errors.chasis}
                 helperText={errors.chasis}
@@ -419,7 +419,7 @@ export const EtapaUno = () => {
               label="👤 Número de documento"
               name="numeroDocumento"
               variant="outlined"
-              value={numeroDocumento.trimStart()}
+              value={(numeroDocumento ?? "").trimStart()}
               onChange={handleChange}
               error={!!errors.numeroDocumento}
               helperText={errors.numeroDocumento}
@@ -435,7 +435,7 @@ export const EtapaUno = () => {
               label="👤 Nombre completo"
               name="nombreCompleto"
               variant="outlined"
-              value={nombreCompleto.trimStart().toUpperCase()}
+              value={(nombreCompleto ?? "").trimStart()}
               onInput={(e) => e.target.value = e.target.value.toUpperCase()}
               onChange={handleChange}
               error={!!errors.nombreCompleto}
@@ -452,7 +452,7 @@ export const EtapaUno = () => {
                 label="📞 Teléfono"
                 name="telefono"
                 variant="outlined"
-                value={telefono.trimStart()}
+                value={(telefono ?? "").trimStart()}
                 onChange={handleChange}
                 autoComplete="off"
                 inputProps={{ maxLength: 10 }}
@@ -474,7 +474,7 @@ export const EtapaUno = () => {
               label="📧 Correo"
               name="correo"
               variant="outlined"
-              value={correo.trimStart()}
+              value={(correo ?? "").trimStart()}
               onChange={handleChange}
               autoComplete="off"
             />

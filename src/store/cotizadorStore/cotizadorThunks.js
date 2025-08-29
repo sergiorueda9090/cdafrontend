@@ -5,6 +5,9 @@ import { showThunk as precioClientesShow } from "../clientesStore/clientesThunks
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
 import { showStore, listStore, resetFormularioStore, handleFormStore  } from "./cotizadorStore.js";
+import { handleFormColumnsConfirmacionPrecioStore } from "../proveedoresStore/proveedoresStore.js";
+import { getAllThunks as getAllThunksProveedores }   from "../proveedoresStore/proveedoresThunks.js";
+
 // Función asincrónica para obtener los Pokemons
 const urlPatter = "cotizador";
 
@@ -535,6 +538,8 @@ export const getAllCotizadorConfirmacionPreciosThunks = () => {
         await dispatch(showBackDropStore());
         
         const {authStore} = getState();
+
+        //defaultProv
         const token = authStore.token
 
         // Iniciar la carga
@@ -556,8 +561,31 @@ export const getAllCotizadorConfirmacionPreciosThunks = () => {
                 let data = response.data;
 
                 if(data.length > 0){
-                    
-                    await dispatch(listStore({'cotizadores':data}))
+                    console.log("data ", data);
+                    await dispatch(listStore({'cotizadores':data}));
+                    // Filtrar los elementos con etiqueta_nombre "seguros generales"
+
+                    await dispatch(getAllThunksProveedores())
+
+                            
+                    const {proveedoresStore} = getState();
+                  
+                    for (const item of data) {
+                        const dataConfirmacionPrecio = {
+                            id_row            : item.id,
+                            idProveedor       : proveedoresStore.defaultProv.id,
+                            nombre            : "Seguros generales",
+                            etiqueta          : "seguros generales",
+                            comisionProveedor : 0,
+                            banco             : "",
+                            idBanco           : ""
+                        };
+
+                        await dispatch(handleFormColumnsConfirmacionPrecioStore({
+                            name: 'columnsConfirmacionPrecios',
+                            value: dataConfirmacionPrecio
+                        }));
+                    }
 
                     await dispatch(hideBackDropStore());
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import { Box } from "@mui/material";
@@ -18,12 +18,13 @@ import { useNavigate }              from 'react-router-dom';
 import { DateRange } from './DateRange';
 import { FilterData } from './FilterData';
 import { Avatar, Tooltip } from '@mui/material';
-import { URL } from '../../constants.js/constantGlogal';
+import { URL, URLws } from '../../constants.js/constantGlogal';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import emptyDataTable from "../../assets/images/emptyDataTable.png"
 
 import { Chip } from "@mui/material";
 import { ExcelUploader } from './SubirExcel';
+
 
 const getContrastColor = (hexColor) => {
   // Convertir HEX a RGB
@@ -38,13 +39,188 @@ const getContrastColor = (hexColor) => {
   return luminance > 0.6 ? "#333" : "#FFF";
 };
 
+// 🎨 Paleta cálida pastel
+const colors = [
+  "#FFD6A5", // durazno pastel
+  "#FFB5A7", // rosado pastel
+  "#FEC89A", // naranja melón pastel
+  "#FCD5CE", // coral pastel
+  "#FFF1B6", // amarillo suave
+  "#EAC4D5", // rosa cálido pastel
+  "#FFDAC1", // durazno claro
+  "#FFE0AC", // amarillo cálido
+  "#FFD1BA", // salmón pastel
+];
 
-
-export function DataTable() {
+export function DataTable({loggedUser}) {
 
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
+
+   /************************************
+    ******** START WEBSOCKET ********
+   * ******************************** */
+    const { token } = useSelector((state) => state.authStore);
+
+    const [ws, setWs] = useState(null);
+    const [cellSelections, setCellSelections] = useState({});
+    const userColorsRef = useRef({}); // usar ref para que no se reinicie en cada render
+
+    // asignar color único determinista a cada usuario
+    const getUserColor = (user) => {
+      if (!userColorsRef.current[user]) {
+        // usar hash del nombre del usuario para elegir un color estable
+        let hash = 0;
+        for (let i = 0; i < user.length; i++) {
+          hash = user.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const index = Math.abs(hash) % colors.length;
+        userColorsRef.current[user] = colors[index];
+      }
+      return userColorsRef.current[user];
+    };
+
+    console.log("loggedUser ",loggedUser)
+
+    useEffect(() => {
+      if (!loggedUser) return;
+
+      const socket = new WebSocket(`ws://${URLws}/ws/table/?token=${token}`);
+      setWs(socket);
+
+      socket.onopen = () => console.log("✅ Conectado al WebSocket ==== ");
+
+      socket.onmessage = (e) => {
+        const message = JSON.parse(e.data);
+
+        if (message.type === "cell_click") {
+          setCellSelections((prev) => {
+            const newSelections = { ...prev };
+
+            // quitar selección previa del usuario en cualquier celda
+            for (const key in newSelections) {
+              newSelections[key] = newSelections[key].filter(
+                (entry) => entry.user !== message.user
+              );
+              if (newSelections[key].length === 0) {
+                delete newSelections[key];
+              }
+            }
+
+            // agregar nueva selección
+            const key = `${message.rowId}-${message.column}`;
+            const color = getUserColor(message.user);
+            if (!newSelections[key]) newSelections[key] = [];
+            newSelections[key].push({ user: message.user, color });
+
+            return newSelections;
+          });
+        }
+
+        if (message.type === "cell_unselect") {
+          setCellSelections((prev) => {
+            const newSelections = { ...prev };
+            if (newSelections[message.key]) {
+              newSelections[message.key] = newSelections[message.key].filter(
+                (entry) => entry.user !== message.user
+              );
+              if (newSelections[message.key].length === 0) {
+                delete newSelections[message.key];
+              }
+            }
+            return newSelections;
+          });
+        }
+      };
+
+      socket.onclose = () => console.log("WebSocket cerrado");
+      socket.onerror = (err) => console.error("WebSocket error:", err);
+
+      return () => socket.close();
+    }, [loggedUser]);
+
+
+    const handleCellClickWs = (rowId, column) => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          const currentKey = `${rowId}-${column}`;
+          const alreadySelected =
+            cellSelections[currentKey]?.some((u) => u.user === loggedUser);
+
+          if (alreadySelected) {
+            ws.send(
+              JSON.stringify({
+                type: "cell_unselect",
+                user: loggedUser,
+                key: currentKey,
+              })
+            );
+          } else {
+            // eliminar selecciones previas del usuario
+            for (const key in cellSelections) {
+              if (cellSelections[key].some((u) => u.user === loggedUser)) {
+                ws.send(
+                  JSON.stringify({
+                    type: "cell_unselect",
+                    user: loggedUser,
+                    key,
+                  })
+                );
+              }
+            }
+            // enviar nueva selección
+            ws.send(
+              JSON.stringify({
+                type: "cell_click",
+                user: loggedUser,
+                rowId,
+                column,
+              })
+            );
+          }
+        }
+    };
+
+    const renderCellWithSelections = (params, content) => {
+  const key = `${params.id}-${params.field}`;
+  const selections = cellSelections[key] || [];
+
+  return (
+    <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
+      {content}
+
+      {selections.length > 0 && (
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 2,
+            right: 2,
+            display: "flex",
+            gap: "2px",
+            flexWrap: "wrap",
+          }}
+        >
+          {selections.map((s) => (
+            <Chip
+              key={s.user}
+              label={s.user}
+              size="small"
+              sx={{
+                bgcolor: s.color,
+                color: "white",
+                fontSize: "0.7rem",
+                height: 20,
+              }}
+            />
+          ))}
+        </Box>
+      )}
+    </Box>
+  );
+};
+  /************************************
+   ********** END WEBSOCKET ***********
+   * ******************************** */
 
     const handleShowUserSelect = (row) => {
       if(row.id){
@@ -80,206 +256,266 @@ export function DataTable() {
       return `hsl(${hue}, 70%, 85%)`; // 70% de saturación y 85% de luminosidad para colores suaves
     };
 
-    const columns = [
-      { field: 'id',              headerName: 'ID',                 width: 90},
-  {
-     field: "image_usuario",
-     headerName: "Usuario",
-     width: 100,
-     sortable: false,
-     renderCell: (params) => {
-       const imageUrl = URL + params.row.image_usuario; // URL de la imagen
-       const fullName = params.row.nombre_usuario || "Usuario";
-       const colorPunto = getPastelColor(); // Color único para cada usuario
- 
-       return (
-         <Tooltip title={fullName} arrow>
-           <Box sx={{ position: "relative", display: "inline-block" }}>
-             <Avatar
-               alt={fullName}
-               src={imageUrl || ""}
-               sx={{ width: 40, height: 40, fontSize: 16, bgcolor: "#2196f3", cursor: "pointer" }}
-             >
-               {!imageUrl ? fullName[0] : ""}
-             </Avatar>
-             {/* Punto de color en la esquina inferior derecha */}
-             <Box
-               sx={{
-                 position: "absolute",
-                 bottom: 0,
-                 right: 0,
-                 width: 10,
-                 height: 10,
-                 borderRadius: "50%",
-                 backgroundColor: colorPunto,
-                 border: "2px solid white",
-               }}
-             />
-           </Box>
-         </Tooltip>
-       );
-     },
-   },
-      {
-        field: "nombre_cliente",
-        headerName: "Cliente",
-        width: 150,
-        renderCell: (params) => {
-          const colorFondo = params.row.color_cliente || "#ddd"; // Usa color_cliente o un color por defecto
-          const colorTexto = getContrastColor(colorFondo); // Color de texto calculado
-          return (
-            <Chip
-              style={{
-                backgroundColor: colorFondo,
-                color: colorTexto, // Color de texto oscuro para mejor contraste
-                padding: "5px",
-                borderRadius: "5px",
-                textAlign: "center",
-                width: "100%",
-              }}
-              label={params.value}
-              />
-          );
-        },
-      },
-      { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 170,       
-          renderCell: (params) => {
-          const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto
-          const colorTexto = getContrastColor(colorFondoEtiqueta); // Color de texto calculado
-          return (
-            <Chip
-              style={{
-                backgroundColor: colorFondoEtiqueta,
-                color: colorTexto, // Color de texto oscuro para mejor contraste
-                padding: "5px",
-                borderRadius: "5px",
-                textAlign: "center",
-                width: "100%",
-              }}
-              label={params.value}
-              />
-          );
-        }, 
-      },
-      {
-        field: 'placa',
-        headerName: 'Placa',
-        width: 150,
-        renderCell: (params) => (
-          <>
-            <Tooltip title="Copiar placa">
-              <IconButton
-                aria-label="Copiar placa"
-                onClick={() => handleCopyToClipboard(params.value)}
-                color="primary"
-                size="small"
-              >
-                <ContentCopyIcon />
-              </IconButton>
-            </Tooltip>
-            {params.value}
-          </>
-        ),
-      },
-      {
-        field: 'cilindraje',
-        headerName: 'Cilindraje',
-        width: 150,
-        renderCell: (params) => (
-          <>
-            <Tooltip title="Copiar cilindraje">
-              <IconButton
-                aria-label="Copiar cilindraje"
-                onClick={() => handleCopyToClipboard(params.value)}
-                color="primary"
-                size="small"
-              >
-                <ContentCopyIcon />
-              </IconButton>
-            </Tooltip>
-            {params.value}
-          </>
-        ),
-      },
-      {
-        field: 'modelo',
-        headerName: 'Modelo',
-        width: 150,
-        renderCell: (params) => (
-          <>
-            <Tooltip title="Copiar modelo">
-              <IconButton
-                aria-label="Copiar modelo"
-                onClick={() => handleCopyToClipboard(params.value)}
-                color="primary"
-                size="small"
-              >
-                <ContentCopyIcon />
-              </IconButton>
-            </Tooltip>
-            {params.value}
-          </>
-        ),
-      },
-      {
-        field: 'chasis',
-        headerName: 'Chasis',
-        width: 180,
-        renderCell: (params) => (
-          <>
-            <Tooltip title="Copiar chasis">
-              <IconButton
-                aria-label="Copiar chasis"
-                onClick={() => handleCopyToClipboard(params.value)}
-                color="primary"
-                size="small"
-              >
-                <ContentCopyIcon />
-              </IconButton>
-            </Tooltip>
-            {params.value}
-          </>
-        ),
-      },
-      { field: 'numeroDocumento', headerName: 'Documento',  width: 150,        
-        renderCell: (params) => (
-          <>
-            <Tooltip title="Copiar Documento">
-              <IconButton
-                aria-label="Copiar Documento"
-                onClick={() => handleCopyToClipboard(params.value)}
-                color="primary"
-                size="small"
-              >
-                <ContentCopyIcon />
-              </IconButton>
-            </Tooltip>
-            {params.value}
-          </>
-        ), 
-    },
-      { field: 'nombreCompleto',  headerName: 'Nombre',   width: 130,  
-        renderCell: (params) => (
-          <>
-            <Tooltip title="Copiar Nombre">
-              <IconButton
-                aria-label="Copiar Nombre"
-                onClick={() => handleCopyToClipboard(params.value)}
-                color="primary"
-                size="small"
-              >
-                <ContentCopyIcon />
-              </IconButton>
-            </Tooltip>
-            {params.value}
-          </>
-        ),  
-      },
+const columns = [
+  { field: "id", headerName: "ID", width: 90 },
 
-      { field: 'telefono',  headerName: 'Teléfono ',   width: 130,  
-        renderCell: (params) => (
-          <>
-          {params.value != "" ?(<Tooltip title="Copiar Teléfono">
+  {
+    field: "image_usuario",
+    headerName: "Usuario",
+    width: 100,
+    sortable: false,
+    renderCell: (params) => {
+      const imageUrl = URL + params.row.image_usuario;
+      const fullName = params.row.nombre_usuario || "Usuario";
+      const colorPunto = getPastelColor();
+
+      const content = (
+        <Tooltip title={fullName} arrow>
+          <Box sx={{ position: "relative", display: "inline-block" }}>
+            <Avatar
+              alt={fullName}
+              src={imageUrl || ""}
+              sx={{
+                width: 40,
+                height: 40,
+                fontSize: 16,
+                bgcolor: "#2196f3",
+                cursor: "pointer",
+              }}
+            >
+              {!imageUrl ? fullName[0] : ""}
+            </Avatar>
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                backgroundColor: colorPunto,
+                border: "2px solid white",
+              }}
+            />
+          </Box>
+        </Tooltip>
+      );
+
+      return renderCellWithSelections(params, content);
+    },
+  },
+
+  {
+    field: "nombre_cliente",
+    headerName: "Cliente",
+    width: 150,
+    renderCell: (params) => {
+      const colorFondo = params.row.color_cliente || "#ddd";
+      const colorTexto = getContrastColor(colorFondo);
+
+      const content = (
+        <Chip
+          style={{
+            backgroundColor: colorFondo,
+            color: colorTexto,
+            padding: "5px",
+            borderRadius: "5px",
+            textAlign: "center",
+            width: "100%",
+          }}
+          label={params.value}
+        />
+      );
+
+      return renderCellWithSelections(params, content);
+    },
+  },
+
+  {
+    field: "etiquetaDos",
+    headerName: "Etiqueta",
+    width: 170,
+    renderCell: (params) => {
+      const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd";
+      const colorTexto = getContrastColor(colorFondoEtiqueta);
+
+      const content = (
+        <Chip
+          style={{
+            backgroundColor: colorFondoEtiqueta,
+            color: colorTexto,
+            padding: "5px",
+            borderRadius: "5px",
+            textAlign: "center",
+            width: "100%",
+          }}
+          label={params.value}
+        />
+      );
+
+      return renderCellWithSelections(params, content);
+    },
+  },
+
+  {
+    field: "placa",
+    headerName: "Placa",
+    width: 150,
+    renderCell: (params) => {
+      const content = (
+        <>
+          <Tooltip title="Copiar placa">
+            <IconButton
+              aria-label="Copiar placa"
+              onClick={() => handleCopyToClipboard(params.value)}
+              color="primary"
+              size="small"
+            >
+              <ContentCopyIcon />
+            </IconButton>
+          </Tooltip>
+          {params.value}
+        </>
+      );
+
+      return renderCellWithSelections(params, content);
+    },
+  },
+
+  {
+    field: "cilindraje",
+    headerName: "Cilindraje",
+    width: 150,
+    renderCell: (params) => {
+      const content = (
+        <>
+          <Tooltip title="Copiar cilindraje">
+            <IconButton
+              aria-label="Copiar cilindraje"
+              onClick={() => handleCopyToClipboard(params.value)}
+              color="primary"
+              size="small"
+            >
+              <ContentCopyIcon />
+            </IconButton>
+          </Tooltip>
+          {params.value}
+        </>
+      );
+
+      return renderCellWithSelections(params, content);
+    },
+  },
+
+  {
+    field: "modelo",
+    headerName: "Modelo",
+    width: 150,
+    renderCell: (params) => {
+      const content = (
+        <>
+          <Tooltip title="Copiar modelo">
+            <IconButton
+              aria-label="Copiar modelo"
+              onClick={() => handleCopyToClipboard(params.value)}
+              color="primary"
+              size="small"
+            >
+              <ContentCopyIcon />
+            </IconButton>
+          </Tooltip>
+          {params.value}
+        </>
+      );
+
+      return renderCellWithSelections(params, content);
+    },
+  },
+
+  {
+    field: "chasis",
+    headerName: "Chasis",
+    width: 180,
+    renderCell: (params) => {
+      const content = (
+        <>
+          <Tooltip title="Copiar chasis">
+            <IconButton
+              aria-label="Copiar chasis"
+              onClick={() => handleCopyToClipboard(params.value)}
+              color="primary"
+              size="small"
+            >
+              <ContentCopyIcon />
+            </IconButton>
+          </Tooltip>
+          {params.value}
+        </>
+      );
+
+      return renderCellWithSelections(params, content);
+    },
+  },
+
+  {
+    field: "numeroDocumento",
+    headerName: "Documento",
+    width: 150,
+    renderCell: (params) => {
+      const content = (
+        <>
+          <Tooltip title="Copiar Documento">
+            <IconButton
+              aria-label="Copiar Documento"
+              onClick={() => handleCopyToClipboard(params.value)}
+              color="primary"
+              size="small"
+            >
+              <ContentCopyIcon />
+            </IconButton>
+          </Tooltip>
+          {params.value}
+        </>
+      );
+
+      return renderCellWithSelections(params, content);
+    },
+  },
+
+  {
+    field: "nombreCompleto",
+    headerName: "Nombre",
+    width: 130,
+    renderCell: (params) => {
+      const content = (
+        <>
+          <Tooltip title="Copiar Nombre">
+            <IconButton
+              aria-label="Copiar Nombre"
+              onClick={() => handleCopyToClipboard(params.value)}
+              color="primary"
+              size="small"
+            >
+              <ContentCopyIcon />
+            </IconButton>
+          </Tooltip>
+          {params.value}
+        </>
+      );
+
+      return renderCellWithSelections(params, content);
+    },
+  },
+
+  {
+    field: "telefono",
+    headerName: "Teléfono ",
+    width: 130,
+    renderCell: (params) => {
+      const content = (
+        <>
+          {params.value != "" ? (
+            <Tooltip title="Copiar Teléfono">
               <IconButton
                 aria-label="Copiar Teléfono"
                 onClick={() => handleCopyToClipboard(params.value)}
@@ -288,16 +524,27 @@ export function DataTable() {
               >
                 <ContentCopyIcon />
               </IconButton>
-            </Tooltip>):('')}
-            {params.value}
-          </>
-        ),  
-      },
+            </Tooltip>
+          ) : (
+            ""
+          )}
+          {params.value}
+        </>
+      );
 
-      { field: 'correo',  headerName: 'Correo',   width: 130,  
-        renderCell: (params) => (
-          <>
-            {params.value != "" ?(<Tooltip title="Copiar correo">
+      return renderCellWithSelections(params, content);
+    },
+  },
+
+  {
+    field: "correo",
+    headerName: "Correo",
+    width: 130,
+    renderCell: (params) => {
+      const content = (
+        <>
+          {params.value != "" ? (
+            <Tooltip title="Copiar correo">
               <IconButton
                 aria-label="Copiar correo"
                 onClick={() => handleCopyToClipboard(params.value)}
@@ -306,67 +553,73 @@ export function DataTable() {
               >
                 <ContentCopyIcon />
               </IconButton>
-            </Tooltip>):('')}
-            {params.value}
-          </>
-        ),  
-      },
-
-      {
-        field: 'actions',
-        headerName: 'Actions',
-        width: 180,
-        sortable: false,
-        renderCell: (params) => (
-          <>
-            <Tooltip title="Editar" arrow>
-                <IconButton
-                  aria-label="edit"
-                  onClick={() => handleEdit(params.row)}
-                  color="primary"
-                >
-                  <EditIcon />
-                </IconButton>
             </Tooltip>
-            
-            <Tooltip title="Pasar a Emision" arrow>
-                <IconButton
-                  aria-label="Pasar a Emision"
-                  onClick={() => handleShowUserSelect(params.row)}
-                  color="warning"
-                >
-                  <DoubleArrowIcon />
-                </IconButton>
-            </Tooltip>
+          ) : (
+            ""
+          )}
+          {params.value}
+        </>
+      );
 
-            <Tooltip title="Eliminar Registro" arrow>
-              <IconButton
-                aria-label="Eliminar Registro"
-                onClick={() => handleDelete(params.row.id)}
-                color="error"
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
+      return renderCellWithSelections(params, content);
+    },
+  },
 
-            
-            
-            {!dateFilter ? <>
-               <Tooltip title="Historia de registros" arrow>
-                  <IconButton
-                    aria-label="Show"
-                    onClick={() => handleShow(params.row.id)}
-                    color="success"
-                  >
-                      <ReceiptLongIcon />
-                  </IconButton>
-               </Tooltip>
-            </>:''}
-             
-          </>
-        ),
-      },
-    ];
+  {
+    field: "actions",
+    headerName: "Actions",
+    width: 180,
+    sortable: false,
+    renderCell: (params) => (
+      <>
+        <Tooltip title="Editar" arrow>
+          <IconButton
+            aria-label="edit"
+            onClick={() => handleEdit(params.row)}
+            color="primary"
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Pasar a Emision" arrow>
+          <IconButton
+            aria-label="Pasar a Emision"
+            onClick={() => handleShowUserSelect(params.row)}
+            color="warning"
+          >
+            <DoubleArrowIcon />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Eliminar Registro" arrow>
+          <IconButton
+            aria-label="Eliminar Registro"
+            onClick={() => handleDelete(params.row.id)}
+            color="error"
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+
+        {!dateFilter ? (
+          <Tooltip title="Historia de registros" arrow>
+            <IconButton
+              aria-label="Show"
+              onClick={() => handleShow(params.row.id)}
+              color="success"
+            >
+              <ReceiptLongIcon />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          ""
+        )}
+      </>
+    ),
+  },
+];
+
     
     const NoRowsOverlay = () => (
       <div style={{ 
@@ -478,30 +731,14 @@ export function DataTable() {
         <DateRange cotizador="cotizador" />
       </Box>
 
-      {/* Etiqueta superior (sergio) en columna seleccionada */}
-      {selectedCell.field && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 72, // Ajusta si el header es más alto
-            left: `calc(${columns.findIndex(c => c.field === selectedCell.field)} * 150px + 10px)`,
-            backgroundColor: 'green',
-            color: 'white',
-            padding: '2px 8px',
-            borderRadius: '4px',
-            zIndex: 2,
-            fontSize: '12px',
-          }}
-        >
-          Carlos
-        </Box>
-      )}
-
       {/* Tabla */}
       <DataGrid
         rows={cotizadores}
         columns={enhancedColumns}
-        onCellClick={handleCellClick}
+        onCellClick={(params, event) => {
+          handleCellClick(params, event);
+          handleCellClickWs(params.id, params.field);
+        }}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         sx={{
