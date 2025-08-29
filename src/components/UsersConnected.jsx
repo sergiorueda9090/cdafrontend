@@ -20,6 +20,8 @@ const StyledBadge = styled(Badge)(({ theme, statusColor }) => ({
     },
 }));
 
+const scheme = window.location.protocol === "https:" ? "wss" : "ws";
+
 export const UsersConnected = () => {
     const { token } = useSelector((state) => state.authStore);
     const [users, setUsers] = useState([]);
@@ -32,7 +34,7 @@ export const UsersConnected = () => {
 
         function connect() {
 
-            chatSocket = new WebSocket( `ws://${URLws}/ws/chat/${roomName}/?token=${token}`);
+            chatSocket = new WebSocket( `${scheme}://${URLws}/ws/chat/${roomName}/?token=${token}`);
     
             chatSocket.onopen = function () {
                 console.log("✅ Successfully connected to WebSocket.");

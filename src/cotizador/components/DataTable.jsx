@@ -52,6 +52,8 @@ const colors = [
   "#FFD1BA", // salmón pastel
 ];
 
+
+const scheme = window.location.protocol === "https:" ? "wss" : "ws";
 export function DataTable({loggedUser}) {
 
     const navigate = useNavigate();
@@ -86,7 +88,7 @@ export function DataTable({loggedUser}) {
     useEffect(() => {
       if (!loggedUser) return;
 
-      const socket = new WebSocket(`ws://${URLws}/ws/table/?token=${token}`);
+      const socket = new WebSocket(`${scheme}://${URLws}/ws/table/?token=${token}`);
       setWs(socket);
 
       socket.onopen = () => console.log("✅ Conectado al WebSocket ==== ");
