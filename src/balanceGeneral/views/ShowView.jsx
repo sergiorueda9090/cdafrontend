@@ -3,7 +3,7 @@ import { DataGrid }      from "@mui/x-data-grid";
 import { Grid, Typography, Box, Card, List, ListItemButton, ListItemIcon, ListItemText  } from "@mui/material";
 import Paper from '@mui/material/Paper';
 
-
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { useSelector, useDispatch }   from "react-redux";
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useNavigate, useParams, Link }  from 'react-router-dom';
@@ -62,11 +62,11 @@ const columns = [
           "Cuenta destino" → recibe
           "Cuenta origen" → envía 
         */
-        if (origen === "Cuenta destino") {
+        if (origen === "Tarjeta Cuenta destino") {
             backgroundColor = "#d7f0baff"; // verde suave
           }
         
-        if (origen === "Cuenta origen") {
+        if (origen === "Tarjeta Cuenta origen") {
           backgroundColor = "#f8d7da"; // rojo suave
         }
     
@@ -213,7 +213,7 @@ const dataBalanceUtilidad = [
               }}
             >
               <Box display="flex" justifyContent="space-between">
-                <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+                <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
               </Box>
 
               <Box mt={2} mb={2}>
@@ -266,7 +266,7 @@ const dataBalanceUtilidad = [
                                 backgroundColor: "#F4F6F8", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -284,7 +284,7 @@ const dataBalanceUtilidad = [
                                 backgroundColor: "#F4F6F8", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -302,7 +302,7 @@ const dataBalanceUtilidad = [
                                 backgroundColor: "#F4F6F8", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -320,7 +320,7 @@ const dataBalanceUtilidad = [
                                 backgroundColor: "#F4F6F8", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -339,7 +339,7 @@ const dataBalanceUtilidad = [
                                 backgroundColor: "#a9f3efff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">

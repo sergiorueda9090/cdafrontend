@@ -8,6 +8,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import NotFoundImage from "../../assets/images/404cda.svg";
 import bienvenidos from "../../assets/images/bienvenidos.webp";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+
 export const NothingSelectedView = () => {
   const navigate = useNavigate();
 
@@ -32,17 +34,14 @@ export const NothingSelectedView = () => {
           px: 3,
         }}
       >
-        <img
-          src={NotFoundImage}
-          alt="404 Not Found"
-          style={{ maxWidth: "100%", height: "auto", marginBottom: "20px" }}
-        />
+        {/* Ícono en lugar de la imagen */}
+        <ErrorOutlineIcon sx={{ fontSize: 120, color: "#0088fe", mb: 2 }} />
 
         <Typography
           variant="h5"
           sx={{ mt: 2, mb: 3, color: "text.secondary" }}
         >
-          Oops! The page you're looking for isn't here.
+          ¡Ups! La página que buscas no existe.
         </Typography>
 
         <Button
@@ -51,7 +50,7 @@ export const NothingSelectedView = () => {
           sx={{ mt: 2, px: 5, py: 1.5, backgroundColor: "#673ab7" }}
           onClick={handleGoBack}
         >
-          Back to Home
+          Volver al inicio
         </Button>
       </Box>
     </Grid>

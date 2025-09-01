@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DataGrid }      from "@mui/x-data-grid";
 import { Grid, Typography, Box, Card, Button }      from "@mui/material";
 import Paper from '@mui/material/Paper';
-
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 import { useSelector, useDispatch }   from "react-redux";
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
@@ -104,11 +104,11 @@ import { URL } from "../../constants.js/constantGlogal";
           "Cuenta destino" → recibe
           "Cuenta origen" → envía 
         */
-        if (origen === "Cuenta destino") {
+        if (origen === "Tarjeta Cuenta destino") {
             backgroundColor = "#d7f0baff"; // verde suave
           }
         
-        if (origen === "Cuenta origen") {
+        if (origen === "Tarjeta Cuenta origen") {
           backgroundColor = "#f8d7da"; // rojo suave
         }
     
@@ -259,7 +259,7 @@ export const ShowView = () => {
                 backgroundColor: "#f7d39dff", // 🎨 Fondo suave
               }}>
               <Box display="flex" justifyContent="space-between">
-                <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+                <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
               </Box>
 
               <Box mt={2}>
@@ -278,7 +278,7 @@ export const ShowView = () => {
                                 backgroundColor: "#d3e5f7ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -296,7 +296,7 @@ export const ShowView = () => {
                                 backgroundColor: "#fae8f9ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -314,7 +314,7 @@ export const ShowView = () => {
                                 backgroundColor: "#f3edf8ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -332,7 +332,7 @@ export const ShowView = () => {
                                 backgroundColor: "#f8f4e6ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -350,7 +350,7 @@ export const ShowView = () => {
                                 backgroundColor: "#ecf1a5ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -368,7 +368,7 @@ export const ShowView = () => {
                                 backgroundColor: "#a9f3efff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <img src="/assets/icons/glass/ic-glass-bag.svg" alt="icon" width={40} />
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
             </Box>
             <Box mt={2}>
               <Typography variant="subtitle2" color="text.secondary">

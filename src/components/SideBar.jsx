@@ -27,7 +27,6 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import GroupsIcon from '@mui/icons-material/Groups';
 import MoneyOffIcon from '@mui/icons-material/MoneyOff';
 
@@ -92,7 +91,6 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Lista de Gastos', icon: <ShoppingBagIcon />, route: '/gastos' },
         { text: 'Relacionar Gasto', icon: <ReceiptIcon />, route: '/gastosgenerales' },
         { text: 'Utilidad Ocasional', icon: <TrendingUpIcon />, route: '/utilidadocasional' },
-        { text: 'Dashboard', icon: <SpaceDashboardIcon />, route: '/dashboard' },
     ];
 
     return (
