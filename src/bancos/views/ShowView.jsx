@@ -86,20 +86,32 @@ import { URL } from "../../constants.js/constantGlogal";
     {
       field: "origen",
       headerName: "Origen",
-      width: 250,
+      width: 280,
       renderCell: (params) => {
         // Obtener el valor de origen
         const origen = params.value;
     
         // Definir colores según el origen
-        let backgroundColor = "transparent"; // Color por defecto
-        if (origen === "Cuenta Bancaria") backgroundColor = "#E6F4EA"; // Verde claro
-        if (origen === "Devolución") backgroundColor = "#FFF4DE"; // Amarillo claro
+        let backgroundColor = "transparent";
+        if (origen === "Cuenta Bancaria") backgroundColor = "#E6F4EA";
+        if (origen === "Devolución") backgroundColor = "#FFF4DE";
         if (origen === "Gasto General") backgroundColor = "#F8D7DA";
         if (origen === "Recepcion de Pago") backgroundColor = "#D1ECF1";
-        if (origen === "Utilidad Ocasional") backgroundColor = "#F6F0ED"; // Rojo claro
-        if (origen === "Cuatro Por Mil") backgroundColor = "#B8D3BB"; // Rojo claro
-        if (origen === "Cargos no registrados") backgroundColor = "#a9f3efff"; // Rojo claro
+        if (origen === "Utilidad Ocasional") backgroundColor = "#F6F0ED"; 
+        if (origen === "Cuatro Por Mil") backgroundColor = "#B8D3BB";
+        if (origen === "Cargos no registrados") backgroundColor = "#a9f3efff"; 
+        /**
+          "Cuenta destino" → recibe
+          "Cuenta origen" → envía 
+        */
+        if (origen === "Cuenta destino") {
+            backgroundColor = "#d7f0baff"; // verde suave
+          }
+        
+        if (origen === "Cuenta origen") {
+          backgroundColor = "#f8d7da"; // rojo suave
+        }
+    
     
         return (
           <span style={{ 
@@ -423,7 +435,7 @@ export const ShowView = () => {
           <Grid item xs={12}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6" align="center">
-                  Historial Bancario sss
+                  Historial Bancario
               </Typography>
               <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
         <Button

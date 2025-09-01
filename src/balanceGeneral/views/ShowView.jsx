@@ -50,14 +50,25 @@ const columns = [
       renderCell: (params) => {
         // Obtener el valor de origen
         const origen = params.value;
-    
-        // Definir colores según el origen
-        let backgroundColor = "transparent"; // Color por defecto
-        if (origen === "tarjetas") backgroundColor = "#E6F4EA"; // Verde claro
-        if (origen === "Clientes") backgroundColor = "#FFF4DE"; // Amarillo claro
+        // Definir colores según el origen  
+        let backgroundColor = "transparent";
+        if (origen === "tarjetas") backgroundColor = "#E6F4EA"; 
+        if (origen === "Clientes") backgroundColor = "#FFF4DE"; 
         if (origen === "gasto") backgroundColor = "#F8D7DA";
         if (origen === "fichaproveedor") backgroundColor = "#D1ECF1";
-        if (origen === "Utilidad Ocasional") backgroundColor = "#F6F0ED"; // Rojo claro
+        if (origen === "Utilidad Ocasional") backgroundColor = "#F6F0ED"; 
+
+        /**
+          "Cuenta destino" → recibe
+          "Cuenta origen" → envía 
+        */
+        if (origen === "Cuenta destino") {
+            backgroundColor = "#d7f0baff"; // verde suave
+          }
+        
+        if (origen === "Cuenta origen") {
+          backgroundColor = "#f8d7da"; // rojo suave
+        }
     
         return (
           <span style={{ 

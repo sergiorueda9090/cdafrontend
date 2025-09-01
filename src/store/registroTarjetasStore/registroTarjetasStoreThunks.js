@@ -7,6 +7,7 @@ import { showStore, listStore, resetFormularioStore, handleFormStore , listTotal
 
 // Función asincrónica para obtener los Pokemons
 const parametersURL = 'registrotarjetas/api/';
+const parametersURLT = 'traslados/api/create/';
 
 export const getAllThunks = () => {
 
@@ -346,11 +347,11 @@ export const updateTranferirThunks = (data) => {
    
         await dispatch(showBackDropStore());
         
-        console.log(`${URL}/${parametersURL}transferirtarjeta/${data.id}/${data.idTarTranMoney}/`);
+        console.log(`${URL}/${parametersURLT}${data.id_tarjeta_bancaria_envia}/${data.id_tarjeta_bancaria_recibe}/`);
 
         const options = {
-            method: 'PUT',
-            url: `${URL}/${parametersURL}transferirtarjeta/${data.id}/${data.idTarTranMoney}/`,
+            method: 'POST',
+            url: `${URL}/${parametersURLT}`,
             headers: {
                 Authorization: `Bearer ${token}`,
                 'content-type': 'multipart/form-data; boundary=---011000010111000001101001'

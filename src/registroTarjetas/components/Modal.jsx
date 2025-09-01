@@ -176,11 +176,13 @@ export const FormDialogUser = () => {
     if (id && idTarTranMoney) {
      
       const dataSend = {
-        id : id,
-        idTarTranMoney : idTarTranMoney,
-        soldoTransferencia : soldoTransferencia,
+        id_tarjeta_bancaria_envia : id,
+        id_tarjeta_bancaria_recibe: idTarTranMoney,
+        valor                     : soldoTransferencia,
       };
 
+      console.log(dataSend)
+      
       dispatch(updateTranferirThunks(dataSend));
 
     }

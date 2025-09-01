@@ -18,6 +18,7 @@ import { Box } from '@mui/material';
 import { FilterData } from '../../cotizador/components/FilterData';
 import { DateRange } from '../../cotizador/components/DateRange';
 import { URL } from '../../constants.js/constantGlogal';
+
 export function DataTable() {
 
     const dispatch = useDispatch();
@@ -107,15 +108,17 @@ export function DataTable() {
         field: "pdf",
         headerName: "PDF",
         width: 150,
-        renderCell: (params) => (
-          params.value ? (
-            <a href={ params.value} target="_blank" rel="noopener noreferrer">
+        renderCell: (params) => {
+          const fileUrl = params.value ? `${URL}${params.value}` : null;
+
+          return fileUrl ? (
+            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
               <PictureAsPdfIcon style={{ color: "red", fontSize: 40 }} />
             </a>
           ) : (
             "No disponible"
-          )
-        ),
+          );
+        },
       },
       {
         field: 'actions',

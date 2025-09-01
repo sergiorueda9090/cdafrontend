@@ -44,6 +44,7 @@ export const registroTarjetasStore = createSlice({
       state.saldo         = '';
       state.imagen        = '';
       state.banco         = '';
+      state.soldoTransferencia  = 0;
       state.transMoneyState = false;
       state.is_daviplata  = false;
     },
