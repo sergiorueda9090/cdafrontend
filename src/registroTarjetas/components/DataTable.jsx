@@ -43,7 +43,7 @@ export function DataTable() {
       { field: 'numero_cuenta',        headerName: 'Numero de la cuenta',   width: 200 },
       { field: 'nombre_cuenta',        headerName: 'Nombre de la cuenta',   width: 200 },
       { field: 'descripcion',          headerName: 'Descripción',           width: 200 },
-      { field: 'saldo',                headerName: 'Saldo',                 width: 160 },
+      /*{ field: 'saldo',                headerName: 'Saldo',                 width: 160 },*/
       /*{ field: 'imagen',               headerName: 'Image',                 width: 130 },*/
       {
         field: 'actions',

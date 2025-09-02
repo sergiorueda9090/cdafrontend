@@ -34,7 +34,12 @@ import { URL } from "../../constants.js/constantGlogal";
         return dayjs(params).format("YYYY-MM-DD HH:mm");
       },
     },
-    { field: "ft",          headerName: "Fecha Tramite",  width: 250 },
+    { field: "ft", headerName: "Fecha Tramite",  width: 250,       
+      valueFormatter: (params) => {
+        if (!params) return "";
+        return dayjs(params).format("YYYY-MM-DD HH:mm");
+      },
+    },
     { field: "desc_alias",  headerName: "Descripción",    width: 250 },
     {
       field: "valor_alias",

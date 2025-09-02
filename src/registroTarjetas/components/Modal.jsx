@@ -59,9 +59,7 @@ export const FormDialogUser = () => {
   const { openModalStore }    = useSelector((state) => state.globalStore);
   const { id, numero_cuenta, nombre_cuenta, descripcion, saldo, imagen, banco, transMoneyState, tarjetasBancarias, idTarTranMoney, is_daviplata, soldoTransferencia } = useSelector((state) => state.registroTarjetasStore);
   const [errors, setErrors]   = useState({});
-  console.log("tarjetasBancarias ",tarjetasBancarias);
-  console.log("is_daviplata ",is_daviplata);
-  console.log("saldo ",saldo);
+
   /*const handleChange = (e) => {
     dispatch(handleFormStoreThunk(e.target));
   };*/
@@ -97,7 +95,12 @@ export const FormDialogUser = () => {
   };
 
   const handleTypeTranMoney = (value) => {
-    dispatch(handleFormStoreThunk({ name: 'idTarTranMoney', value:value.id }));
+    if(value){
+      dispatch(handleFormStoreThunk({ name: 'idTarTranMoney', value:value.id }));
+    }else{
+      dispatch(handleFormStoreThunk({ name: 'idTarTranMoney', value:'' }));
+    }
+    
   };
 
   const validateForm = () => {
@@ -118,9 +121,30 @@ export const FormDialogUser = () => {
       newErrors.banco = "El tipo del banco es obligatorio";
     }
 
-      // ✅ Validar que saldoTransferencia no sea mayor a saldo
-    if (Number(soldoTransferencia) > Number(saldo)) {
-      newErrors.soldoTransferencia = "El saldo a transferir no puede ser mayor al saldo disponible";
+    if(transMoneyState){
+        // ✅ Validar que saldoTransferencia no sea mayor a saldo
+        if (Number(soldoTransferencia) > Number(saldo)) {
+          newErrors.soldoTransferencia = "El saldo a transferir no puede ser mayor al saldo disponible";
+        }
+
+        if (Number(soldoTransferencia) <= 0) {
+          newErrors.soldoTransferencia = "El saldo a transferir no puede ser 0";
+        }
+
+          // ✅ Validar si faltan tarjetas
+        if (!idTarTranMoney) {
+          newErrors.idTarTranMoney = "Debes seleccionar la tarjeta de origen.";
+        }
+
+        if (!id) {
+          newErrors.id = "Debes seleccionar la tarjeta de destino.";
+        }
+
+        // ✅ Validar que la tarjeta origen y destino no sean iguales
+        if (id && idTarTranMoney && id === idTarTranMoney) {
+          newErrors.idTarTranMoney = "La tarjeta de origen y destino no pueden ser la misma";
+        }
+
     }
       
     setErrors(newErrors);
@@ -249,23 +273,30 @@ export const FormDialogUser = () => {
 
               {transMoneyState ? (
                 <>
-                    <Grid item xs={6}>
-                      <FormControl fullWidth>
-                          <Autocomplete
-                              options={tarjetasBancarias}
-                              getOptionLabel={(option) => option.nombre_cuenta+' '+option.numero_cuenta}
-                              onChange={(event, newValue) => handleTypeTranMoney(newValue)}
-                              renderOption={(props, option) => (
-                                <Box component="li" {...props} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                  <Typography>{option.nombre_cuenta+' '+option.numero_cuenta}</Typography>
-                                </Box>
-                              )}
-                              renderInput={(params) => <TextField {...params} label="Seleccione la tarjeta a la que desea transferir dinero" />}
-                            />
-                      </FormControl>
-                    </Grid>
+                  <Grid item xs={6}>
+                    <FormControl fullWidth>
+                      <Autocomplete
+                        options={tarjetasBancarias}
+                        getOptionLabel={(option) => option.nombre_cuenta + ' ' + option.numero_cuenta}
+                        onChange={(event, newValue) => handleTypeTranMoney(newValue)}
+                        renderOption={(props, option) => (
+                          <Box component="li" {...props} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <Typography>{option.nombre_cuenta + ' ' + option.numero_cuenta}</Typography>
+                          </Box>
+                        )}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Seleccione la tarjeta a la que desea transferir dinero"
+                            error={!!errors.idTarTranMoney}   // 🔴 Mostrar en rojo si hay error
+                            helperText={errors.idTarTranMoney}       // Mensaje de error debajo
+                          />
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
 
-                                      <Grid item xs={6}>
+                  <Grid item xs={6}>
                     <TextField
                       autoComplete="off"
                       fullWidth

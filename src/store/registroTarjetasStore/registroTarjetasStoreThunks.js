@@ -389,18 +389,15 @@ export const updateTranferirThunks = (data) => {
             }
             
 
-        } catch (error) {
+        } catch (error) {   
 
-            //await dispatch ( loginFail() );
-            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
-            
-            //await dispatch ( loginFail() );
+            await dispatch(resetFormularioStore());
+
+            await dispatch(setAlert({ message: `❌ ${error.response.data.error}.`, type: 'error'}));
 
             await dispatch( closeModalShared() );
 
             await dispatch( hideBackDropStore() );
-            // Manejar errores
-            console.error(error);
        
         }
 
