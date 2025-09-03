@@ -14,6 +14,9 @@ export const clientesStore = createSlice({
     preciosLey        : [],
     clientes          : [],
     clientesMain      : [],
+    username          : '',
+    email             : '',
+    medio_contacto    : 'whatsapp',
   },
   reducers: {
     showStore:(state,action) => {
@@ -25,6 +28,10 @@ export const clientesStore = createSlice({
       state.direccion     = action.payload.direccion;
       state.fecha_creacion= action.payload.fecha_creacion;
       state.preciosLey    = action.payload.precios_ley;
+
+      state.username            = action.payload.username;
+      state.email               = action.payload.email;
+      state.medio_contacto      = action.payload.medio_contacto;
     },
     listStoreMain:(state, action) => {
       state.clientesMain = action.payload.clientes
@@ -41,6 +48,9 @@ export const clientesStore = createSlice({
       state.direccion     = '';
       state.fecha_creacion= '';
       state.preciosLey    = [];
+      state.username        = '';
+      state.email           = '';
+      state.medio_contacto  = 'whatsapp';
     },
     addPreciosLeyStore:(state, action) => {
       state.preciosLey = action.payload

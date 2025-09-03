@@ -86,6 +86,9 @@ export const createThunks = (data) => {
         form.append("telefono",     data.telefono);
         form.append("direccion",    data.direccion);
         form.append("color",        data.color);
+        form.append("email",        data.email);
+        form.append("username",       data.username);
+        form.append("medio_contacto", data.medio_contacto);
         form.append("precios_ley",  JSON.stringify(clientesStore.preciosLey));
         //return
         const options = {
@@ -178,6 +181,9 @@ export const showThunk= (id = "") => {
                                               direccion :   response.data.direccion ?? '',
                                               precios_ley : response.data.precios_ley ?? '',
                                               color     :   response.data.color ?? '',
+                                              medio_contacto     :   response.data.medio_contacto ?? '',
+                                              email              :   response.data.email ?? '',
+                                              username           :   response.data.username ?? '',
                                             }
                                         )
                                 );
@@ -221,12 +227,15 @@ export const updateThunks = (data) => {
         
         /********************************* */
         const form = new FormData();
-        form.append("nombre", data.nombre);
-        form.append("apellidos", data.apellidos);
-        form.append("telefono", data.telefono);
-        form.append("color", data.color);
-        form.append("direccion", data.direccion);
-        form.append("precios_ley", data.precios_ley);
+        form.append("nombre",           data.nombre);
+        form.append("apellidos",        data.apellidos);
+        form.append("telefono",         data.telefono);
+        form.append("color",            data.color);
+        form.append("direccion",        data.direccion);
+        form.append("email",            data.email);
+        form.append("username",         data.username);
+        form.append("medio_contacto",   data.medio_contacto);
+        form.append("precios_ley",      data.precios_ley);
 
         const options = {
             method: 'PUT',

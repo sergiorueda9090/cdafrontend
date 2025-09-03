@@ -9,6 +9,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk } from '../../store/clientesStore/clientesThunks';
 import { toast } from 'react-toastify';
 
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import EmailIcon from '@mui/icons-material/Email';
+import { green, blue } from '@mui/material/colors';
+
 import { Chip } from "@mui/material";
 
 export function DataTable() {
@@ -18,10 +22,35 @@ export function DataTable() {
     let { clientesMain } = useSelector(state => state.clientesStore);
 
     const columns = [
-      { field: 'id',          headerName: 'ID',         width: 100 },
-      { field: 'nombre',      headerName: 'Nombre completo',    width: 230 },
-      { field: 'telefono',    headerName: 'Telefono',   width: 230 },
-      { field: 'direccion',   headerName: 'Direccion',  width: 230 },
+      { field: 'id',                headerName: 'ID',         width: 100 },
+      { field: 'nombre',            headerName: 'Nombre completo',    width: 230 },
+      { field: 'telefono',          headerName: 'Telefono',   width: 230 },
+      { field: 'direccion',         headerName: 'Direccion',  width: 230 },
+      { field: 'username',          headerName: 'Username',  width: 230 },
+      {
+        field: 'medio_contacto',
+        headerName: 'Medio contacto',
+        width: 230,
+        renderCell: (params) => {
+          if (params.value === 'whatsapp') {
+            return (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <WhatsAppIcon sx={{ color: green[500] }} />
+                <span>WhatsApp</span>
+              </div>
+            );
+          }
+          if (params.value === 'email') {
+            return (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <EmailIcon sx={{ color: blue[500] }} />
+                <span>Email</span>
+              </div>
+            );
+          }
+          return params.value; // fallback por si llega otro valor
+        },
+      },
       {
         field: "color",
         headerName: "Color",
