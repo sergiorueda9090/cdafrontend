@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import { Box } from "@mui/material";
@@ -18,7 +18,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk, updateThunks, update_cotizador_devolver }   from '../../store/cotizadorStore/cotizadorThunks';
 
 import { useNavigate }              from 'react-router-dom';
-import { URL } from '../../constants.js/constantGlogal';
+import { URL, URLws } from '../../constants.js/constantGlogal';
 import { FilterData } from '../../cotizador/components/FilterData';
 import { DateRange } from '../../cotizador/components/DateRange';
 
@@ -35,6 +35,21 @@ import { Chip } from "@mui/material";
 // Habilitar el plugin de tiempo relativo
 dayjs.extend(relativeTime);
 
+// 🎨 Paleta cálida pastel
+const colors = [
+  "#FFD6A5", // durazno pastel
+  "#FFB5A7", // rosado pastel
+  "#FEC89A", // naranja melón pastel
+  "#FCD5CE", // coral pastel
+  "#FFF1B6", // amarillo suave
+  "#EAC4D5", // rosa cálido pastel
+  "#FFDAC1", // durazno claro
+  "#FFE0AC", // amarillo cálido
+  "#FFD1BA", // salmón pastel
+];
+
+const scheme = window.location.protocol === "https:" ? "wss" : "ws";
+
 const getContrastColor = (hexColor) => {
   // Convertir HEX a RGB
   const r = parseInt(hexColor.substring(1, 3), 16);
@@ -48,8 +63,8 @@ const getContrastColor = (hexColor) => {
   return luminance > 0.6 ? "#333" : "#FFF";
 };
 
-export function DataTable() {
-
+export function DataTable({loggedUser}) {
+    console.log("tramites ",loggedUser)
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
@@ -316,6 +331,172 @@ export function DataTable() {
     };
     
     /* ============== END PRUEBAS ========== */
+
+
+        /************************************
+    ******** START WEBSOCKET ********
+    * ******************************** */
+        const { token } = useSelector((state) => state.authStore);
+    
+        const [ws, setWs] = useState(null);
+        const [cellSelections, setCellSelections] = useState({});
+        const userColorsRef = useRef({}); // usar ref para que no se reinicie en cada render
+    
+        // asignar color único determinista a cada usuario
+        const getUserColor = (user) => {
+          if (!userColorsRef.current[user]) {
+            // usar hash del nombre del usuario para elegir un color estable
+            let hash = 0;
+            for (let i = 0; i < user.length; i++) {
+              hash = user.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const index = Math.abs(hash) % colors.length;
+            userColorsRef.current[user] = colors[index];
+          }
+          return userColorsRef.current[user];
+        };
+    
+        console.log("loggedUser ",loggedUser)
+    
+        useEffect(() => {
+          if (!loggedUser) return;
+    
+          const socket = new WebSocket(`${scheme}://${URLws}/ws/table/?token=${token}`);
+          setWs(socket);
+    
+          socket.onopen = () => console.log("✅ Conectado al WebSocket ==== ");
+    
+          socket.onmessage = (e) => {
+            const message = JSON.parse(e.data);
+    
+            if (message.type === "cell_click") {
+              setCellSelections((prev) => {
+                const newSelections = { ...prev };
+    
+                // quitar selección previa del usuario en cualquier celda
+                for (const key in newSelections) {
+                  newSelections[key] = newSelections[key].filter(
+                    (entry) => entry.user !== message.user
+                  );
+                  if (newSelections[key].length === 0) {
+                    delete newSelections[key];
+                  }
+                }
+    
+                // agregar nueva selección
+                const key = `${message.rowId}-${message.column}`;
+                const color = getUserColor(message.user);
+                if (!newSelections[key]) newSelections[key] = [];
+                newSelections[key].push({ user: message.user, color });
+    
+                return newSelections;
+              });
+            }
+    
+            if (message.type === "cell_unselect") {
+              setCellSelections((prev) => {
+                const newSelections = { ...prev };
+                if (newSelections[message.key]) {
+                  newSelections[message.key] = newSelections[message.key].filter(
+                    (entry) => entry.user !== message.user
+                  );
+                  if (newSelections[message.key].length === 0) {
+                    delete newSelections[message.key];
+                  }
+                }
+                return newSelections;
+              });
+            }
+          };
+    
+          socket.onclose = () => console.log("WebSocket cerrado");
+          socket.onerror = (err) => console.error("WebSocket error:", err);
+    
+          return () => socket.close();
+        }, [loggedUser]);
+    
+    
+        const handleCellClickWs = (rowId, column) => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              const currentKey = `${rowId}-${column}`;
+              const alreadySelected =
+                cellSelections[currentKey]?.some((u) => u.user === loggedUser);
+    
+              if (alreadySelected) {
+                ws.send(
+                  JSON.stringify({
+                    type: "cell_unselect",
+                    user: loggedUser,
+                    key: currentKey,
+                  })
+                );
+              } else {
+                // eliminar selecciones previas del usuario
+                for (const key in cellSelections) {
+                  if (cellSelections[key].some((u) => u.user === loggedUser)) {
+                    ws.send(
+                      JSON.stringify({
+                        type: "cell_unselect",
+                        user: loggedUser,
+                        key,
+                      })
+                    );
+                  }
+                }
+                // enviar nueva selección
+                ws.send(
+                  JSON.stringify({
+                    type: "cell_click",
+                    user: loggedUser,
+                    rowId,
+                    column,
+                  })
+                );
+              }
+            }
+        };
+    
+        const renderCellWithSelections = (params, content) => {
+          const key = `${params.id}-${params.field}`;
+          const selections = cellSelections[key] || [];
+          
+            return (
+              <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
+                {content}
+      
+                {selections.length > 0 && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      bottom: 2,
+                      right: 2,
+                      display: "flex",
+                      gap: "2px",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {selections.map((s) => (
+                      <Chip
+                        key={s.user}
+                        label={s.user}
+                        size="small"
+                        sx={{
+                          bgcolor: s.color,
+                          color: "white",
+                          fontSize: "0.7rem",
+                          height: 20,
+                        }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              </Box>
+            );
+        };
+    /************************************
+     ********** END WEBSOCKET ***********
+      * ******************************** */
+
     const columns = [
       { field: 'id',              headerName: 'ID',                 width: 80},
       {
@@ -343,7 +524,7 @@ export function DataTable() {
             const fullName = params.row.nombre_usuario || "Usuario";
             const colorPunto = getPastelColor(); // Color único para cada usuario
 
-            return (
+            const content = (
               <Tooltip title={fullName} arrow>
                 <Box sx={{ position: "relative", display: "inline-block" }}>
                   <Avatar
@@ -369,6 +550,7 @@ export function DataTable() {
                 </Box>
               </Tooltip>
             );
+            return renderCellWithSelections(params, content);
           },
         },
       {
@@ -378,7 +560,7 @@ export function DataTable() {
         renderCell: (params) => {
           const colorFondo = params.row.color_cliente || "#ddd"; // Usa color_cliente o un color por defecto
           const colorTexto = getContrastColor(colorFondo); // Color de texto calculado
-          return (
+          const content = (
             <Chip
               style={{
                 backgroundColor: colorFondo,
@@ -391,7 +573,9 @@ export function DataTable() {
               label={params.value}
               />
           );
+          return renderCellWithSelections(params, content);
         },
+        
       },
       {
         field: 'etiquetaDos',
@@ -399,7 +583,7 @@ export function DataTable() {
         width: 250,
         renderCell: (params) => {
           const isActive = activeRow === params.id; // Verifica si esta celda está activa
-          return (
+          const content = (
             <Box width="100%">
             {isActive && etiquetas.length > 0 ? (
               <Autocomplete
@@ -450,6 +634,7 @@ export function DataTable() {
             )}
           </Box>
           );
+          return renderCellWithSelections(params, content);
         },
       },
       {
@@ -498,7 +683,7 @@ export function DataTable() {
 
           };
     
-          return (
+          const content = (
             <>
               {params.value && (
                 <>
@@ -535,6 +720,7 @@ export function DataTable() {
               )}
             </>
           );
+          return renderCellWithSelections(params, content);
         },
       },
       {
@@ -542,8 +728,8 @@ export function DataTable() {
         headerName: "Email",
         width: 200,
         editable: true,
-        renderCell: (params) => (
-          <>
+        renderCell: (params) => {
+          const content = (<>
             {params.value ? (
               <Tooltip title="Copiar Email">
                 <IconButton
@@ -561,12 +747,13 @@ export function DataTable() {
               </Tooltip>
             )}
             {params.value || "No disponible"}
-          </>
-        ),
+          </>);
+          return renderCellWithSelections(params, content);
+        },
       },
       { field: 'placa',           headerName: 'Placa',              width: 130, editable: true,  
-        renderCell: (params) => (
-          <>
+        renderCell: (params) => {
+          const content = (<>
             <Tooltip title="Copiar Placa">
               <IconButton
                 aria-label="Copiar Placa"
@@ -578,12 +765,13 @@ export function DataTable() {
               </IconButton>
             </Tooltip>
             {params.value}
-          </>
-        ), 
+          </>);
+          return renderCellWithSelections(params, content);
+        }, 
       },
           { field: 'cilindraje',      headerName: 'Cilindraje',         width: 130, editable: true,  
-            renderCell: (params) => (
-              <>
+            renderCell: (params) => {
+              const content = (<>
                 <Tooltip title="Copiar Cilindraje">
                   <IconButton
                     aria-label="Copiar Cilindraje"
@@ -595,12 +783,13 @@ export function DataTable() {
                   </IconButton>
                 </Tooltip>
                 {params.value}
-              </>
-            ), 
+              </>);
+              return renderCellWithSelections(params, content);
+          }, 
           },
           { field: 'modelo',          headerName: 'Modelo',             width: 100, editable: true,  
-            renderCell: (params) => (
-              <>
+            renderCell: (params) => {
+              const content = (<>
                 <Tooltip title="Copiar Modelo">
                   <IconButton
                     aria-label="Copiar Modelo"
@@ -612,12 +801,13 @@ export function DataTable() {
                   </IconButton>
                 </Tooltip>
                 {params.value}
-              </>
-            ), 
+              </>);
+              return renderCellWithSelections(params, content);
+            }, 
           },
           { field: 'chasis',          headerName: 'Chasis',             width: 220, editable: true,  
-            renderCell: (params) => (
-              <>
+            renderCell: (params) => {
+             const content = (<>
                 <Tooltip title="Copiar Cilindraje">
                   <IconButton
                     aria-label="Copiar Cilindraje"
@@ -629,8 +819,9 @@ export function DataTable() {
                   </IconButton>
                 </Tooltip>
                 {params.value}
-              </>
-            ), 
+              </>);
+              return renderCellWithSelections(params, content);
+            }, 
           },
           {
             field: "tipoDocumento",
@@ -652,7 +843,7 @@ export function DataTable() {
           
               const isNotCC = abbr !== "CC"; // Mostrar punto rojo si NO es "CC"
           
-              return (
+              const content = (
                 <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                   <span>{abbr}</span>
                   {isNotCC && (
@@ -668,11 +859,12 @@ export function DataTable() {
                   )}
                 </div>
               );
+              return renderCellWithSelections(params, content);
             }
           },
           { field: 'numeroDocumento', headerName: 'Documento',          width: 150, editable: true,  
-            renderCell: (params) => (
-              <>
+            renderCell: (params) => {
+              const content = (<>
                 <Tooltip title="Copiar Documento">
                   <IconButton
                     aria-label="Copiar Documento"
@@ -684,12 +876,13 @@ export function DataTable() {
                   </IconButton>
                 </Tooltip>
                 {params.value}
-              </>
-            ), 
+              </>);
+              return renderCellWithSelections(params, content);
+            }, 
           },
           { field: 'nombreCompleto',  headerName: 'Nombre',             width: 130, editable: true,  
-            renderCell: (params) => (
-              <>
+            renderCell: (params) => {
+              const content = (<>
                 <Tooltip title="Copiar Nombre">
                   <IconButton
                     aria-label="Copiar Nombre"
@@ -701,12 +894,13 @@ export function DataTable() {
                   </IconButton>
                 </Tooltip>
                 {params.value}
-              </>
-            ), 
+              </>);
+              return renderCellWithSelections(params, content);
+            }, 
           },
           { field: 'telefono',  headerName: 'Teléfono',  width: 130, editable: true,  
-            renderCell: (params) => (
-              <>
+            renderCell: (params) => {
+              const content = (<>
                 <Tooltip title="Copiar Teléfono">
                   <IconButton
                     aria-label="Copiar Teléfono"
@@ -718,17 +912,18 @@ export function DataTable() {
                   </IconButton>
                 </Tooltip>
                 {params.value}
-              </>
-            ), 
+              </>);
+              return renderCellWithSelections(params, content);
+            }, 
           },
       {
         field: 'actions',
         headerName: 'Actions',
         width: 200,
         sortable: false,
-        renderCell: (params) => (
+        renderCell: (params) => {
           
-          <>
+          const content = (<>
           {/* Botón de Editar 
           <Tooltip title="Editar" arrow>
             <IconButton
@@ -776,8 +971,9 @@ export function DataTable() {
           </Tooltip>
           </>:''
           }
-        </>
-        ),
+        </>);
+        return renderCellWithSelections(params, content);
+        },
       },
     ];
     
@@ -794,7 +990,7 @@ export function DataTable() {
     
     }
     
-    const paginationModel = { page: 0, pageSize: 15 };
+    const paginationModel = { page: 0, pageSize: 100 };
     
     const NoRowsOverlay = () => (
       <div style={{ 
@@ -865,6 +1061,7 @@ export function DataTable() {
       });
     };
 
+
   return (
     <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
           
@@ -890,6 +1087,10 @@ export function DataTable() {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
+        onCellClick={(params, event) => {
+          //handleCellClick(params, event);
+          handleCellClickWs(params.id, params.field);
+        }}
         slots={{
           noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
         }}

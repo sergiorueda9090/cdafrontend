@@ -34,7 +34,7 @@ export const SelectViews = () => {
 
             // Establece el intervalo para llamar cada segundo (1000 ms)
             const intervalId = setInterval(() => {
-                //dispatch(getAllThunksSecond());
+                dispatch(getAllThunksSecond());
             }, 1000);
 
             // Limpia el intervalo al desmontar el componente
@@ -86,7 +86,7 @@ export const SelectViews = () => {
     })
         .then((res) => res.json())
         .then((data) => {
-        console.log("Datos del usuario:", data);
+        console.log("Datos del usuario tramites:", data);
         setLoggedUser(data.username); // Ajusta según la respuesta de tu API
         })
         .catch((err) => console.error("Error al obtener usuario:", err));

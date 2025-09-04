@@ -646,7 +646,7 @@ export function DataTable() {
 
               {/* Mostrar icono de subir archivo SOLO si no hay archivo cargado */}
               {!archivoFile && !isFileUploaded && (
-                <Tooltip title="Subir archivo">
+                <Tooltip title="Subir Image">
                   <IconButton
                     aria-label="upload"
                     color="primary"

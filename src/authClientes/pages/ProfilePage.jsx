@@ -16,6 +16,7 @@ import {
   Link,
   Tabs, 
   Tab,
+  Tooltip
 } from "@mui/material";
 
 import { DataGrid } from "@mui/x-data-grid";
@@ -26,7 +27,7 @@ import { loginFail } from "../../store/authCustomers/authCustomers"; // Ajusta s
 import InstagramIcon from "@mui/icons-material/Instagram";
 import movilidadA2 from "../../assets/images/movilidadA2.jpeg"; // Ajusta si tu alias no es "@/"
 import { getCotizadoresCliente, getCotizadoresClienteSecond, showRecepcionPagoSecond } from "../../store/authCustomers/authCustomersThunks";
-
+import { URL } from "../../constants.js/constantGlogal";
 
 export const ProfilePage = () => {
   
@@ -148,21 +149,27 @@ export const ProfilePage = () => {
       { field: "fechaCreacion", headerName: "Fecha de creación",  width: 250 },
       { field: "fechaTramite", headerName: "Fecha de trámite",  width: 250 },
       {
-          field: "acciones",
-          headerName: "Acciones",
-          width: 250,
-          renderCell: (params) => (
+        field: "acciones",
+        headerName: "Acciones",
+        width: 250,
+        renderCell: (params) => {
+          if (!params.row.pdf) return null; // Si no hay PDF, no muestra nada
+
+          return (
             <a
-              href={`http://127.0.0.1:8000${params.row.pdf}`} // cambia TU_BACKEND.com por tu dominio
+              href={`${URL}${params.row.pdf}`} // Construcción correcta de la ruta
               target="_blank"
               rel="noopener noreferrer"
             >
-              <IconButton color="error">
-                <PictureAsPdfIcon />
-              </IconButton>
+              <Tooltip title="Ver PDF">
+                <IconButton color="error" size="small">
+                  <PictureAsPdfIcon />
+                </IconButton>
+              </Tooltip>
             </a>
-          ),
-    },
+          );
+        },
+      }
   ];
 
 

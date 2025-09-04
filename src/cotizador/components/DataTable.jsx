@@ -54,6 +54,7 @@ const colors = [
 
 
 const scheme = window.location.protocol === "https:" ? "wss" : "ws";
+
 export function DataTable({loggedUser}) {
 
     const navigate = useNavigate();
@@ -184,42 +185,42 @@ export function DataTable({loggedUser}) {
     };
 
     const renderCellWithSelections = (params, content) => {
-  const key = `${params.id}-${params.field}`;
-  const selections = cellSelections[key] || [];
+    const key = `${params.id}-${params.field}`;
+    const selections = cellSelections[key] || [];
 
-  return (
-    <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
-      {content}
+      return (
+        <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
+          {content}
 
-      {selections.length > 0 && (
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: 2,
-            right: 2,
-            display: "flex",
-            gap: "2px",
-            flexWrap: "wrap",
-          }}
-        >
-          {selections.map((s) => (
-            <Chip
-              key={s.user}
-              label={s.user}
-              size="small"
+          {selections.length > 0 && (
+            <Box
               sx={{
-                bgcolor: s.color,
-                color: "white",
-                fontSize: "0.7rem",
-                height: 20,
+                position: "absolute",
+                bottom: 2,
+                right: 2,
+                display: "flex",
+                gap: "2px",
+                flexWrap: "wrap",
               }}
-            />
-          ))}
+            >
+              {selections.map((s) => (
+                <Chip
+                  key={s.user}
+                  label={s.user}
+                  size="small"
+                  sx={{
+                    bgcolor: s.color,
+                    color: "white",
+                    fontSize: "0.7rem",
+                    height: 20,
+                  }}
+                />
+              ))}
+            </Box>
+          )}
         </Box>
-      )}
-    </Box>
-  );
-};
+      );
+  };
   /************************************
    ********** END WEBSOCKET ***********
    * ******************************** */
@@ -260,7 +261,6 @@ export function DataTable({loggedUser}) {
 
 const columns = [
   { field: "id", headerName: "ID", width: 90 },
-
   {
     field: "image_usuario",
     headerName: "Usuario",
