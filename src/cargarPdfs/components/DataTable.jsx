@@ -90,7 +90,8 @@ export function DataTable() {
             <p>¿Estás seguro de que deseas confirmar la subida del documento y continuar?</p>
             <button
               onClick={() => {
-                handleUploadFileConfirmar(id, closeToast); // Confirmar eliminación
+                closeToast();
+                handleUploadFileConfirmar(id); // Confirmar eliminación
               }}
               style={{
                 marginRight: '10px',
@@ -388,7 +389,8 @@ export function DataTable() {
             <p>¿Estás seguro de que deseas eliminar el cliente?</p>
             <button
               onClick={() => {
-                confirmDelete(id, closeToast); // Confirmar eliminación
+                closeToast();
+                confirmDelete(id); // Confirmar eliminación
               }}
               style={{
                 marginRight: '10px',

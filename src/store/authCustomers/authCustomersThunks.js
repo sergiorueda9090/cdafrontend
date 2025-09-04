@@ -3,7 +3,7 @@ import { loginSuccess, loginFail, showStoreRecepcionPago } from "./authCustomers
 import { URL } from "../../constants.js/constantGlogal.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 
-export const getLogin = (identificacion) => {
+export const getLogin = (username) => {
 
     return async (dispatch, getState) => {
        
@@ -16,7 +16,7 @@ export const getLogin = (identificacion) => {
             headers: {
                 'Content-Type': 'multipart/form-data; boundary=---011000010111000001101001',
             },
-            data: {identificacion:identificacion}
+            data: {username:username}
         };
 
         try {
@@ -28,10 +28,11 @@ export const getLogin = (identificacion) => {
                 let data = response.data;
                 
                 await dispatch(getCotizadoresCliente({
-                                                        token: data.token,
-                                                        nombre: data.nombre,
+                                                        token:    data.token,
+                                                        nombre:   data.nombre,
                                                         telefono: data.telefono,
-                                                        isLogin: true,
+                                                        username: data.username,
+                                                        isLogin:  true,
                                                         id_cliente: data.id, 
                                                     }));
 
@@ -65,17 +66,17 @@ export const getLogin = (identificacion) => {
 
 
 export const getCotizadoresCliente = (clienteData) => {
-   
+
     return async (dispatch) => {
         try {
             
-            if (!clienteData || !clienteData.token || !clienteData.telefono || !clienteData.id_cliente) {
+            if (!clienteData || !clienteData.token || !clienteData.username || !clienteData.id_cliente) {
                 throw new Error("Faltan datos del cliente.");
             }
 
             const response = await axios.post(`${URL}/clientes/api/cotizador-cliente/`, {
                 token       : clienteData.token,
-                telefono    : clienteData.telefono,
+                username    : clienteData.username,
                 id_cliente  : clienteData.id_cliente
             });
             
@@ -83,7 +84,7 @@ export const getCotizadoresCliente = (clienteData) => {
             if (response.status === 200) {
              
                 localStorage.setItem("cliente_data", JSON.stringify({isLogin: true, token:clienteData.token, 
-                                                                    telefono:clienteData.telefono, id_cliente:clienteData.id_cliente }));
+                                                                     username:clienteData.username, id_cliente:clienteData.id_cliente }));
 
                 await dispatch(setAlert({ message: '¡✨ Acción completada con éxito!', type: 'success'}));
 
@@ -299,9 +300,9 @@ export const showRecepcionPagoSecond = ( id = "") => {
             
             if(response.status == 200){
 
-                console.log("response.data ",response);
+                console.log("response.data.data ",response.data);
 
-                await dispatch(showStoreRecepcionPago(response.data));
+                await dispatch(showStoreRecepcionPago({"data":response.data.data, "total":response.data.total}));
 
 
             }else{

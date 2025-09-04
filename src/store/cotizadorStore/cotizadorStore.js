@@ -135,6 +135,20 @@ export const cotizadorStore = createSlice({
       }
       
     },
+    listStoreUpdate:(state, action) => {
+      const updated = action.payload.cotizadores; // tu objeto actualizado (data)
+      const index = state.cotizadores.findIndex(c => c.id === updated.id);
+
+      if (index !== -1) {
+        state.cotizadores[index] = {
+          ...state.cotizadores[index],
+          ...updated
+        };
+      }
+    },
+    listRemoveStore:(state, action) => {
+      state.cotizadores = state.cotizadores.filter((cotizador) => cotizador.id !== action.payload.id);
+    },
     resetFormularioStore:(state) => {
       state.id              = '';
       state.idUsuario       = '';
@@ -224,4 +238,4 @@ export const cotizadorStore = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listStore, resetFormularioStore, handleFormStore } = cotizadorStore.actions;
+export const { showStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore } = cotizadorStore.actions;

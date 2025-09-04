@@ -30,7 +30,7 @@ import { getCotizadoresCliente, getCotizadoresClienteSecond, showRecepcionPagoSe
 
 export const ProfilePage = () => {
   
-  const { data, recepcionPagoArray } = useSelector((state) => state.authCustomerStore);
+  const { data, recepcionPagoArray, total } = useSelector((state) => state.authCustomerStore);
 
   const [tabIndex, setTabIndex] = useState(0);
     const handleTabChange = (event, newValue) => {
@@ -134,8 +134,17 @@ export const ProfilePage = () => {
       { field: "modelo", headerName: "Modelo",  width: 250 },
       { field: "correo", headerName: "Correo electrónico",  width: 250 },
       { field: "chasis", headerName: "Chasis",  width: 250 },
-      { field: "cilindraje", headerName: "Cilindraje",  width: 250 },
-      { field: "total", headerName: "Total", width: 250 },
+      { field: "cilindraje",        headerName: "Cilindraje",  width: 250 },
+      { field: "precioDeLey",       headerName: "precioDeLey", width: 250 },
+      { field: "comisionPrecioLey", headerName: "comisionPrecioLey", width: 250 },
+      { 
+        field: "total", 
+        headerName: "Total", 
+        width: 250,
+        valueFormatter: (params) => {
+          return new Intl.NumberFormat('es-CO').format(params);
+        },
+      },
       { field: "fechaCreacion", headerName: "Fecha de creación",  width: 250 },
       { field: "fechaTramite", headerName: "Fecha de trámite",  width: 250 },
       {
@@ -156,17 +165,18 @@ export const ProfilePage = () => {
     },
   ];
 
+
   return (
     <Box display="flex" flexDirection="column" minHeight="100vh">
       {/* NAVBAR */}
-    <AppBar position="static" sx={{ mb: 3, backgroundColor: "#003871" }}>
-      <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Box component="img" src={movilidadA2} alt="Logo Movilidad 2A" sx={{ height: 50 }} />
-        <Button color="inherit" onClick={handleLogout}>
-          Cerrar sesión
-        </Button>
-      </Toolbar>
-    </AppBar>
+      <AppBar position="static" sx={{ mb: 3, backgroundColor: "#003871" }}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Box component="img" src={movilidadA2} alt="Logo Movilidad 2A" sx={{ height: 50 }} />
+          <Button color="inherit" onClick={handleLogout}>
+            Cerrar sesión
+          </Button>
+        </Toolbar>
+      </AppBar>
 
       {/* CONTENIDO */}
       <Box
@@ -179,7 +189,7 @@ export const ProfilePage = () => {
           padding: 3,
         }}
       >
-        <Grid container spacing={3} sx={{ maxWidth: "1200px", width: "100%" }}>
+        <Grid container spacing={3} >
           {/* Sidebar */}
           <Grid item xs={12} md={4}>
             <Paper elevation={3} sx={{ p: 3 }}>
@@ -234,6 +244,27 @@ export const ProfilePage = () => {
           <Grid item xs={12} md={8}>
             <Paper elevation={3} sx={{ p: 3 }}>
 
+              
+                        <Paper 
+                            elevation={3} 
+                            sx={{ 
+                              p: 2, 
+                              mb: 3, 
+                              maxWidth: 600, 
+                              mx: 'auto', 
+                              backgroundColor: '#e3f2fd', 
+                              borderRadius: 2, 
+                              boxShadow: '0 4px 10px rgba(33, 150, 243, 0.3)'
+                            }}
+                          >
+                            <Typography variant="subtitle1" align="center" color="textSecondary">
+                              Saldo actual
+                            </Typography>
+                            <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
+                              {total == 0 ? 0 : new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(total)}
+                            </Typography>
+                        </Paper>
+
               <Tabs value={tabIndex} onChange={handleTabChange} sx={{ mb: 2 }}>
                 <Tab label="Información de Trámites" />
                 <Tab label="Recepción de Pago" />
@@ -245,17 +276,24 @@ export const ProfilePage = () => {
                   columns={columns}
                   autoHeight
                   disableSelectionOnClick
-                  sx={{ backgroundColor: "white" }}
+                    sx={{ 
+                    backgroundColor: "white",
+                    height: 1000 // 👈 altura fija
+                  }}
                 />
               </TabPanel>
 
               <TabPanel value={tabIndex} index={1}>
+
                 <DataGrid
                   rows={recepcionPagoArray}
                   columns={columnsRecepcion}
                   autoHeight
                   disableSelectionOnClick
-                  sx={{ backgroundColor: "white" }}
+                                     sx={{ 
+                    backgroundColor: "white",
+                    height: 1000 // 👈 altura fija
+                  }}
                 />
               </TabPanel>
 

@@ -726,7 +726,7 @@ export function DataTable() {
                           <IconButton
                             aria-label="confirmar-archivo"
                             color="success"
-                            onClick={() => handleUploadFile(params.row.id)}
+                            onClick={() => handleUploadFile(params.row.id, "confirmar")}
                           >
                             <AutoStoriesIcon />
                           </IconButton>
@@ -824,7 +824,7 @@ export function DataTable() {
       navigate(`/tramites/PageShow/${id}`);
     };
 
-    const handleUploadFile = (id) => {
+    const handleUploadFile = (id, confirmar="") => {
     
  
       toast(
@@ -833,7 +833,8 @@ export function DataTable() {
             <p>¿Estás seguro de que deseas confirmar la subida del documento y continuar?</p>
             <button
               onClick={() => {
-                handleUploadFileConfirmar(id, closeToast); // Confirmar eliminación
+                closeToast();
+                handleUploadFileConfirmar(id, confirmar); // Confirmar eliminación
               }}
               style={{
                 marginRight: '10px',
@@ -865,7 +866,7 @@ export function DataTable() {
 
     }
 
-    const handleUploadFileConfirmar = (id) => {
+    const handleUploadFileConfirmar = (id, confirmar='') => {
       //sergio
 
       let comisionproveedor = columnsConfirmacionPrecios.filter(item => item.id_row === id)[0]?.comisionProveedor || 0;
@@ -961,7 +962,8 @@ export function DataTable() {
                                   idProveedor       : idProveedor,
                                   comisionproveedor : comision
                               },
-                              'confirmarprecio'
+                              'confirmarprecio',
+                              confirmar
                           ));
 
      /* dispatch(updateThunks({id,  

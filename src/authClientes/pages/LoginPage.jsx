@@ -13,7 +13,7 @@ export const LoginPage = () => {
   
   const dispatch = useDispatch();
 
-  const [identificacionLogin, setIdentificacionLogin] = useState('');
+  const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   
   const { alert }  = useSelector( state => state.globalStore );
@@ -31,23 +31,23 @@ export const LoginPage = () => {
 
   const handleLogin = () => {
     
-    if (identificacionLogin.length <= 5) {
+    if (!username.trim()) {
     
-      setError('El número de identificación no valido.');
+      setError('El username no valido.');
    
     } else {
       
       setError('');
      
-      dispatch(getLogin(identificacionLogin));
+      dispatch(getLogin(username));
    
     }
   };
 
   const handleChange = (e) => {
-    const identificacion = e.target.value;
-    setIdentificacionLogin(identificacion);
-    if (identificacion.length > 5) {
+    const username = e.target.value;
+    setUsername(username);
+    if (!username.trim()) {
       setError('');
     }
   };
@@ -101,9 +101,9 @@ export const LoginPage = () => {
 
         <form>
           <TextField
-            label="Número de Teléfono "
-            name="identificacion"
-            value={identificacionLogin}
+            label="Usuario "
+            name="username"
+            value={username}
             onChange={handleChange}
             type="text"
             fullWidth

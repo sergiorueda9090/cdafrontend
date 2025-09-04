@@ -4,7 +4,7 @@ import { loginFail } from "../authStore/authStore.js";
 import { showThunk as precioClientesShow } from "../clientesStore/clientesThunks.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { showStore, listStore, resetFormularioStore, handleFormStore  } from "./cotizadorStore.js";
+import { showStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore  } from "./cotizadorStore.js";
 import { handleFormColumnsConfirmacionPrecioStore } from "../proveedoresStore/proveedoresStore.js";
 import { getAllThunks as getAllThunksProveedores }   from "../proveedoresStore/proveedoresThunks.js";
 
@@ -222,8 +222,8 @@ export const showThunk= (id = "") => {
 
 }
 
-export const updateThunks = (data, modulo="") => {
-    
+export const updateThunks = (data, modulo="", confirmar="") => {
+    console.log("confirmar", confirmar);
     return async (dispatch, getState) => {
 
         const {authStore} = getState();
@@ -262,8 +262,15 @@ export const updateThunks = (data, modulo="") => {
 
                 }else if(modulo == "confirmarprecio"){
 
-                    await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
+                    if(confirmar == "confirmar"){
+                        //await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
+                        await dispatch(getAllCotizadorConfirmacionPreciosRemoveThunks(data.id) );
+                    }else{
+                        await dispatch( getAllCotizadorConfirmacionPreciosIdThunks(data.id) );
+                    }
+                    //await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
                     //await dispatch( getAllCotizadorTramitesThunks() );
+                    
 
                 }else if(modulo == "pdf"){
 
@@ -592,6 +599,200 @@ export const getAllCotizadorConfirmacionPreciosThunks = () => {
                 }else{
 
                     await dispatch(listStore({'cotizadores':[]}))
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+
+        } catch (error) {
+            
+            await dispatch(hideBackDropStore());
+
+            // Manejar errores
+            console.error(error);
+            
+            //await dispatch ( loginFail() );
+            
+            await dispatch( hideBackDropStore() );
+
+        }
+    };
+};
+
+export const getAllCotizadorConfirmacionPreciosRemoveThunks = (id) => {
+
+    return async (dispatch, getState) => {
+       
+        await dispatch(showBackDropStore());
+        
+        const {authStore} = getState();
+
+        //defaultProv
+        const token = authStore.token
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${ URL}/cotizador/get_cotizadores_confirmacion_precios/api`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+
+                if(data.length > 0){
+
+                    console.log("data ", data);
+                    //await dispatch(listStore({'cotizadores':data}));
+                    
+                    await dispatch(listRemoveStore({'id':id}));
+                    // Filtrar los elementos con etiqueta_nombre "seguros generales"
+
+                    /*await dispatch(getAllThunksProveedores())
+
+                            
+                    const {proveedoresStore} = getState();
+                  
+                    for (const item of data) {
+                        const dataConfirmacionPrecio = {
+                            id_row            : item.id,
+                            idProveedor       : proveedoresStore.defaultProv.id,
+                            nombre            : "Seguros generales",
+                            etiqueta          : "seguros generales",
+                            comisionProveedor : 0,
+                            banco             : "",
+                            idBanco           : ""
+                        };
+
+                        await dispatch(handleFormColumnsConfirmacionPrecioStore({
+                            name: 'columnsConfirmacionPrecios',
+                            value: dataConfirmacionPrecio
+                        }));
+                    }*/
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    await dispatch(listStore({'cotizadores':[]}))
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+
+        } catch (error) {
+            
+            await dispatch(hideBackDropStore());
+
+            // Manejar errores
+            console.error(error);
+            
+            //await dispatch ( loginFail() );
+            
+            await dispatch( hideBackDropStore() );
+
+        }
+    };
+};
+
+export const getAllCotizadorConfirmacionPreciosIdThunks = (id) => {
+
+    return async (dispatch, getState) => {
+       
+        await dispatch(showBackDropStore());
+        
+        const {authStore, cotizadorStore} = getState();
+        
+        //defaultProv
+        const token = authStore.token
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${ URL}/cotizador/get_cotizadores_confirmacion_precios/api/${id}`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+            console.log("======================== (response.status ",response.status)
+            if(response.status == 200){
+
+                /*let data = response.data;
+
+                console.log("data ", data.id);
+                console.log("cotizadorStore.cotizadores ",cotizadorStore.cotizadores)
+                cotizadorStore.cotizadores = cotizadorStore.cotizadores.map(c =>
+                    c.id === data.id ? { ...c, comisionPrecioLey: data.comisionPrecioLey } : c
+                );*/
+
+                  let data = response.data;
+
+                console.log("data ", data.id);
+                console.log("cotizadorStore.cotizadores ", cotizadorStore.cotizadores);
+
+                // solo despachas el objeto
+                await dispatch(listStoreUpdate({ cotizadores: data }));
+
+                if(data.length > 0){
+                    console.log("data ", data);
+                    console.log("cotizadorStore.cotizadores ",cotizadorStore.cotizadores)
+                    //await dispatch(listStore({'cotizadores':data}));
+                    
+                    await dispatch(listStoreUpdate({'cotizadores':data}));
+                    // Filtrar los elementos con etiqueta_nombre "seguros generales"
+
+                    await dispatch(getAllThunksProveedores())
+
+                            
+                    const {proveedoresStore} = getState();
+                  
+                    for (const item of data) {
+                        const dataConfirmacionPrecio = {
+                            id_row            : item.id,
+                            idProveedor       : proveedoresStore.defaultProv.id,
+                            nombre            : "Seguros generales",
+                            etiqueta          : "seguros generales",
+                            comisionProveedor : 0,
+                            banco             : "",
+                            idBanco           : ""
+                        };
+
+                        await dispatch(handleFormColumnsConfirmacionPrecioStore({
+                            name: 'columnsConfirmacionPrecios',
+                            value: dataConfirmacionPrecio
+                        }));
+                    }
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    //await dispatch(listStore({'cotizadores':[]}))
 
                     await dispatch(hideBackDropStore());
                 }
