@@ -16,9 +16,11 @@ import {
   Link,
   Tabs, 
   Tab,
-  Tooltip
+  Tooltip,
+  TextField,
+  InputAdornment
 } from "@mui/material";
-
+import ClearIcon from "@mui/icons-material/Clear"
 import { DataGrid } from "@mui/x-data-grid";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { useSelector,useDispatch } from "react-redux";
@@ -48,7 +50,6 @@ export const ProfilePage = () => {
       if (clienteDataString) {
         const clienteData = JSON.parse(clienteDataString);
         console.log("clienteData decodificado:", clienteData);
-        dispatch(getCotizadoresCliente(clienteData));
       } else {
         console.warn("No hay datos en localStorage al cargar.");
         localStorage.removeItem("cliente_data")
@@ -63,6 +64,7 @@ export const ProfilePage = () => {
 
       if (idCliente) {
         dispatch(showRecepcionPagoSecond(idCliente));
+        dispatch(getCotizadoresCliente(clienteData));
       } else {
         console.warn("ID cliente no encontrado en localStorage.");
       }
@@ -94,84 +96,135 @@ export const ProfilePage = () => {
   const handleLogout = () => {
     localStorage.removeItem("cliente_data");
     dispatch(loginFail());
-    navigate("/customer/customer", { replace: true });
+    navigate("/cliente", { replace: true });
   };
 
   const hasData = Array.isArray(data) && data.length > 0;
   const cliente = hasData ? data[0] : null;
 
-      const columnsRecepcion = [
-        { field: 'id',                      headerName: 'ID',                     width: 100 },
-        {
-          field: 'fecha_ingreso',
-          headerName: 'Fecha de Ingreso',
-          width: 200,
-          valueFormatter: (params) => {
-            if (!params) return "";
-            // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
-            return params.slice(0, 16).replace("T", " ");
-          }
-        },
-        {
-          field: 'fecha_transaccion',
-          headerName: 'Fecha de Transacción',
-          width: 200,
-          valueFormatter: (params) => {
-            if (!params) return "";
-            // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
-            return params.slice(0, 16).replace("T", " ");
-          }
-        },
-        {
-          field: 'valor',
-          headerName: 'Valor',
-          width: 130,
-          align: "right", headerAlign: "right",
-        },
-      ];
-
-  const columns = [
-      { field: "placa", headerName: "Placa",  width: 250 },
-      { field: "modelo", headerName: "Modelo",  width: 250 },
-      { field: "correo", headerName: "Correo electrónico",  width: 250 },
-      { field: "chasis", headerName: "Chasis",  width: 250 },
-      { field: "cilindraje",        headerName: "Cilindraje",  width: 250 },
-      { field: "precioDeLey",       headerName: "precioDeLey", width: 250 },
-      { field: "comisionPrecioLey", headerName: "comisionPrecioLey", width: 250 },
-      { 
-        field: "total", 
-        headerName: "Total", 
-        width: 250,
-        valueFormatter: (params) => {
-          return new Intl.NumberFormat('es-CO').format(params);
-        },
-      },
-      { field: "fechaCreacion", headerName: "Fecha de creación",  width: 250 },
-      { field: "fechaTramite", headerName: "Fecha de trámite",  width: 250 },
-      {
-        field: "acciones",
-        headerName: "Acciones",
-        width: 250,
-        renderCell: (params) => {
-          if (!params.row.pdf) return null; // Si no hay PDF, no muestra nada
-
-          return (
-            <a
-              href={`${URL}${params.row.pdf}`} // Construcción correcta de la ruta
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Tooltip title="Ver PDF">
-                <IconButton color="error" size="small">
-                  <PictureAsPdfIcon />
-                </IconButton>
-              </Tooltip>
-            </a>
-          );
-        },
+  const columnsRecepcion = [
+    { field: 'id',                      headerName: 'ID',                     width: 100 },
+    {
+      field: 'fecha_ingreso',
+      headerName: 'Fecha de Ingreso',
+      width: 320,
+      valueFormatter: (params) => {
+        if (!params) return "";
+        // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
+        return params.slice(0, 16).replace("T", " ");
       }
+    },
+    {
+      field: 'fecha_transaccion',
+      headerName: 'Fecha de Transacción',
+      width: 320,
+      valueFormatter: (params) => {
+        if (!params) return "";
+        // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
+        return params.slice(0, 16).replace("T", " ");
+      }
+    },
+    {
+      field: 'valor',
+      headerName: 'Valor',
+      width: 260,
+      align: "right", headerAlign: "right",
+    },
   ];
 
+  const columns = [
+    {
+      field: "fechaTramite",
+      headerName: "Fecha de trámite",
+      width: 250,
+      valueFormatter: (params) => {
+        if (!params) return "";
+        const date = new Date(params);
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        const seconds = String(date.getSeconds()).padStart(2, "0");
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      },
+    },
+    {
+      field: "acciones",
+      headerName: "Documento",
+      width: 250,
+      renderCell: (params) => {
+        if (!params.row.pdf) return null; // Si no hay PDF, no muestra nada
+
+        return (
+          <a
+            href={`${URL}${params.row.pdf}`} // Construcción correcta de la ruta
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Tooltip title="Ver PDF">
+              <IconButton color="error" size="small">
+                <PictureAsPdfIcon />
+              </IconButton>
+            </Tooltip>
+          </a>
+        );
+      },
+    },
+    {
+      field: "placa",
+      headerName: "Placa",
+      width: 250,
+      renderCell: (params) => (
+        <strong style={{ fontSize: "18px" }}>{params.value}</strong>
+      ),
+    },
+    { field: "precioDeLey",       headerName: "Precio de ley", width: 280 },
+    { field: "comisionPrecioLey", headerName: "Comisión precio ley", width: 280 },
+    { 
+      field: "total", 
+      headerName: "Total", 
+      width: 250,
+      valueFormatter: (params) => {
+        return new Intl.NumberFormat('es-CO').format(params);
+      },
+    },
+    { field: "nombreCompleto",    headerName: "Nombre", width: 250 },
+    /*{
+      field: "fechaCreacion",
+      headerName: "Fecha de creación",
+      width: 250,
+      valueFormatter: (params) => {
+        if (!params) return "";
+        const date = new Date(params);
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        const seconds = String(date.getSeconds()).padStart(2, "0");
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      },
+    },*/
+    /*{ field: "modelo", headerName: "Modelo",  width: 250 },
+    { field: "correo", headerName: "Correo electrónico",  width: 250 },
+    { field: "chasis", headerName: "Chasis",  width: 250 },
+    { field: "cilindraje",        headerName: "Cilindraje",  width: 250 },*/
+  ];
+
+  const [searchText, setSearchText] = useState("");
+  const [startDate, setStartDate]   = useState("");
+  const [endDate, setEndDate]       = useState("");
+
+  const [searchText2, setSearchText2] = useState("");
+  const [startDate2, setStartDate2]   = useState("");
+  const [endDate2, setEndDate2]       = useState("");
 
   return (
     <Box display="flex" flexDirection="column" minHeight="100vh">
@@ -250,56 +303,188 @@ export const ProfilePage = () => {
           {/* Trámites */}
           <Grid item xs={12} md={8}>
             <Paper elevation={3} sx={{ p: 3 }}>
-
-              
-                        <Paper 
-                            elevation={3} 
-                            sx={{ 
-                              p: 2, 
-                              mb: 3, 
-                              maxWidth: 600, 
-                              mx: 'auto', 
-                              backgroundColor: '#e3f2fd', 
-                              borderRadius: 2, 
-                              boxShadow: '0 4px 10px rgba(33, 150, 243, 0.3)'
-                            }}
-                          >
-                            <Typography variant="subtitle1" align="center" color="textSecondary">
-                              Saldo actual
-                            </Typography>
-                            <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
-                              {total == 0 ? 0 : new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(total)}
-                            </Typography>
-                        </Paper>
+              <Paper 
+                  elevation={3} 
+                  sx={{ 
+                    p: 2, 
+                    mb: 3, 
+                    maxWidth: 600, 
+                    mx: 'auto', 
+                    backgroundColor: '#e3f2fd', 
+                    borderRadius: 2, 
+                    boxShadow: '0 4px 10px rgba(33, 150, 243, 0.3)'
+                  }}
+                >
+                  <Typography variant="subtitle1" align="center" color="textSecondary">
+                    Saldo actual
+                  </Typography>
+                  <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
+                    {total == 0 ? 0 : new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(total)}
+                  </Typography>
+              </Paper>
 
               <Tabs value={tabIndex} onChange={handleTabChange} sx={{ mb: 2 }}>
                 <Tab label="Información de Trámites" />
                 <Tab label="Recepción de Pago" />
               </Tabs>
-                
-              <TabPanel value={tabIndex} index={0}>
-                <DataGrid
-                  rows={data}
-                  columns={columns}
-                  autoHeight
-                  disableSelectionOnClick
+                <TabPanel value={tabIndex} index={0}>
+                  {/* Barra de búsqueda */}
+                  <TextField
+                    label="Buscar..."
+                    variant="outlined"
+                    size="small"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    sx={{ mb: 2, mr: 2 }}
+                  />
+
+                  {/* Filtro por fecha: Desde */}
+                  <TextField
+                    label="Desde"
+                    type="datetime-local"
+                    size="small"
+                    InputLabelProps={{ shrink: true }}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    sx={{ mb: 2, mr: 2 }}
+                    InputProps={{
+                      endAdornment: startDate && (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setStartDate("")} size="small">
+                            <ClearIcon fontSize="small" />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+
+                  {/* Filtro por fecha: Hasta */}
+                    <TextField
+                      label="Hasta"
+                      type="datetime-local"
+                      size="small"
+                      InputLabelProps={{ shrink: true }}
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      sx={{ mb: 2 }}
+                      InputProps={{
+                        endAdornment: endDate && (
+                          <InputAdornment position="end">
+                            <IconButton onClick={() => setEndDate("")} size="small">
+                              <ClearIcon fontSize="small" />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+
+                  <DataGrid
+                      rows={data.filter((row) => {
+                        console.log("row ",row.fechaTramite)
+                      // 🔍 Filtrar por buscador
+                      const matchesSearch = Object.values(row).some((value) =>
+                        String(value).toLowerCase().includes(searchText.toLowerCase())
+                      );
+
+                      // 📅 Filtrar por fechas (ajusta el campo de fecha según tu modelo)
+                      const rowDate = new Date(row.fechaTramite); 
+                      const validStart = startDate ? rowDate >= new Date(startDate) : true;
+                      const validEnd = endDate ? rowDate <= new Date(endDate) : true;
+
+                      return matchesSearch && validStart && validEnd;
+                    })}
+                    //rows={data}
+                    columns={columns}
+                    autoHeight
+                    disableSelectionOnClick
                     sx={{ 
-                    backgroundColor: "white",
-                    height: 1000 // 👈 altura fija
-                  }}
-                />
-              </TabPanel>
+                      backgroundColor: "white",
+                      height: 1000, // 👈 altura fija
+                      "& .MuiDataGrid-cell": {
+                        fontSize: "18px", // 👈 Tamaño de letra de las celdas
+                      },
+                      "& .MuiDataGrid-columnHeaders": {
+                        fontSize: "20px", // 👈 Tamaño de letra de los headers
+                        fontWeight: "bold",
+                      },
+                      // 🎨 Estilo de filas intercaladas tipo "table-striped"
+                      "& .MuiDataGrid-row:nth-of-type(odd)": {
+                        backgroundColor: "#f9f9f9", // fila impar
+                      },
+                      "& .MuiDataGrid-row:nth-of-type(even)": {
+                        backgroundColor: "#ffffff", // fila par
+                      },
+                    }}
+                  />
+                </TabPanel>
 
               <TabPanel value={tabIndex} index={1}>
 
+                <TextField
+                  label="Buscar..."
+                  variant="outlined"
+                  size="small"
+                  value={searchText2}
+                  onChange={(e) => setSearchText2(e.target.value)}
+                  sx={{ mb: 2, mr: 2 }}
+                />
+
+                {/* Filtro por fecha: Desde */}
+                <TextField
+                  label="Desde"
+                  type="datetime-local"
+                  size="small"
+                  InputLabelProps={{ shrink: true }}
+                  value={startDate2}
+                  onChange={(e) => setStartDate2(e.target.value)}
+                  sx={{ mb: 2, mr: 2 }}
+                />
+
+                {/* Filtro por fecha: Hasta */}
+                <TextField
+                  label="Hasta"
+                  type="datetime-local"
+                  size="small"
+                  InputLabelProps={{ shrink: true }}
+                  value={endDate2}
+                  onChange={(e) => setEndDate2(e.target.value)}
+                  sx={{ mb: 2 }}
+                />
+
                 <DataGrid
-                  rows={recepcionPagoArray}
+                  rows={recepcionPagoArray.filter((row) => {
+                    // 🔍 Filtro por buscador
+                    const matchesSearch = Object.values(row).some((value) =>
+                      String(value).toLowerCase().includes(searchText2.toLowerCase())
+                    );
+
+                    // 📅 Filtro por fechas (ajusta el campo de fecha de tu data)
+                    const rowDate = new Date(row.fecha_transaccion); // <-- cambia si tu campo se llama distinto
+                    const validStart = startDate2 ? rowDate >= new Date(startDate2) : true;
+                    const validEnd = endDate2 ? rowDate <= new Date(endDate2) : true;
+
+                    return matchesSearch && validStart && validEnd;
+                  })}
                   columns={columnsRecepcion}
                   autoHeight
                   disableSelectionOnClick
-                                     sx={{ 
+                  sx={{ 
                     backgroundColor: "white",
-                    height: 1000 // 👈 altura fija
+                    height: 1000, // 👈 altura fija
+                    "& .MuiDataGrid-cell": {
+                      fontSize: "18px", // 👈 Tamaño de letra de las celdas
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                      fontSize: "20px", // 👈 Tamaño de letra de los headers
+                      fontWeight: "bold",
+                    },
+                    // 🎨 Estilo de filas intercaladas tipo "table-striped"
+                    "& .MuiDataGrid-row:nth-of-type(odd)": {
+                      backgroundColor: "#f9f9f9", // fila impar
+                    },
+                    "& .MuiDataGrid-row:nth-of-type(even)": {
+                      backgroundColor: "#ffffff", // fila par
+                    },
                   }}
                 />
               </TabPanel>
@@ -310,59 +495,59 @@ export const ProfilePage = () => {
       </Box>
 
       {/* FOOTER */}
-          <Box
-      sx={{
-        backgroundColor: "#003871",
-        color: "white",
-        py: 4,
-        mt: 6,
-        px: 3,
-      }}
-    >
-      <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} md={4}>
-          <Typography variant="h6" gutterBottom fontWeight="bold">
-            Movilidad 2A
-          </Typography>
-          <Typography variant="body2">
-            BARRIO OLAYA CLL 31D 63-75<br />
-            Cartagena, Colombia
-          </Typography>
+      <Box
+        sx={{
+          backgroundColor: "#003871",
+          color: "white",
+          py: 4,
+          mt: 6,
+          px: 3,
+        }}
+      >
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom fontWeight="bold">
+              Movilidad 2A
+            </Typography>
+            <Typography variant="body2">
+              BARRIO OLAYA CLL 31D 63-75<br />
+              Cartagena, Colombia
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom fontWeight="bold">
+              Contacto
+            </Typography>
+            <Typography variant="body2">📞 314 8556245</Typography>
+            <Typography variant="body2">✉️ tramitesmovilidad2a@gmail.com</Typography>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom fontWeight="bold">
+              Redes Sociales
+            </Typography>
+            <Box display="flex" alignItems="center">
+              <InstagramIcon sx={{ mr: 1 }} />
+              <Link
+                href="https://instagram.com/movilidad2a"
+                target="_blank"
+                rel="noopener"
+                color="inherit"
+                underline="hover"
+              >
+                instagram.com/movilidad2a
+              </Link>
+            </Box>
+          </Grid>
         </Grid>
 
-        <Grid item xs={12} md={4}>
-          <Typography variant="h6" gutterBottom fontWeight="bold">
-            Contacto
+        <Box textAlign="center" mt={4}>
+          <Typography variant="caption" color="gray">
+            © {new Date().getFullYear()} Movilidad 2A. Todos los derechos reservados.
           </Typography>
-          <Typography variant="body2">📞 314 8556245</Typography>
-          <Typography variant="body2">✉️ tramitesmovilidad2a@gmail.com</Typography>
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          <Typography variant="h6" gutterBottom fontWeight="bold">
-            Redes Sociales
-          </Typography>
-          <Box display="flex" alignItems="center">
-            <InstagramIcon sx={{ mr: 1 }} />
-            <Link
-              href="https://instagram.com/movilidad2a"
-              target="_blank"
-              rel="noopener"
-              color="inherit"
-              underline="hover"
-            >
-              instagram.com/movilidad2a
-            </Link>
-          </Box>
-        </Grid>
-      </Grid>
-
-      <Box textAlign="center" mt={4}>
-        <Typography variant="caption" color="gray">
-          © {new Date().getFullYear()} Movilidad 2A. Todos los derechos reservados.
-        </Typography>
+        </Box>
       </Box>
-    </Box>
     </Box>
   );
 };

@@ -82,13 +82,14 @@ export const getCotizadoresCliente = (clienteData) => {
             
         
             if (response.status === 200) {
-             
+                
+                let data = response.data.data.filter((d) => d.pdf);
                 localStorage.setItem("cliente_data", JSON.stringify({isLogin: true, token:clienteData.token, 
                                                                      username:clienteData.username, id_cliente:clienteData.id_cliente }));
 
                 await dispatch(setAlert({ message: '¡✨ Acción completada con éxito!', type: 'success'}));
 
-                await dispatch(loginSuccess({data: response.data.data, islogin: true}));
+                await dispatch(loginSuccess({data: data, islogin: true}));
     
                 await dispatch(showRecepcionPago(clienteData.id_cliente));
 
@@ -289,9 +290,9 @@ export const showRecepcionPagoSecond = ( id = "") => {
         const options = {
             method: 'GET',
             url: `${URL}/${parametersURL}recepcionescliente/${id}/`,
-            headers: {
+            /*headers: {
               Authorization: `Bearer ${token}`
-            }
+            }*/
           };
 
           try {

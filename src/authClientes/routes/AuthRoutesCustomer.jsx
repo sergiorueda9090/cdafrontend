@@ -3,33 +3,32 @@ import { LoginPage, ProfilePage } from '../pages';
 import { useSelector } from 'react-redux';
 
 export const AuthRoutesCustomer = () => {
-
   const { isLogin } = useSelector(state => state.authCustomerStore);
 
   return (
     <Routes>
-      {/* Ruta pública */}
+      {/* Ruta pública: /customer */}
       <Route
-        path="/customer"
+        path="/"
         element={
           !isLogin
             ? <LoginPage />
-            : <Navigate to="profile" replace />  // ✅ Ruta relativa dentro de /customer
+            : <Navigate to="profile" replace /> // ✅ relativo: /customer/profile
         }
       />
 
-      {/* Ruta privada */}
+      {/* Ruta privada: /customer/profile */}
       <Route
-        path="customer/profile"
+        path="profile"
         element={
           isLogin
             ? <ProfilePage />
-            : <Navigate to="/customer" replace />  // ✅ vuelve al login dentro de /customer
+            : <Navigate to="/" replace /> // ✅ vuelve al login
         }
       />
 
-      {/* Cualquier ruta desconocida redirige al login de /customer */}
-      <Route path="*" element={<Navigate to="/customer" replace />} />
+      {/* Rutas desconocidas redirigen al login */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

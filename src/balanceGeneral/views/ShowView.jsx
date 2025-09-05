@@ -206,10 +206,10 @@ const dataBalanceUtilidad = [
               sx={{
                 borderRadius: 2,
                 p: 2,
-                backgroundColor: "#F4F6F8",
+                backgroundColor: "#f5b0d0ff",
                 height: "100%",
                 display: "flex",
-                flexDirection: "column",
+                flexDirection: "column",  
               }}
             >
               <Box display="flex" justifyContent="space-between">
@@ -263,7 +263,7 @@ const dataBalanceUtilidad = [
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
-                                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
+                                backgroundColor: "#d2b0f5ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
               <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
@@ -281,7 +281,7 @@ const dataBalanceUtilidad = [
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
-                                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
+                                backgroundColor: "#f3d88fff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
               <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
@@ -299,7 +299,7 @@ const dataBalanceUtilidad = [
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
-                                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
+                                backgroundColor: "#a6eff1ff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
               <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
@@ -317,7 +317,7 @@ const dataBalanceUtilidad = [
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
-                                backgroundColor: "#F4F6F8", // 🎨 Fondo suave
+                                backgroundColor: "#f0f1abff", // 🎨 Fondo suave
                               }}>
             <Box display="flex" justifyContent="space-between">
               <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
