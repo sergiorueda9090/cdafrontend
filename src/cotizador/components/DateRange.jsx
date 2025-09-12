@@ -45,7 +45,7 @@ import { getAllThunks as getAllThunksArchivo } from '../../store/archivocotizaci
 import { getAllThunks as getAllThunksHistorial } from '../../store/historialtramitesemitidosStore/historialtramitesemitidosStoreThunks';
 
 import { getFichaProveedorByIdThunk } from '../../store/fichaProveedoresStore/fichaProveedoresThunks';
-import { getAllThunks as getAllThunksBalanceGeneral } from '../../store/balancegeneralStore/balancegeneralStoreThunks';
+import { getAllThunks as getAllThunksBalanceGeneral, getObtenerTotalTarjetas, getPatrimonioNeto, getUtilidadNominal, getUtilidadReal } from '../../store/balancegeneralStore/balancegeneralStoreThunks';
 import { getAllThunks as getAllThunksUtilidadFilter }       from "../../store/utilidadStore/utilidadStoreThunks";
 
 import dayjs from "dayjs";
@@ -172,7 +172,12 @@ export const DateRange = ({cotizador,id=''}) => {
             
             dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
             dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
-            dispatch(getAllThunksBalanceGeneral(formattedStartDate, formattedEndDate));
+            dispatch( getAllThunksBalanceGeneral(formattedStartDate, formattedEndDate) );
+
+            //dispatch(getObtenerTotalTarjetas());
+            dispatch(getPatrimonioNeto(formattedStartDate, formattedEndDate));
+            dispatch(getUtilidadNominal(formattedStartDate, formattedEndDate));
+            dispatch(getUtilidadReal(formattedStartDate, formattedEndDate));
 
         }else{
 

@@ -3,7 +3,7 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { loginFail } from "../authStore/authStore.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { listStore, resetFormularioStore} from "./balancegeneralStore.js";
+import { listStore, resetFormularioStore, getObtenerTotalTarjetasStore, getPatrimonioNetoStore, getUtilidadNominalStore, getUtilidadRealStore, getTotalDiferenciaStore} from "./balancegeneralStore.js";
 
 // Función asincrónica para obtener los Pokemons
 const parametersURL = 'balancegeneral/api/';
@@ -55,7 +55,8 @@ export const getAllThunks = (fechaInicio, fechaFin) => {
                         totalTarjetas: data.totalTarjetas,
                         sumaTotal: data.sumaTotal,
                         utilidades:data.utilidades,
-                        tarjetas: data.tarjetas
+                        tarjetas: data.tarjetas,
+                        clientes: data.clientes
                     }));
                 } else {
                     await dispatch(listStore({
@@ -89,4 +90,242 @@ export const getAllThunks = (fechaInicio, fechaFin) => {
 
         }
     };
+};
+
+
+export const getObtenerTotalTarjetas = (fechaInicio, fechaFin) => {
+  return async (dispatch, getState) => {
+    await dispatch(showBackDropStore());
+
+    const { authStore } = getState();
+    const token = authStore.token;
+
+    // Construir la URL
+    let url = `${URL}/${parametersURL}balancegeneral/obtenertotaltarjetas`;
+
+    // Agregar fechas si existen
+    if (fechaInicio || fechaFin) {
+      const params = new URLSearchParams();
+      if (fechaInicio) params.append("fechaInicio", fechaInicio);
+      if (fechaFin) params.append("fechaFin", fechaFin);
+      url += `?${params.toString()}`;
+    }
+
+    const options = {
+      method: "GET",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+
+      if (response.status === 200) {
+        const data = response.data;
+
+        // ✅ Solo esperamos totalTarjetas
+        const patrimonioBruto = data?.patrimonioBruto || 0;
+
+        await dispatch(getObtenerTotalTarjetasStore({patrimonioBruto}));
+      }
+    } catch (error) {
+      console.error("Error al obtener totalTarjetas:", error);
+      await dispatch(getObtenerTotalTarjetasStore({patrimonioBruto: 0}));
+    } finally {
+      await dispatch(hideBackDropStore());
+    }
+  };
+};
+
+
+export const getPatrimonioNeto = (fechaInicio, fechaFin) => {
+  return async (dispatch, getState) => {
+    await dispatch(showBackDropStore());
+
+    const { authStore } = getState();
+    const token = authStore.token;
+
+    // Construir la URL
+    let url = `${URL}/${parametersURL}balancegeneral/obtenercuatroxmilygastos`;
+
+    // Agregar fechas si existen
+    if (fechaInicio || fechaFin) {
+      const params = new URLSearchParams();
+      if (fechaInicio) params.append("fechaInicio", fechaInicio);
+      if (fechaFin) params.append("fechaFin", fechaFin);
+      url += `?${params.toString()}`;
+    }
+
+    const options = {
+      method: "GET",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+
+      if (response.status === 200) {
+        const data = response.data;
+        
+        console.log("data ",data)
+
+        //Solo esperamos totalTarjetas
+        const patrimonioNeto = data?.patrimonio_neto || 0;
+        await dispatch(getPatrimonioNetoStore({patrimonioNeto}));
+      }
+    } catch (error) {
+      console.error("Error al obtener totalTarjetas:", error);
+      //await dispatch(getObtenerTotalTarjetasStore({totalTarjetasBalance: 0}));
+    } finally {
+      await dispatch(hideBackDropStore());
+    }
+  };
+};
+
+
+export const getUtilidadNominal = (fechaInicio, fechaFin) => {
+  return async (dispatch, getState) => {
+    await dispatch(showBackDropStore());
+
+    const { authStore } = getState();
+    const token = authStore.token;
+
+    // Construir la URL
+    let url = `${URL}/${parametersURL}balancegeneral/utilidadnominal`;
+
+    // Agregar fechas si existen
+    if (fechaInicio || fechaFin) {
+      const params = new URLSearchParams();
+      if (fechaInicio) params.append("fechaInicio", fechaInicio);
+      if (fechaFin) params.append("fechaFin", fechaFin);
+      url += `?${params.toString()}`;
+    }
+
+    const options = {
+      method: "GET",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+
+      if (response.status === 200) {
+        const data = response.data;
+        
+        console.log("data ",data)
+
+        //Solo esperamos totalTarjetas
+        const utilidadnominal = data?.total || 0;
+        await dispatch(getUtilidadNominalStore({utilidadnominal}));
+      }
+    } catch (error) {
+      console.error("Error al obtener totalTarjetas:", error);
+      //await dispatch(getObtenerTotalTarjetasStore({totalTarjetasBalance: 0}));
+    } finally {
+      await dispatch(hideBackDropStore());
+    }
+  };
+};
+
+
+export const getUtilidadReal = (fechaInicio, fechaFin) => {
+  return async (dispatch, getState) => {
+    await dispatch(showBackDropStore());
+
+    const { authStore } = getState();
+    const token = authStore.token;
+
+    // Construir la URL
+    let url = `${URL}/${parametersURL}balancegeneral/utilidadreal`;
+
+    // Agregar fechas si existen
+    if (fechaInicio || fechaFin) {
+      const params = new URLSearchParams();
+      if (fechaInicio) params.append("fechaInicio", fechaInicio);
+      if (fechaFin) params.append("fechaFin", fechaFin);
+      url += `?${params.toString()}`;
+    }
+
+    const options = {
+      method: "GET",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+
+      if (response.status === 200) {
+        const data = response.data;
+        
+        console.log("utilidadreal data ",data)
+
+        //Solo esperamos totalTarjetas
+        const utilidadreal = data?.resultado || 0;
+        await dispatch(getUtilidadRealStore({utilidadreal}));
+      }
+    } catch (error) {
+      console.error("Error al obtener totalTarjetas:", error);
+      //await dispatch(getObtenerTotalTarjetasStore({totalTarjetasBalance: 0}));
+    } finally {
+      await dispatch(hideBackDropStore());
+    }
+  };
+};
+
+export const getTotalDiferencia = (fechaInicio, fechaFin) => {
+  return async (dispatch, getState) => {
+    await dispatch(showBackDropStore());
+
+    const { authStore } = getState();
+    const token = authStore.token;
+
+    // Construir la URL
+    let url = `${URL}/${parametersURL}balancegeneral/totaldiferencia`;
+
+    // Agregar fechas si existen
+    if (fechaInicio || fechaFin) {
+      const params = new URLSearchParams();
+      if (fechaInicio) params.append("fechaInicio", fechaInicio);
+      if (fechaFin) params.append("fechaFin", fechaFin);
+      url += `?${params.toString()}`;
+    }
+
+    const options = {
+      method: "GET",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+
+      if (response.status === 200) {
+        const data = response.data;
+        
+        console.log("utilidadreal data ",data)
+
+        //Solo esperamos totalTarjetas
+        const totaldiferencia = data?.total_diferencia || 0;
+        await dispatch(getTotalDiferenciaStore({totaldiferencia}));
+      }
+    } catch (error) {
+      console.error("Error al obtener totalTarjetas:", error);
+      //await dispatch(getObtenerTotalTarjetasStore({totalTarjetasBalance: 0}));
+    } finally {
+      await dispatch(hideBackDropStore());
+    }
+  };
 };

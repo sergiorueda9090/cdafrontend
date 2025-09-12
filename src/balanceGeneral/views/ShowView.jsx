@@ -9,7 +9,7 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useNavigate, useParams, Link }  from 'react-router-dom';
 
 
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { BarChart, Bar, XAxis, YAxis } from "recharts";
 
 //import { PictureAsPdf, FileDownload } from "@mui/icons-material";
@@ -18,10 +18,13 @@ import { BarChart, Bar, XAxis, YAxis } from "recharts";
 import { DateRange } from "../../cotizador/components/DateRange";
 import { downloadExcelThunk } from "../../store/cuentasBancariasStore/cuentasBancariasThunks";
 
-import dayjs from "dayjs";
+
 import { v4 as uuidv4 } from 'uuid';
 
 import { URL } from "../../constants.js/constantGlogal";
+
+import { BalanceIntervalo } from "./BalanceIntervalo";
+
   // Definir las columnas para el DataGrid
 const columns = [
     { field: "id",          headerName: "ID",             width: 150, hide: true },
@@ -85,23 +88,18 @@ const columns = [
         );
       }
     }
-  ];
-
-  const rows = [];
+];
 
 export const ShowView = () => {
 
-  let { dashboardData, total_cuenta_bancaria, total_devoluciones, 
-        total_gastos_generales, total_utilidad_ocacional, total,
-        nombre_cuenta, descripcion_cuenta, 
-        numero_cuenta, total_recepcionDePagos, banco }    = useSelector(state => state.cuentasBancariasStore);
+  let { total_recepcionDePagos }    = useSelector(state => state.cuentasBancariasStore);
 
   let { balanceGeneral,
         totalSaldoClientes,
         totalGastosGenerales,
         totalComisionesProveedores,
         totalTarjetas,
-        sumaTotal, utilidades, tarjetas }    = useSelector(state => state.balancegeneralStore);
+        sumaTotal, utilidades, tarjetas, clientes }    = useSelector(state => state.balancegeneralStore);
 
   const { startDate, endDate } = useSelector(state => state.globalStore);
 
@@ -173,11 +171,6 @@ const dataBalanceUtilidad = [
     id: uuidv4() // Usa el ID existente o genera uno nuevo
   }));
 
-  const tarjetasDisponibles = [
-    { nombre: "Tarjeta Débito", icon: "/assets/icons/glass/ic-glass-bag.svg", ruta: "/tarjetas/debito" },
-    { nombre: "Tarjeta Crédito", icon: "/assets/icons/glass/ic-glass-card.svg", ruta: "/tarjetas/credito" },
-    { nombre: "Tarjeta Virtual", icon: "/assets/icons/glass/ic-glass-virtual.svg", ruta: "/tarjetas/virtual" },
-  ];
 
   return (
     <Box sx={{ height: 500, width: "100%", p: 3 }}>
@@ -235,8 +228,6 @@ const dataBalanceUtilidad = [
                     {tarjetas.map((tarjeta, index) => (
                       <ListItemButton
                         key={index}
-                        component={Link}
-                        to={"/"}
                         sx={{
                           borderRadius: 1,
                           display: "flex",
@@ -260,20 +251,51 @@ const dataBalanceUtilidad = [
           </Grid>
         
         <Grid item xs={4}>
-          <Card elevation={0} sx={{
+            <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
                                 backgroundColor: "#d2b0f5ff", // 🎨 Fondo suave
                               }}>
-            <Box display="flex" justifyContent="space-between">
-              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
-            </Box>
-            <Box mt={2}>
-              <Typography variant="subtitle2" color="text.secondary">
-                Total saldo clientes
-              </Typography>
-              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(totalSaldoClientes)}</Typography>
-            </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
+                </Box>
+                <Box mt={2}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Total saldo clientes
+                  </Typography>
+                  <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(totalSaldoClientes)}</Typography>
+                </Box>
+
+                <Box>
+                  <Box sx={{ maxHeight: 200, overflowY: "auto" }}>
+                      <List dense>
+                        {clientes.map((cliente, index) => (
+                          <ListItemButton
+                            key={index}
+                            sx={{
+                              borderRadius: 1,
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Box display="flex" alignItems="center">
+                              <ListItemText primary={cliente.nombre} />
+                            </Box>
+
+                            <Typography
+                              variant="body2"
+                              fontWeight="bold"
+                              color="text.primary"
+                            >
+                              ${new Intl.NumberFormat("es-CO").format(cliente.valor)}
+                            </Typography>
+                          </ListItemButton>
+                        ))}
+                      </List>
+                  </Box>
+                </Box>
+
           </Card>
         </Grid>
 
@@ -391,53 +413,56 @@ const dataBalanceUtilidad = [
               </ResponsiveContainer>
           </Paper>
         </Grid>
+        
+        <BalanceIntervalo />
 
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h5" align="center" gutterBottom color="primary" sx={{ fontWeight: 'bold' }}>
+              Balance General
+            </Typography>
 
-          <Grid item xs={12}>
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h5" align="center" gutterBottom color="primary" sx={{ fontWeight: 'bold' }}>
-                Balance General
+            <Paper 
+              elevation={3} 
+              sx={{ 
+                p: 2, 
+                mb: 3, 
+                maxWidth: 600, 
+                mx: 'auto', 
+                backgroundColor: '#e3f2fd', 
+                borderRadius: 2, 
+                boxShadow: '0 4px 10px rgba(33, 150, 243, 0.3)'
+              }}
+            >
+              <Typography variant="subtitle1" align="center" color="textSecondary">
+                Total Balance
               </Typography>
-
-              <Paper 
-                elevation={3} 
-                sx={{ 
-                  p: 2, 
-                  mb: 3, 
-                  maxWidth: 600, 
-                  mx: 'auto', 
-                  backgroundColor: '#e3f2fd', 
-                  borderRadius: 2, 
-                  boxShadow: '0 4px 10px rgba(33, 150, 243, 0.3)'
-                }}
-              >
-                <Typography variant="subtitle1" align="center" color="textSecondary">
-                  Total Balance
-                </Typography>
-                <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
-                  {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(sumaTotal)}
-                </Typography>
-              </Paper>
-
-              <DataGrid
-                rows={enhancedDashboardData}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5, 10]}
-                autoHeight
-                sx={{
-                  "& .MuiDataGrid-cell": {
-                    fontSize: "14px",
-                  },
-                  "& .MuiDataGrid-columnHeaders": {
-                    backgroundColor: "#eeeeee",
-                  },
-                  borderRadius: 2,
-                  boxShadow: '0 0 8px rgba(0,0,0,0.1)'
-                }}
-              />
+              <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
+                {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(sumaTotal)}
+              </Typography>
             </Paper>
-          </Grid>
+
+            <DataGrid
+              rows={enhancedDashboardData}
+              columns={columns}
+              pageSize={5}
+              rowsPerPageOptions={[5, 10]}
+              autoHeight
+              sx={{
+                "& .MuiDataGrid-cell": {
+                  fontSize: "14px",
+                },
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: "#eeeeee",
+                },
+                borderRadius: 2,
+                boxShadow: '0 0 8px rgba(0,0,0,0.1)'
+              }}
+            />
+          </Paper>
+        </Grid>
+
+
       </Grid>
 
     </Box>

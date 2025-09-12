@@ -9,9 +9,15 @@ export const balancegeneralStore = createSlice({
     totalGastosGenerales: 0,
     totalComisionesProveedores: 0,
     totalTarjetas: 0,
+    patrimonioBruto:0,
     sumaTotal:0,
     utilidades:0,
     tarjetas:[],
+    clientes:[],
+    patrimonioNeto:0,
+    utilidadnominal:0,
+    utilidadreal:0,
+    totaldiferencia:0,
   },
   reducers: {
     listStore: (state, action) => {
@@ -23,6 +29,7 @@ export const balancegeneralStore = createSlice({
       state.sumaTotal = action.payload.sumaTotal || 0;
       state.utilidades = action.payload.utilidades || 0;
       state.tarjetas = action.payload.tarjetas || [];
+      state.clientes = action.payload.clientes || [];
     },
     resetFormularioStore: (state) => {
       state.id = '';
@@ -35,8 +42,24 @@ export const balancegeneralStore = createSlice({
       state.utilidades = 0;
       state.tarjetas = [];
     },
+    getObtenerTotalTarjetasStore: (state, action) => {
+      state.patrimonioBruto = action.payload.patrimonioBruto;
+    },
+    getPatrimonioNetoStore: (state, action) => {
+      state.patrimonioNeto = action.payload.patrimonioNeto;
+    },
+    getUtilidadNominalStore: (state, action) => {
+      state.utilidadnominal = action.payload.utilidadnominal;
+    },
+    getUtilidadRealStore: (state, action) => {
+      state.utilidadreal = action.payload.utilidadreal;
+    },
+    getTotalDiferenciaStore: (state, action) => {
+      state.totaldiferencia = action.payload.totaldiferencia;
+    },
+
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { listStore, resetFormularioStore} = balancegeneralStore.actions;
+export const { listStore, resetFormularioStore, getObtenerTotalTarjetasStore, getPatrimonioNetoStore, getUtilidadNominalStore, getUtilidadRealStore, getTotalDiferenciaStore} = balancegeneralStore.actions;
