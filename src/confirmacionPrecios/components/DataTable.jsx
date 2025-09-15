@@ -208,68 +208,6 @@ export function DataTable() {
       dispatch(clearAllProveedores())
     }
 
-  
-    /*const handleSelectionChange = (id, newValue) => {
-      if(newValue){
-        dispatch(handleFormStoreThunk({name: 'banco', value:newValue.nombre_cuenta }));
-        dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:id }));
-
-        let dataConfirmacionPrecios = {
-          id_row            : activeRow,
-          banco             : newValue.nombre_cuenta,
-          idBanco           : id,
-        }
-
-        dispatch(handleFormColumnsConfirmacionPrecioStore({
-                                                              name: 'columnsConfirmacionPrecios',
-                                                              value: dataConfirmacionPrecios
-                                                            }));
-
-      }else{
-        dispatch(handleFormStoreThunk({name: 'banco', value:"" }));
-        dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:"" }));
-      }
-
-    };*/
-
-
-      /*const handleProveedorSelectionChange = (id, newValue) => {
-
-      if(newValue){
-        dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:newValue.nombre }));
-        dispatch(handleFormStoreThunkProveedores({name: 'etiqueta',  value:newValue.etiqueta_nombre }));
-        dispatch(handleFormStoreThunkProveedores({name: 'id',        value:id }));
-
-        let dataConfirmacionPrecios = {
-          id_row      : activeRow,
-          idProveedor : id,
-          nombre      : newValue.nombre,
-          etiqueta    : newValue.etiqueta_nombre,
-          comisionProveedor: 0,
-          banco       : "",
-          idBanco     : "",
-        }
-        console.log("dataConfirmacionPrecios ",dataConfirmacionPrecios)
-        dispatch(handleFormColumnsConfirmacionPrecioStore({
-                                                              name: 'columnsConfirmacionPrecios',
-                                                              value: dataConfirmacionPrecios
-                                                            }));
-
-        
-        if(newValue.etiqueta_nombre !== "seguros generales"){
-
-          dispatch(handleFormStoreThunkCotizador({name: 'idBanco', value:"" }));
-          dispatch(handleFormStoreThunk({name: 'banco', value:"" }));
-        }
-
-      }else{
-        dispatch(handleFormStoreThunkProveedores({name: 'nombre',    value:"" }));
-        dispatch(handleFormStoreThunkProveedores({name: 'etiqueta',  value:"" }));
-        dispatch(handleFormStoreThunkProveedores({name: 'id',        value:"" }));
-      }
-
-
-    };*/
     
     const handleDevolver = (data="") => {
       if(data == "") return
@@ -314,11 +252,6 @@ export function DataTable() {
       dispatch(update_cotizador_devolver({'id':data.id, 'devolver':data.devolver}))
     }
         
-    //const esEditable = etiqueta?.toUpperCase() === 'AMALFI' || etiqueta?.toUpperCase() === 'ELVIN';
-    
-    //const [selectedProveedores, setSelectedProveedores] = useState(defaultProv);
-  
-
     const columns = [
       { field: 'id',                    headerName: 'ID',              width: 90},
       {
@@ -395,9 +328,7 @@ export function DataTable() {
           const isActive = activeRow === params.id;
 
           // Buscar si ya hay un proveedor asignado en columnsConfirmacionPrecios
-          const proveedorAsignado = columnsConfirmacionPrecios.find(
-            item => item.id_row === params.id
-          );
+          const proveedorAsignado = columnsConfirmacionPrecios.find(item => item.id_row === params.id);
 
           // Si ya lo tienes guardado, úsalo
           const proveedorSeleccionado = proveedorAsignado
@@ -476,9 +407,7 @@ export function DataTable() {
         width: 180,
         renderCell: (params) => {
 
-          const proveedorAsignado = columnsConfirmacionPrecios.find(
-            item => item.id_row === params.id
-          );
+          const proveedorAsignado = columnsConfirmacionPrecios.find(item => item.id_row === params.id);
 
           const etiqueta = proveedorAsignado ? proveedorAsignado.etiqueta : '';
 
@@ -874,10 +803,12 @@ export function DataTable() {
       let idBanco           = columnsConfirmacionPrecios.filter(item => item.id_row === id)[0]?.idBanco || '';
       let idProveedor       =  columnsConfirmacionPrecios.filter(item => item.id_row === id)[0]?.idProveedor || '';  
 
-      //let comisionproveedor = Object.values(comisiones);
+      let etiquetaNombre    = columnsConfirmacionPrecios.filter(item => item.id_row === id)[0] || '';
+      console.log(" === etiquetaNombre === ",etiquetaNombre.etiqueta)
+
 
       // Si no existe o es vacío, asignar "0"
-      //let comisionRaw = comisionproveedor[0] ? comisionproveedor[0] : "0";
+      //let comisionRaw = comisionproveedor[0] ? comisionproveedor[0] : "0"; sergio
       let comision = 0;
 
       if(comisionproveedor == "" || comisionproveedor == undefined){
@@ -894,6 +825,15 @@ export function DataTable() {
       
         }
       
+      }
+
+      if(etiquetaNombre.etiqueta && (etiquetaNombre.etiqueta.toLowerCase() === 'elvin' || etiquetaNombre.etiqueta.toLowerCase() === 'amalfi')){
+
+        if(comision == "0"){
+          alert("Por favor ingresa una comisión");
+          return;
+        }
+
       }
        
       if (etiqueta.toLowerCase() != "seguros generales"){
@@ -965,18 +905,6 @@ export function DataTable() {
                               'confirmarprecio',
                               confirmar
                           ));
-
-     /* dispatch(updateThunks({id,  
-                              'archivo'                 : fileUpload, 
-                              'idBanco'                 : idBanco, 
-                              confirmacionPreciosModulo : 0, 
-                              cotizadorModulo           : 0, 
-                              pdfsModulo                : 1, 
-                              tramiteModulo             : 0,
-                              idProveedor               : idProveedor,
-                              comisionproveedor         : comisionproveedor[0]
-                            }, 'confirmarprecio'))  */                           
-      //navigate('/cargarpdfs');
     }
     
     const paginationModel = { page: 0, pageSize: 15 };
