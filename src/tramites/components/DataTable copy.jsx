@@ -15,7 +15,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import { Autocomplete, TextField } from '@mui/material';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk, updateThunks, update_cotizador_devolver, getAllEliminarCotizadorTramitesThunks, getAllCotizadorTramitesSecondThunks }   from '../../store/cotizadorStore/cotizadorThunks';
+import { showThunk, deleteThunk, updateThunks, update_cotizador_devolver, getAllEliminarCotizadorTramitesThunks }   from '../../store/cotizadorStore/cotizadorThunks';
 
 import { useNavigate }              from 'react-router-dom';
 import { URL, URLws } from '../../constants.js/constantGlogal';
@@ -38,15 +38,15 @@ dayjs.extend(relativeTime);
 
 // 🎨 Paleta cálida pastel
 const colors = [
-  "#FF6B6B", // rojo coral vibrante
-  "#FFA931", // naranja brillante
-  "#FFD93D", // amarillo vivo
-  "#6BCB77", // verde fresco
-  "#4D96FF", // azul intenso
-  "#A06CD5", // morado vibrante
-  "#FF7F50", // coral fuerte
-  "#00BFA6", // turquesa brillante
-  "#F15BB5", // rosa vibrante
+  "#FFD6A5", // durazno pastel
+  "#FFB5A7", // rosado pastel
+  "#FEC89A", // naranja melón pastel
+  "#FCD5CE", // coral pastel
+  "#FFF1B6", // amarillo suave
+  "#EAC4D5", // rosa cálido pastel
+  "#FFDAC1", // durazno claro
+  "#FFE0AC", // amarillo cálido
+  "#FFD1BA", // salmón pastel
 ];
 
 const scheme = window.location.protocol === "https:" ? "wss" : "ws";
@@ -82,7 +82,6 @@ export function DataTable({loggedUser}) {
     const [loading, setLoading] = useState(false);
 
     const processRowUpdate = async (newRow) => {
-      
       const oldRow = cotizadores.find((row) => row.id === newRow.id);
     
       if (!oldRow) return newRow;
@@ -90,7 +89,6 @@ export function DataTable({loggedUser}) {
       const changedField = Object.keys(newRow).find((key) => oldRow[key] !== newRow[key]);
     
       if (changedField) {
-
         const newValue = newRow[changedField];
     
         let respuesta = true;
@@ -116,7 +114,7 @@ export function DataTable({loggedUser}) {
               respuesta = false;
             }
         }
-        console.log("respuesta ",respuesta)
+    
         if (respuesta) {
 
           setEditingField(changedField);
@@ -127,19 +125,7 @@ export function DataTable({loggedUser}) {
           if(changedField === "escribirlink"){
              formValues = { ['linkPago']: newValue, 'id': newRow.id };
           }
-          if ("correo" in newRow && newRow.correo) {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-              ws.send(
-                JSON.stringify({
-                  type: "update_email",
-                  user: loggedUser,
-                  rowId: newRow.id,
-                  value: newRow.correo,
-                })
-              );
-            }
-          }
-          console.log(" formValues ",formValues)
+          
           dispatch(updateThunks(formValues, 'tramite'));
         }
       }
@@ -512,7 +498,7 @@ export function DataTable({loggedUser}) {
         }
 
         if (message.type === "refresh_request") {
-          dispatch(getAllCotizadorTramitesSecondThunks());
+          dispatch(getAllEliminarCotizadorTramitesThunks());
         }
 
       };
@@ -589,14 +575,10 @@ export function DataTable({loggedUser}) {
                     label={s.user}
                     size="small"
                     sx={{
-                      bgcolor: s.color || "#1976d2", // color de fondo
-                      color: "white",                // texto blanco
-                      fontSize: "0.9rem",            // más grande
-                      fontWeight: "bold",            // más grueso
-                      height: 28,                    // más alto
-                      px: 1.5,                       // padding horizontal extra
-                      borderRadius: "8px",           // esquinas más redondeadas
-                      boxShadow: "0px 2px 6px rgba(0,0,0,0.15)", // sombra ligera
+                      bgcolor: s.color,
+                      color: "white",
+                      fontSize: "0.7rem",
+                      height: 20,
                     }}
                   />
                 ))}
@@ -1125,11 +1107,6 @@ export function DataTable({loggedUser}) {
 
       await dispatch(updateThunks({ id, confirmacionPreciosModulo: 1, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0 }, 'tramite'));
       
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({
-            type: "refresh_request"
-          }));
-        }
       //navigate('/confirmacionprecios')
     
     }
@@ -1220,7 +1197,21 @@ export function DataTable({loggedUser}) {
       <DataGrid
         rows={rows}
         columns={columns}
-        processRowUpdate={processRowUpdate}
+        processRowUpdate={(newRow, oldRow) => {
+          if (newRow.correo !== oldRow.correo) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(
+                JSON.stringify({
+                  type: "update_email",
+                  user: loggedUser,
+                  rowId: newRow.id,
+                  value: newRow.correo,
+                })
+              );
+            }
+          }
+          return newRow;
+        }}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         sx={{

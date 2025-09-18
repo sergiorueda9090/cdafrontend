@@ -11,7 +11,7 @@ import { FormDialogUser }               from '../components/Modal';
 import { useSelector, useDispatch }     from 'react-redux';
 
 import { SimpleBackdrop }                 from "../../components/Backdrop/BackDrop";
-import { getAllCotizadorTramitesThunks }  from "../../store/cotizadorStore/cotizadorThunks";
+import { getAllCotizadorTramitesThunks, getAllCotizadorTramitesSecondThunks }  from "../../store/cotizadorStore/cotizadorThunks";
 import { URL } from "../../constants.js/constantGlogal";
 //import { getAllThunksTramites }           from '../../store/clientesStore/clientesThunks';
 
@@ -24,6 +24,33 @@ export const SelectViews = () => {
     const { alert }  = useSelector( state => state.globalStore );
     const { token } = useSelector((state) => state.authStore);
     const [loggedUser, setLoggedUser] = useState(null);
+
+        /*const useIntervalDispatch = () => {
+            useEffect(() => {
+                let isMounted = true;
+                let timeoutId;
+                let controller = new AbortController();
+        
+                const fetchLoop = async () => {
+                controller.abort(); // cancela petición previa
+                controller = new AbortController();
+        
+                await dispatch(getAllCotizadorTramitesSecondThunks(controller.signal));
+        
+                if (isMounted) {
+                    timeoutId = setTimeout(fetchLoop, 1000);
+                }
+                };
+        
+                fetchLoop();
+        
+                return () => {
+                isMounted = false;
+                clearTimeout(timeoutId);
+                controller.abort(); // 🔑 aborta request pendiente al desmontar
+                };
+            }, [dispatch]);
+        };*/
 
     // Cuando tengas el token, puedes decodificarlo para sacar el username
     useEffect(() => {
@@ -58,9 +85,10 @@ export const SelectViews = () => {
 
     useEffect(() => {
         dispatch(getAllCotizadorTramitesThunks());
-      },[])
+    },[])
 
-  
+    //useIntervalDispatch();
+
   return (
     <Grid container direction="row" justifyContent="space-between" sx={{ mb:1 }} alignItems='center'>
 

@@ -248,7 +248,7 @@ export function DataTable({loggedUser}) {
       }
     }
     
-    let { cotizadores, dateFilter } = useSelector(state => state.cotizadorStore);
+    let { tramitesArray: cotizadores, dateFilter } = useSelector(state => state.cotizadorStore);
 
     const handleCopyToClipboard = (value) => {
       navigator.clipboard.writeText(value);
@@ -643,14 +643,14 @@ const columns = [
     );
     // Función para manejar la eliminación
     const handleDelete = (id) => {
-      // Mostrar la notificación con opciones de confirmación
       toast(
-        ({ closeToast }) => (
+        () => (
           <div>
             <p>¿Estás seguro de que deseas eliminar el cliente?</p>
             <button
               onClick={() => {
-                confirmDelete(id, closeToast); // Confirmar eliminación
+                confirmDelete(id); 
+                toast.dismiss(); // cierra el toast manualmente
               }}
               style={{
                 marginRight: '10px',
@@ -664,7 +664,7 @@ const columns = [
               Sí, eliminar
             </button>
             <button
-              onClick={closeToast} // Cancelar eliminación
+              onClick={() => toast.dismiss()} // cancelar
               style={{
                 backgroundColor: 'gray',
                 color: 'white',
@@ -677,14 +677,19 @@ const columns = [
             </button>
           </div>
         ),
-        { autoClose: false } // Evitar cierre automático
+        { autoClose: false }
       );
     };
 
     // Lógica para confirmar la eliminación
     const confirmDelete = async (id, closeToast) => {
-      await dispatch(deleteThunk(id));
-      closeToast(); // Cerrar la notificación
+      await dispatch(deleteThunk(id, "cotizador"));
+      
+      if (typeof closeToast === "function") {
+        closeToast(); // cerrar solo el toast actual
+      } else {
+        toast.dismiss(); // respaldo en caso de que no sea función
+      }
     };
 
     const handleShow = async(id) => {

@@ -56,6 +56,7 @@ export const cotizadorStore = createSlice({
     clientes        : [],
     tiposDocumentos : [],
     cotizadores     : [],
+    tramitesArray   : [],
     cotizadorModulo : '0',
     tramiteModulo   : '0',
     confirmacionPreciosModulo: '0',
@@ -146,6 +147,16 @@ export const cotizadorStore = createSlice({
         };
       }
     },
+    listTramitesStore:(state, action) => {
+      state.tramitesArray = action.payload.cotizadores
+
+      if(action.payload.dateFilter){
+        state.dateFilter =  action.payload.dateFilter
+      }else{
+        state.dateFilter =  action.payload.dateFilter
+      }
+      
+    },
     listRemoveStore:(state, action) => {
       state.cotizadores = state.cotizadores.filter((cotizador) => cotizador.id !== action.payload.id);
     },
@@ -233,9 +244,9 @@ export const cotizadorStore = createSlice({
   
       // Habilitar el botón solo si ambas condiciones se cumplen
       state.disableBtn = allFieldsFilled && validEtiquetaDos;
-    }
+    },
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore } = cotizadorStore.actions;
+export const { showStore, listTramitesStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore } = cotizadorStore.actions;

@@ -202,9 +202,16 @@ export function DataTable() {
 
     const columns = [
       { field: 'id',                    headerName: 'ID',              width: 90},
-      { field: 'fechaCreacion',        headerName:  'Fecha',       width: 150 },
-
-
+      {
+        field: 'fechaCreacion',
+        headerName: 'Fecha',
+        width: 150,
+        valueFormatter: (params) => {
+          if (!params) return "";
+          // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
+          return params.slice(0, 16).replace("T", " ");
+        }
+      },
       { field: 'etiquetaDos',     headerName: 'Etiqueta', width: 170,       
           renderCell: (params) => {
           const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd"; // Usa color_cliente o un color por defecto

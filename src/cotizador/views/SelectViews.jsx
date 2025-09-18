@@ -27,19 +27,30 @@ export const SelectViews = () => {
     const { token } = useSelector((state) => state.authStore);
    
     const useIntervalDispatch = () => {
-        useEffect(() => {
-            // Llama inmediatamente al montar
-            dispatch(getAllThunksSecond());
+    useEffect(() => {
+        let isMounted = true;
+        let timeoutId;
+        let controller = new AbortController();
 
+        const fetchLoop = async () => {
+        controller.abort(); // cancela petición previa
+        controller = new AbortController();
 
-            // Establece el intervalo para llamar cada segundo (1000 ms)
-            const intervalId = setInterval(() => {
-                dispatch(getAllThunksSecond());
-            }, 1000);
+        await dispatch(getAllThunksSecond(controller.signal));
 
-            // Limpia el intervalo al desmontar el componente
-            return () => clearInterval(intervalId);
-        }, [dispatch]);
+        if (isMounted) {
+            timeoutId = setTimeout(fetchLoop, 1000);
+        }
+        };
+
+        fetchLoop();
+
+        return () => {
+        isMounted = false;
+        clearTimeout(timeoutId);
+        controller.abort(); // 🔑 aborta request pendiente al desmontar
+        };
+    }, [dispatch]);
     };
 
     useEffect(() => {

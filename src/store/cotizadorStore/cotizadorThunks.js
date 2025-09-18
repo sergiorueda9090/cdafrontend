@@ -4,14 +4,14 @@ import { loginFail } from "../authStore/authStore.js";
 import { showThunk as precioClientesShow } from "../clientesStore/clientesThunks.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { showStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore  } from "./cotizadorStore.js";
+import { showStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore, listTramitesStore  } from "./cotizadorStore.js";
 import { handleFormColumnsConfirmacionPrecioStore } from "../proveedoresStore/proveedoresStore.js";
 import { getAllThunks as getAllThunksProveedores }   from "../proveedoresStore/proveedoresThunks.js";
 
 // Función asincrónica para obtener los Pokemons
 const urlPatter = "cotizador";
 
-export const getAllThunks = () => {
+export const  getAllThunks = () => {
 
     return async (dispatch, getState) => {
         
@@ -72,6 +72,69 @@ export const getAllThunks = () => {
         }
     };
 };
+
+export const  getAllCotizadorThunks = () => {
+
+    return async (dispatch, getState) => {
+        
+        await dispatch(showBackDropStore());
+        
+        const {authStore} = getState();
+        const token = authStore.token
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${ URL}/${urlPatter}/api`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+          
+                if(data.length > 0){
+                    
+                    await dispatch(listTramitesStore({'cotizadores':data, 'dateFilter':false}))
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    await dispatch(listTramitesStore({'cotizadores':[], 'dateFilter':false}))
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+
+        } catch (error) {
+            
+            await dispatch(hideBackDropStore());
+
+            // Manejar errores
+            console.error(error);
+            
+            //await dispatch ( loginFail() );
+            
+            await dispatch( hideBackDropStore() );
+
+        }
+    };
+};
+
 
 export const createThunks = (data, modulo="") => {
 
@@ -256,6 +319,8 @@ export const updateThunks = (data, modulo="", confirmar="") => {
                 
                     await dispatch(getAllThunks());
 
+                    await dispatch(getAllCotizadorThunks());
+
                 }else if(modulo == "tramite"){
 
                     await dispatch( getAllCotizadorTramitesThunks() );
@@ -409,7 +474,7 @@ export const updatePdfThunks = (data, modulo="") => {
 
 }
 
-export const deleteThunk = (idUser = "") => {
+export const deleteThunk = (idUser = "", modulo="") => {
 
     return async (dispatch, getState) => {
 
@@ -435,7 +500,12 @@ export const deleteThunk = (idUser = "") => {
             // Despachar la acción setAuthenticated con la respuesta de la solicitud
             if(response.status == 204){
 
-                await dispatch( getAllThunks() );
+                if(modulo == "cotizador"){
+                    await dispatch( getAllCotizadorThunks() );
+                }else{
+                    await dispatch( getAllThunks() );
+                }
+                
 
                 await dispatch(setAlert({ message: '¡ 🗑️ Acción completada con éxito!', type: 'success'}));
 
@@ -482,6 +552,118 @@ export const getAllCotizadorTramitesThunks = () => {
         
         await dispatch(showBackDropStore());
         
+        await dispatch(listStore({'cotizadores':[]}))
+
+        const {authStore} = getState();
+        const token = authStore.token
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${ URL}/cotizador/get_logs_cotizador_tramites/api`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+                
+                if(data.length > 0){
+                    
+                    await dispatch(listStore({'cotizadores':data}))
+
+                    await dispatch(hideBackDropStore());
+
+                }else{
+
+                    await dispatch(listStore({'cotizadores':[]}))
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            }else{
+
+                await dispatch(hideBackDropStore());
+
+            }
+
+
+        } catch (error) {
+            
+            await dispatch(hideBackDropStore());
+
+            // Manejar errores
+            console.error(error);
+            
+            await dispatch ( loginFail() );
+            
+            await dispatch( hideBackDropStore() );
+
+        }
+    };
+};
+
+export const getAllCotizadorTramitesSecondThunks = () => {
+
+    return async (dispatch, getState) => {
+        
+        const {authStore} = getState();
+        const token = authStore.token
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${ URL}/cotizador/get_logs_cotizador_tramites/api`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+                
+                if(data.length > 0){
+                    
+                    await dispatch(listStore({'cotizadores':data}))
+
+                }else{
+
+                    await dispatch(listStore({'cotizadores':[]}))
+
+                }
+
+            }
+
+
+        } catch (error) {
+
+
+            // Manejar errores
+            console.error(error);
+        
+
+        }
+    };
+};
+
+export const getAllEliminarCotizadorTramitesThunks = (id) => {
+
+    return async (dispatch, getState) => {
+        
+    
         const {authStore} = getState();
         const token = authStore.token
 
@@ -541,7 +723,9 @@ export const getAllCotizadorTramitesThunks = () => {
 export const getAllCotizadorConfirmacionPreciosThunks = () => {
 
     return async (dispatch, getState) => {
-       
+        
+        await dispatch(listStore({'cotizadores':[]}))
+
         await dispatch(showBackDropStore());
         
         const {authStore} = getState();
@@ -568,7 +752,7 @@ export const getAllCotizadorConfirmacionPreciosThunks = () => {
                 let data = response.data;
 
                 if(data.length > 0){
-                    console.log("data ", data);
+        
                     await dispatch(listStore({'cotizadores':data}));
                     // Filtrar los elementos con etiqueta_nombre "seguros generales"
 
@@ -823,6 +1007,8 @@ export const getAllCotizadorPdfsThunks = () => {
 
     return async (dispatch, getState) => {
        
+        await dispatch(listStore({'cotizadores':[]}))
+        
         await dispatch(showBackDropStore());
         
         const {authStore} = getState();
@@ -1129,6 +1315,8 @@ export const getAllThunksSecond = () => {
         
         const {authStore} = getState();
         const token = authStore.token
+        
+        //await dispatch(listStore({'cotizadores':[]}))
 
         // Iniciar la carga
         const options = {
@@ -1150,13 +1338,11 @@ export const getAllThunksSecond = () => {
           
                 if(data.length > 0){
                     
-                    await dispatch(listStore({'cotizadores':data, 'dateFilter':false}))
-
-
+                    await dispatch(listTramitesStore({'cotizadores':data, 'dateFilter':false}))
 
                 }else{
 
-                    await dispatch(listStore({'cotizadores':[], 'dateFilter':false}))
+                    await dispatch(listTramitesStore({'cotizadores':[], 'dateFilter':false}))
 
 
                 }
