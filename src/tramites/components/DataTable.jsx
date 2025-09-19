@@ -426,7 +426,7 @@ export function DataTable({loggedUser}) {
 
       socket.onopen = () => console.log("✅ Conectado al WebSocket ==== ");
 
-      socket.onmessage = (e) => {
+      /*socket.onmessage = (e) => {
         const message = JSON.parse(e.data);
         console.log(" === message.type ==== ",message.type)
         if (message.type === "cell_click") {
@@ -515,6 +515,95 @@ export function DataTable({loggedUser}) {
           dispatch(getAllCotizadorTramitesSecondThunks());
         }
 
+      };*/
+
+      socket.onmessage = (e) => {
+        const message = JSON.parse(e.data);
+        console.log("📩 WS recibido:", message);
+
+        switch (message.type) {
+          case "cell_click":
+            setCellSelections((prev) => {
+              const newSelections = { ...prev };
+
+              // quitar selección previa del usuario en cualquier celda
+              for (const key in newSelections) {
+                newSelections[key] = newSelections[key].filter(
+                  (entry) => entry.user !== message.user
+                );
+                if (newSelections[key].length === 0) {
+                  delete newSelections[key];
+                }
+              }
+
+              // agregar nueva selección
+              const key = `${message.rowId}-${message.column}`;
+              const color = getUserColor(message.user);
+              if (!newSelections[key]) newSelections[key] = [];
+              newSelections[key].push({ user: message.user, color });
+
+              return newSelections;
+            });
+            break;
+
+          case "cell_unselect":
+            setCellSelections((prev) => {
+              const newSelections = { ...prev };
+              if (newSelections[message.key]) {
+                newSelections[message.key] = newSelections[message.key].filter(
+                  (entry) => entry.user !== message.user
+                );
+                if (newSelections[message.key].length === 0) {
+                  delete newSelections[message.key];
+                }
+              }
+              return newSelections;
+            });
+            break;
+
+          case "update_etiqueta":
+            setRows((prevRows) =>
+              prevRows.map((row) =>
+                row.id === message.rowId
+                  ? { ...row, etiquetaDos: message.value }
+                  : row
+              )
+            );
+            break;
+
+          case "update_link":
+            setRows((prevRows) =>
+              prevRows.map((row) =>
+                row.id === message.rowId ? { ...row, linkPago: message.value } : row
+              )
+            );
+            break;
+
+          case "update_email":
+            setRows((prevRows) =>
+              prevRows.map((row) =>
+                row.id === message.rowId ? { ...row, correo: message.value } : row
+              )
+            );
+            break;
+
+          case "copy_link":
+            setIdRow(message.rowId);
+            setLoading(true);
+            break;
+
+          case "stop_loading":
+            setLoading(false);
+            setIdRow("");
+            break;
+
+          case "refresh_request":
+            dispatch(getAllCotizadorTramitesSecondThunks());
+            break;
+
+          default:
+            console.warn("⚠️ Evento WS no manejado:", message);
+        }
       };
 
       socket.onclose = () => console.log("WebSocket cerrado");
