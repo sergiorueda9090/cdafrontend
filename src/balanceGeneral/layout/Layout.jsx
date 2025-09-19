@@ -4,7 +4,7 @@ import { Box }      from '@mui/system'
 import { NavBar }   from '../../components/NavBar';
 import { SideBar }  from '../../components/SideBar';
 import { useDispatch }   from "react-redux";
-import { getAllThunks, getObtenerTotalTarjetas, getPatrimonioNeto, getUtilidadNominal, getUtilidadReal, getTotalDiferencia } from '../../store/balancegeneralStore/balancegeneralStoreThunks';
+import { getAllThunks, getObtenerTotalTarjetas, getPatrimonioNeto, getUtilidadNominal, getUtilidadReal, getTotalDiferencia, getGastoTotalesDelPeriodo } from '../../store/balancegeneralStore/balancegeneralStoreThunks';
 
 const drawerWidth = 280;
 const nameModule = "Balance General";
@@ -29,6 +29,7 @@ export const Layout = ({ children }) => {
         dispatch(getUtilidadNominal());
         dispatch(getUtilidadReal());
         dispatch(getTotalDiferencia());
+        dispatch(getGastoTotalesDelPeriodo());
     },[])
   
   return (

@@ -191,8 +191,7 @@ export function DataTable() {
     id: uuidv4() // Usa el ID existente o genera uno nuevo
   }));
   return (
-    <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
-
+    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
       
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
            {/*<FilterData  cotizador="fichacliente"/>  Componente de filtros adicionales */}
@@ -214,6 +213,6 @@ export function DataTable() {
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
       />
-    </Paper>
+    </Box>
   );
 }

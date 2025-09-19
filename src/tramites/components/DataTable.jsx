@@ -725,7 +725,7 @@ export function DataTable({loggedUser}) {
                     handleSelectionChange(params.id, newValue);
 
                     if(ws && ws.readyState === WebSocket.OPEN) {
-                            console.log("📤 Enviando update_etiqueta:", {
+                       console.log("📤 Enviando update_etiqueta:", {
                         rowId: params.id,
                         value: newValue.nombre,
                       });

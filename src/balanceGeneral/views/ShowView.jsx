@@ -418,7 +418,7 @@ const dataBalanceUtilidad = [
 
         <Grid item xs={12}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h5" align="center" gutterBottom color="primary" sx={{ fontWeight: 'bold' }}>
+            {/*<Typography variant="h5" align="center" gutterBottom color="primary" sx={{ fontWeight: 'bold' }}>
               Balance General
             </Typography>
 
@@ -440,7 +440,7 @@ const dataBalanceUtilidad = [
               <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
                 {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(sumaTotal)}
               </Typography>
-            </Paper>
+            </Paper>*/}
 
             <DataGrid
               rows={enhancedDashboardData}

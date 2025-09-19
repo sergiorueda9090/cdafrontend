@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk } from '../../store/usersStore/usersThunks';
 import { toast } from 'react-toastify';
 import { URL } from '../../constants.js/constantGlogal';
+import { Box } from "@mui/material";
 
 export function DataTable() {
 
@@ -127,7 +128,7 @@ export function DataTable() {
 
 
   return (
-    <Paper sx={{ height: 700, width: '100%' }}>
+    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
       <DataGrid
         rows={users}
         columns={columns}
@@ -143,6 +144,6 @@ export function DataTable() {
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
       />
-    </Paper>
+    </Box>
   );
 }

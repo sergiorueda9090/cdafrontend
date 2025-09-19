@@ -730,7 +730,7 @@ const columns = [
 }));
 
   return (
-    <Paper sx={{ padding: 2, height: 700, width: '100%', position: 'relative' }}>
+    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
       
       {/* Filtros */}
       <Box display="flex" justifyContent="space-between" marginBottom={2}>
@@ -764,6 +764,6 @@ const columns = [
         }}
       />
       
-    </Paper>
+    </Box>
   );
 }

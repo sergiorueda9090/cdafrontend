@@ -13,7 +13,7 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import EmailIcon from '@mui/icons-material/Email';
 import { green, blue } from '@mui/material/colors';
 
-import { Chip } from "@mui/material";
+import { Chip, Box } from "@mui/material";
 
 export function DataTable() {
 
@@ -153,7 +153,7 @@ export function DataTable() {
 
 
   return (
-    <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
+    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
       <DataGrid
         rows={clientesMain}
         columns={columns}
@@ -169,6 +169,6 @@ export function DataTable() {
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
       />
-    </Paper>
+    </Box>
   );
 }

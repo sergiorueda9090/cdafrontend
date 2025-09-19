@@ -7,7 +7,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk } from '../../store/etiquetasStore/etiquetasThunks';
 import { toast } from 'react-toastify';
-import { Chip } from "@mui/material";
+import { Box, Chip } from "@mui/material";
+
 export function DataTable() {
 
     const dispatch = useDispatch();
@@ -119,7 +120,7 @@ export function DataTable() {
 
 
   return (
-    <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
+    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
       <DataGrid
         rows={etiquetas}
         columns={columns}
@@ -135,6 +136,6 @@ export function DataTable() {
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
       />
-    </Paper>
+    </Box>
   );
 }

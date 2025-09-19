@@ -3,7 +3,8 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { loginFail } from "../authStore/authStore.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { listStore, resetFormularioStore, getObtenerTotalTarjetasStore, getPatrimonioNetoStore, getUtilidadNominalStore, getUtilidadRealStore, getTotalDiferenciaStore} from "./balancegeneralStore.js";
+import { listStore, resetFormularioStore, getObtenerTotalTarjetasStore, getPatrimonioNetoStore, 
+      getUtilidadNominalStore, getUtilidadRealStore, getTotalDiferenciaStore, getGastosTotalesDelPeriodoStore} from "./balancegeneralStore.js";
 
 // Función asincrónica para obtener los Pokemons
 const parametersURL = 'balancegeneral/api/';
@@ -177,6 +178,53 @@ export const getPatrimonioNeto = (fechaInicio, fechaFin) => {
         //Solo esperamos totalTarjetas
         const patrimonioNeto = data?.patrimonio_neto || 0;
         await dispatch(getPatrimonioNetoStore({patrimonioNeto}));
+      }
+    } catch (error) {
+      console.error("Error al obtener totalTarjetas:", error);
+      //await dispatch(getObtenerTotalTarjetasStore({totalTarjetasBalance: 0}));
+    } finally {
+      await dispatch(hideBackDropStore());
+    }
+  };
+};
+
+export const getGastoTotalesDelPeriodo = (fechaInicio, fechaFin) => {
+  return async (dispatch, getState) => {
+    await dispatch(showBackDropStore());
+
+    const { authStore } = getState();
+    const token = authStore.token;
+
+    // Construir la URL
+    let url = `${URL}/${parametersURL}balancegeneral/gastostotalesdelperiodo`;
+
+    // Agregar fechas si existen
+    if (fechaInicio || fechaFin) {
+      const params = new URLSearchParams();
+      if (fechaInicio) params.append("fechaInicio", fechaInicio);
+      if (fechaFin) params.append("fechaFin", fechaFin);
+      url += `?${params.toString()}`;
+    }
+
+    const options = {
+      method: "GET",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+
+      if (response.status === 200) {
+        const data = response.data;
+        
+        console.log("data ",data)
+
+        //Solo esperamos totalTarjetas
+        const gastos_totales_de_periodo = data?.gastos_totales_de_periodo || 0;
+        await dispatch(getGastosTotalesDelPeriodoStore({gastos_totales_de_periodo}));
       }
     } catch (error) {
       console.error("Error al obtener totalTarjetas:", error);
