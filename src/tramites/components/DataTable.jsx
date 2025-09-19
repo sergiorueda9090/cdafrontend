@@ -424,98 +424,82 @@ export function DataTable({loggedUser}) {
       const socket = new WebSocket(`${scheme}://${URLws}/ws/table/?token=${token}`);
       setWs(socket);
 
-      socket.onopen = () => console.log("✅ Conectado al WebSocket ==== ");
+      socket.onopen = () => console.log("✅ Conectado al WebSocket");
 
-      /*socket.onmessage = (e) => {
-        const message = JSON.parse(e.data);
-        console.log(" === message.type ==== ",message.type)
-        if (message.type === "cell_click") {
-          setCellSelections((prev) => {
-            const newSelections = { ...prev };
+      const handleCellClick = (message) => {
+        setCellSelections((prev) => {
+          const newSelections = { ...prev };
 
-            // quitar selección previa del usuario en cualquier celda
-            for (const key in newSelections) {
-              newSelections[key] = newSelections[key].filter(
-                (entry) => entry.user !== message.user
-              );
-              if (newSelections[key].length === 0) {
-                delete newSelections[key];
-              }
-            }
-
-            // agregar nueva selección
-            const key = `${message.rowId}-${message.column}`;
-            const color = getUserColor(message.user);
-            if (!newSelections[key]) newSelections[key] = [];
-            newSelections[key].push({ user: message.user, color });
-
-            return newSelections;
-          });
-        }
-
-        if (message.type === "update_etiqueta") {
-          setRows((prevRows) =>
-            prevRows.map((row) =>
-              row.id === message.rowId
-                ? { ...row, etiquetaDos: message.value }
-                : row
-            )
-          );
-        }
-
-        if(message.type === "update_link") {
-            setRows((prevRows) =>
-              prevRows.map((row) =>
-                row.id === message.rowId
-                  ? { ...row, linkPago: message.value }
-                  : row
-              )
+          for (const key in newSelections) {
+            newSelections[key] = newSelections[key].filter(
+              (entry) => entry.user !== message.user
             );
-        }
-
-        if (message.type === "copy_link") {
-            setIdRow(message.rowId);
-            setLoading(true);
-
-            // 🔄 Apagar ruedita después de 3s (o el tiempo que quieras)
-            //setTimeout(() => setLoading(false), 3000);
+            if (newSelections[key].length === 0) {
+              delete newSelections[key];
+            }
           }
 
-        if (message.type === "stop_loading") {
-          setLoading(false);
-          setIdRow("");
-        }
+          const key = `${message.rowId}-${message.column}`;
+          const color = getUserColor(message.user);
+          if (!newSelections[key]) newSelections[key] = [];
+          newSelections[key].push({ user: message.user, color });
 
-        if (message.type === "update_email") {
-          setRows((prevRows) =>
-            prevRows.map((row) =>
-              row.id === message.rowId
-                ? { ...row, correo: message.value }
-                : row
-            )
-          );
-        }
+          return newSelections;
+        });
+      };
 
-        if (message.type === "cell_unselect") {
-          setCellSelections((prev) => {
-            const newSelections = { ...prev };
-            if (newSelections[message.key]) {
-              newSelections[message.key] = newSelections[message.key].filter(
-                (entry) => entry.user !== message.user
-              );
-              if (newSelections[message.key].length === 0) {
-                delete newSelections[message.key];
-              }
+      const handleCellUnselect = (message) => {
+        setCellSelections((prev) => {
+          const newSelections = { ...prev };
+          if (newSelections[message.key]) {
+            newSelections[message.key] = newSelections[message.key].filter(
+              (entry) => entry.user !== message.user
+            );
+            if (newSelections[message.key].length === 0) {
+              delete newSelections[message.key];
             }
-            return newSelections;
-          });
-        }
+          }
+          return newSelections;
+        });
+      };
 
-        if (message.type === "refresh_request") {
-          dispatch(getAllCotizadorTramitesSecondThunks());
-        }
+      const handleUpdateEtiqueta = (message) => {
+        setRows((prevRows) =>
+          prevRows.map((row) =>
+            row.id === message.rowId ? { ...row, etiquetaDos: message.value } : row
+          )
+        );
+      };
 
-      };*/
+      const handleUpdateLink = (message) => {
+        setRows((prevRows) =>
+          prevRows.map((row) =>
+            row.id === message.rowId ? { ...row, linkPago: message.value } : row
+          )
+        );
+      };
+
+      const handleUpdateEmail = (message) => {
+        setRows((prevRows) =>
+          prevRows.map((row) =>
+            row.id === message.rowId ? { ...row, correo: message.value } : row
+          )
+        );
+      };
+
+      const handleCopyLink = (message) => {
+        setIdRow(message.rowId);
+        setLoading(true);
+      };
+
+      const handleStopLoading = () => {
+        setLoading(false);
+        setIdRow("");
+      };
+
+      const handleRefreshRequest = () => {
+        dispatch(getAllCotizadorTramitesSecondThunks());
+      };
 
       socket.onmessage = (e) => {
         const message = JSON.parse(e.data);
@@ -523,91 +507,36 @@ export function DataTable({loggedUser}) {
 
         switch (message.type) {
           case "cell_click":
-            setCellSelections((prev) => {
-              const newSelections = { ...prev };
-
-              // quitar selección previa del usuario en cualquier celda
-              for (const key in newSelections) {
-                newSelections[key] = newSelections[key].filter(
-                  (entry) => entry.user !== message.user
-                );
-                if (newSelections[key].length === 0) {
-                  delete newSelections[key];
-                }
-              }
-
-              // agregar nueva selección
-              const key = `${message.rowId}-${message.column}`;
-              const color = getUserColor(message.user);
-              if (!newSelections[key]) newSelections[key] = [];
-              newSelections[key].push({ user: message.user, color });
-
-              return newSelections;
-            });
+            handleCellClick(message);
             break;
-
           case "cell_unselect":
-            setCellSelections((prev) => {
-              const newSelections = { ...prev };
-              if (newSelections[message.key]) {
-                newSelections[message.key] = newSelections[message.key].filter(
-                  (entry) => entry.user !== message.user
-                );
-                if (newSelections[message.key].length === 0) {
-                  delete newSelections[message.key];
-                }
-              }
-              return newSelections;
-            });
+            handleCellUnselect(message);
             break;
-
           case "update_etiqueta":
-            setRows((prevRows) =>
-              prevRows.map((row) =>
-                row.id === message.rowId
-                  ? { ...row, etiquetaDos: message.value }
-                  : row
-              )
-            );
+            handleUpdateEtiqueta(message);
             break;
-
           case "update_link":
-            setRows((prevRows) =>
-              prevRows.map((row) =>
-                row.id === message.rowId ? { ...row, linkPago: message.value } : row
-              )
-            );
+            handleUpdateLink(message);
             break;
-
           case "update_email":
-            setRows((prevRows) =>
-              prevRows.map((row) =>
-                row.id === message.rowId ? { ...row, correo: message.value } : row
-              )
-            );
+            handleUpdateEmail(message);
             break;
-
           case "copy_link":
-            setIdRow(message.rowId);
-            setLoading(true);
+            handleCopyLink(message);
             break;
-
           case "stop_loading":
-            setLoading(false);
-            setIdRow("");
+            handleStopLoading();
             break;
-
           case "refresh_request":
-            dispatch(getAllCotizadorTramitesSecondThunks());
+            handleRefreshRequest();
             break;
-
           default:
             console.warn("⚠️ Evento WS no manejado:", message);
         }
       };
 
-      socket.onclose = () => console.log("WebSocket cerrado");
-      socket.onerror = (err) => console.error("WebSocket error:", err);
+      socket.onclose = () => console.log("❌ WebSocket cerrado");
+      socket.onerror = (err) => console.error("⚠️ WebSocket error:", err);
 
       return () => socket.close();
     }, [loggedUser]);
