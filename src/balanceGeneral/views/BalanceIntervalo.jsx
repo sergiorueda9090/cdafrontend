@@ -21,7 +21,7 @@ export const BalanceIntervalo = () => {
                     }}
                     >
                     <Typography variant="subtitle1" align="center" color="textSecondary">
-                        Patrimonio Bruto
+                        1. Patrimonio Bruto
                     </Typography>
                     <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
                         {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(patrimonioBruto)}
@@ -88,7 +88,7 @@ export const BalanceIntervalo = () => {
                     }}
                     >
                     <Typography variant="subtitle1" align="center" color="textSecondary">
-                        Utilidad Real
+                        Utilidad real del periodo
                     </Typography>
                     <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
                         {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(utilidadreal)}
