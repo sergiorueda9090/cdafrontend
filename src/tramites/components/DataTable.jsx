@@ -535,10 +535,11 @@ export function DataTable({loggedUser}) {
 
 
     const handleCellClickWs = (rowId, column) => {
+
         if (ws && ws.readyState === WebSocket.OPEN) {
+      
           const currentKey = `${rowId}-${column}`;
-          const alreadySelected =
-            cellSelections[currentKey]?.some((u) => u.user === loggedUser);
+          const alreadySelected = cellSelections[currentKey]?.some((u) => u.user === loggedUser);
 
           if (alreadySelected) {
             ws.send(
@@ -561,6 +562,7 @@ export function DataTable({loggedUser}) {
                 );
               }
             }
+            console.log("oooooo")
             // enviar nueva selección
             ws.send(
               JSON.stringify({
@@ -1230,7 +1232,22 @@ export function DataTable({loggedUser}) {
       <DataGrid
         rows={rows}
         columns={columns}
-        processRowUpdate={processRowUpdate}
+        //processRowUpdate={processRowUpdate}
+        processRowUpdate={(newRow, oldRow) => {
+          if (newRow.correo !== oldRow.correo) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(
+                JSON.stringify({
+                  type: "update_email",
+                  user: loggedUser,
+                  rowId: newRow.id,
+                  value: newRow.correo,
+                })
+              );
+            }
+          }
+          return newRow;
+        }}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         sx={{
@@ -1241,10 +1258,10 @@ export function DataTable({loggedUser}) {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
-        onCellClick={(params, event) => {
+        /*onCellClick={(params, event) => {
           //handleCellClick(params, event);
           handleCellClickWs(params.id, params.field);
-        }}
+        }}*/
         slots={{
           noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
         }}
