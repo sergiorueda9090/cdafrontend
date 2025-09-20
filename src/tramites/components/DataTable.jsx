@@ -1232,22 +1232,7 @@ export function DataTable({loggedUser}) {
       <DataGrid
         rows={rows}
         columns={columns}
-        //processRowUpdate={processRowUpdate}
-        processRowUpdate={(newRow, oldRow) => {
-          if (newRow.correo !== oldRow.correo) {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-              ws.send(
-                JSON.stringify({
-                  type: "update_email",
-                  user: loggedUser,
-                  rowId: newRow.id,
-                  value: newRow.correo,
-                })
-              );
-            }
-          }
-          return newRow;
-        }}
+        processRowUpdate={processRowUpdate}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         sx={{
@@ -1258,10 +1243,10 @@ export function DataTable({loggedUser}) {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
-        /*onCellClick={(params, event) => {
+        onCellClick={(params, event) => {
           //handleCellClick(params, event);
           handleCellClickWs(params.id, params.field);
-        }}*/
+        }}
         slots={{
           noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
         }}
