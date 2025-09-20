@@ -15,7 +15,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import { Autocomplete, TextField } from '@mui/material';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk, updateThunks, update_cotizador_devolver, getAllEliminarCotizadorTramitesThunks }   from '../../store/cotizadorStore/cotizadorThunks';
+import { showThunk, deleteThunk, updateThunks, update_cotizador_devolver, getAllEliminarCotizadorTramitesThunks, getAllCotizadorTramitesSecondThunks }   from '../../store/cotizadorStore/cotizadorThunks';
 
 import { useNavigate }              from 'react-router-dom';
 import { URL, URLws } from '../../constants.js/constantGlogal';
@@ -38,15 +38,15 @@ dayjs.extend(relativeTime);
 
 // 🎨 Paleta cálida pastel
 const colors = [
-  "#FFD6A5", // durazno pastel
-  "#FFB5A7", // rosado pastel
-  "#FEC89A", // naranja melón pastel
-  "#FCD5CE", // coral pastel
-  "#FFF1B6", // amarillo suave
-  "#EAC4D5", // rosa cálido pastel
-  "#FFDAC1", // durazno claro
-  "#FFE0AC", // amarillo cálido
-  "#FFD1BA", // salmón pastel
+  "#FF6B6B", // rojo coral vibrante
+  "#FFA931", // naranja brillante
+  "#FFD93D", // amarillo vivo
+  "#6BCB77", // verde fresco
+  "#4D96FF", // azul intenso
+  "#A06CD5", // morado vibrante
+  "#FF7F50", // coral fuerte
+  "#00BFA6", // turquesa brillante
+  "#F15BB5", // rosa vibrante
 ];
 
 const scheme = window.location.protocol === "https:" ? "wss" : "ws";
@@ -82,6 +82,7 @@ export function DataTable({loggedUser}) {
     const [loading, setLoading] = useState(false);
 
     const processRowUpdate = async (newRow) => {
+      
       const oldRow = cotizadores.find((row) => row.id === newRow.id);
     
       if (!oldRow) return newRow;
@@ -89,6 +90,7 @@ export function DataTable({loggedUser}) {
       const changedField = Object.keys(newRow).find((key) => oldRow[key] !== newRow[key]);
     
       if (changedField) {
+
         const newValue = newRow[changedField];
     
         let respuesta = true;
@@ -114,7 +116,7 @@ export function DataTable({loggedUser}) {
               respuesta = false;
             }
         }
-    
+        console.log("respuesta ",respuesta)
         if (respuesta) {
 
           setEditingField(changedField);
@@ -125,7 +127,19 @@ export function DataTable({loggedUser}) {
           if(changedField === "escribirlink"){
              formValues = { ['linkPago']: newValue, 'id': newRow.id };
           }
-          
+          if ("correo" in newRow && newRow.correo) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(
+                JSON.stringify({
+                  type: "update_email",
+                  user: loggedUser,
+                  rowId: newRow.id,
+                  value: newRow.correo,
+                })
+              );
+            }
+          }
+          console.log(" formValues ",formValues)
           dispatch(updateThunks(formValues, 'tramite'));
         }
       }
@@ -410,101 +424,119 @@ export function DataTable({loggedUser}) {
       const socket = new WebSocket(`${scheme}://${URLws}/ws/table/?token=${token}`);
       setWs(socket);
 
-      socket.onopen = () => console.log("✅ Conectado al WebSocket ==== ");
+      socket.onopen = () => console.log("✅ Conectado al WebSocket");
+
+      const handleCellClick = (message) => {
+        setCellSelections((prev) => {
+          const newSelections = { ...prev };
+
+          for (const key in newSelections) {
+            newSelections[key] = newSelections[key].filter(
+              (entry) => entry.user !== message.user
+            );
+            if (newSelections[key].length === 0) {
+              delete newSelections[key];
+            }
+          }
+
+          const key = `${message.rowId}-${message.column}`;
+          const color = getUserColor(message.user);
+          if (!newSelections[key]) newSelections[key] = [];
+          newSelections[key].push({ user: message.user, color });
+
+          return newSelections;
+        });
+      };
+
+      const handleCellUnselect = (message) => {
+        setCellSelections((prev) => {
+          const newSelections = { ...prev };
+          if (newSelections[message.key]) {
+            newSelections[message.key] = newSelections[message.key].filter(
+              (entry) => entry.user !== message.user
+            );
+            if (newSelections[message.key].length === 0) {
+              delete newSelections[message.key];
+            }
+          }
+          return newSelections;
+        });
+      };
+
+      const handleUpdateEtiqueta = (message) => {
+        setRows((prevRows) =>
+          prevRows.map((row) =>
+            row.id === message.rowId ? { ...row, etiquetaDos: message.value } : row
+          )
+        );
+      };
+
+      const handleUpdateLink = (message) => {
+        setRows((prevRows) =>
+          prevRows.map((row) =>
+            row.id === message.rowId ? { ...row, linkPago: message.value } : row
+          )
+        );
+      };
+
+      const handleUpdateEmail = (message) => {
+        setRows((prevRows) =>
+          prevRows.map((row) =>
+            row.id === message.rowId ? { ...row, correo: message.value } : row
+          )
+        );
+      };
+
+      const handleCopyLink = (message) => {
+        setIdRow(message.rowId);
+        setLoading(true);
+      };
+
+      const handleStopLoading = () => {
+        setLoading(false);
+        setIdRow("");
+      };
+
+      const handleRefreshRequest = () => {
+        dispatch(getAllCotizadorTramitesSecondThunks());
+      };
 
       socket.onmessage = (e) => {
         const message = JSON.parse(e.data);
-        console.log(" === message.type ==== ",message.type)
-        if (message.type === "cell_click") {
-          setCellSelections((prev) => {
-            const newSelections = { ...prev };
+        console.log("📩 WS recibido:", message);
 
-            // quitar selección previa del usuario en cualquier celda
-            for (const key in newSelections) {
-              newSelections[key] = newSelections[key].filter(
-                (entry) => entry.user !== message.user
-              );
-              if (newSelections[key].length === 0) {
-                delete newSelections[key];
-              }
-            }
-
-            // agregar nueva selección
-            const key = `${message.rowId}-${message.column}`;
-            const color = getUserColor(message.user);
-            if (!newSelections[key]) newSelections[key] = [];
-            newSelections[key].push({ user: message.user, color });
-
-            return newSelections;
-          });
+        switch (message.type) {
+          case "cell_click":
+            handleCellClick(message);
+            break;
+          case "cell_unselect":
+            handleCellUnselect(message);
+            break;
+          case "update_etiqueta":
+            handleUpdateEtiqueta(message);
+            break;
+          case "update_link":
+            handleUpdateLink(message);
+            break;
+          case "update_email":
+            handleUpdateEmail(message);
+            break;
+          case "copy_link":
+            handleCopyLink(message);
+            break;
+          case "stop_loading":
+            handleStopLoading();
+            break;
+          case "refresh_request":
+            handleRefreshRequest();
+            break;
+          default:
+            console.warn("⚠️ Evento WS no manejado:", message);
         }
-
-        if (message.type === "update_etiqueta") {
-          setRows((prevRows) =>
-            prevRows.map((row) =>
-              row.id === message.rowId
-                ? { ...row, etiquetaDos: message.value }
-                : row
-            )
-          );
-        }
-
-        if(message.type === "update_link") {
-            setRows((prevRows) =>
-              prevRows.map((row) =>
-                row.id === message.rowId
-                  ? { ...row, linkPago: message.value }
-                  : row
-              )
-            );
-        }
-
-        if (message.type === "copy_link") {
-            setIdRow(message.rowId);
-            setLoading(true);
-
-            // 🔄 Apagar ruedita después de 3s (o el tiempo que quieras)
-            //setTimeout(() => setLoading(false), 3000);
-          }
-
-        if (message.type === "stop_loading") {
-          setLoading(false);
-          setIdRow("");
-        }
-
-        if (message.type === "update_email") {
-          setRows((prevRows) =>
-            prevRows.map((row) =>
-              row.id === message.rowId
-                ? { ...row, correo: message.value }
-                : row
-            )
-          );
-        }
-
-        if (message.type === "cell_unselect") {
-          setCellSelections((prev) => {
-            const newSelections = { ...prev };
-            if (newSelections[message.key]) {
-              newSelections[message.key] = newSelections[message.key].filter(
-                (entry) => entry.user !== message.user
-              );
-              if (newSelections[message.key].length === 0) {
-                delete newSelections[message.key];
-              }
-            }
-            return newSelections;
-          });
-        }
-
-        if (message.type === "refresh_request") {
-          dispatch(getAllEliminarCotizadorTramitesThunks());
-        }
-
       };
 
-      socket.onclose = () => console.log("WebSocket cerrado");
-      socket.onerror = (err) => console.error("WebSocket error:", err);
+      socket.onclose = () => console.log("❌ WebSocket cerrado");
+      socket.onerror = (err) => console.error("⚠️ WebSocket error:", err);
 
       return () => socket.close();
     }, [loggedUser]);
@@ -575,10 +607,14 @@ export function DataTable({loggedUser}) {
                     label={s.user}
                     size="small"
                     sx={{
-                      bgcolor: s.color,
-                      color: "white",
-                      fontSize: "0.7rem",
-                      height: 20,
+                      bgcolor: s.color || "#1976d2", // color de fondo
+                      color: "white",                // texto blanco
+                      fontSize: "0.9rem",            // más grande
+                      fontWeight: "bold",            // más grueso
+                      height: 28,                    // más alto
+                      px: 1.5,                       // padding horizontal extra
+                      borderRadius: "8px",           // esquinas más redondeadas
+                      boxShadow: "0px 2px 6px rgba(0,0,0,0.15)", // sombra ligera
                     }}
                   />
                 ))}
@@ -689,7 +725,7 @@ export function DataTable({loggedUser}) {
                     handleSelectionChange(params.id, newValue);
 
                     if(ws && ws.readyState === WebSocket.OPEN) {
-                            console.log("📤 Enviando update_etiqueta:", {
+                       console.log("📤 Enviando update_etiqueta:", {
                         rowId: params.id,
                         value: newValue.nombre,
                       });
@@ -1107,6 +1143,11 @@ export function DataTable({loggedUser}) {
 
       await dispatch(updateThunks({ id, confirmacionPreciosModulo: 1, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0 }, 'tramite'));
       
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: "refresh_request"
+          }));
+        }
       //navigate('/confirmacionprecios')
     
     }
@@ -1197,21 +1238,7 @@ export function DataTable({loggedUser}) {
       <DataGrid
         rows={rows}
         columns={columns}
-        processRowUpdate={(newRow, oldRow) => {
-          if (newRow.correo !== oldRow.correo) {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-              ws.send(
-                JSON.stringify({
-                  type: "update_email",
-                  user: loggedUser,
-                  rowId: newRow.id,
-                  value: newRow.correo,
-                })
-              );
-            }
-          }
-          return newRow;
-        }}
+        processRowUpdate={processRowUpdate}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         sx={{

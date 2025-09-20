@@ -74,9 +74,6 @@ export function DataTable({loggedUser}) {
    
     const [rows, setRows] = useState(cotizadores);
 
-    const [editingField, setEditingField] = useState("");
-    const [editingValue, setEditingValue] = useState("");
-
     const [idRow, setIdRow] = useState('');
 
     const [loading, setLoading] = useState(false);
@@ -96,39 +93,42 @@ export function DataTable({loggedUser}) {
         let respuesta = true;
     
         if(changedField === "escribirlink") {
-
-            try {
-              respuesta = await handleConfirmar(`Esta seguro que la url es: ${newValue}`);
-              if (respuesta) {
-                // ✅ Emitir el evento al WebSocket
-                if (ws && ws.readyState === WebSocket.OPEN) {
-                  ws.send(
-                    JSON.stringify({
-                      type: "update_link",
-                      user: loggedUser,
-                      rowId: newRow.id,
-                      value: newValue,
-                    })
-                  );
-                }
+          try {
+            respuesta = await handleConfirmar(`Esta seguro que la url es: ${newValue}`);
+            if (respuesta) {
+              // ✅ Emitir el evento al WebSocket
+              if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(
+                  JSON.stringify({
+                    type: "update_link",
+                    user: loggedUser,
+                    rowId: newRow.id,
+                    value: newValue,
+                  })
+                );
               }
-            } catch (error) {
-              respuesta = false;
             }
+          } catch (error) {
+            respuesta = false;
+          }
         }
-        console.log("respuesta ",respuesta)
-        if (respuesta) {
 
-          setEditingField(changedField);
-          setEditingValue(newValue);
+        console.log("respuesta ",respuesta)
+       
+        if (respuesta) {
           
           let formValues = { [changedField]: newValue, 'id': newRow.id };
 
           if(changedField === "escribirlink"){
              formValues = { ['linkPago']: newValue, 'id': newRow.id };
           }
+
           if ("correo" in newRow && newRow.correo) {
-            if (ws && ws.readyState === WebSocket.OPEN) {
+            console.log("1 📤 Enviando update_email:")
+
+            if (ws && ws.readyState === WebSocket.OPEN){
+              
+              console.log("2 📤 Enviando update_email:")
               ws.send(
                 JSON.stringify({
                   type: "update_email",
@@ -137,10 +137,15 @@ export function DataTable({loggedUser}) {
                   value: newRow.correo,
                 })
               );
+
             }
+
           }
+
           console.log(" formValues ",formValues)
+        
           dispatch(updateThunks(formValues, 'tramite'));
+        
         }
       }
     
@@ -321,11 +326,8 @@ export function DataTable({loggedUser}) {
     const handleDevolverConfirmar = (data) => {
       dispatch(update_cotizador_devolver({'id':data.id, 'devolver':data.devolver}))
     }
-    const confirmDelete = (rowId) => {
-      alert("llama el endpoint de elminar el archivo");
-    }
 
-    
+
     /* ====================== */
 
     /* ============== PRUEBAS ========== */
