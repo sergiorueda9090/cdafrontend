@@ -93,28 +93,27 @@ export function DataTable({loggedUser}) {
         let respuesta = true;
     
         if(changedField === "escribirlink") {
-          try {
-            respuesta = await handleConfirmar(`Esta seguro que la url es: ${newValue}`);
-            if (respuesta) {
-              // ✅ Emitir el evento al WebSocket
-              if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(
-                  JSON.stringify({
-                    type: "update_link",
-                    user: loggedUser,
-                    rowId: newRow.id,
-                    value: newValue,
-                  })
-                );
-              }
-            }
-          } catch (error) {
-            respuesta = false;
-          }
-        }
 
+            try {
+              respuesta = await handleConfirmar(`Esta seguro que la url es: ${newValue}`);
+              if (respuesta) {
+                // ✅ Emitir el evento al WebSocket
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                  ws.send(
+                    JSON.stringify({
+                      type: "update_link",
+                      user: loggedUser,
+                      rowId: newRow.id,
+                      value: newValue,
+                    })
+                  );
+                }
+              }
+            } catch (error) {
+              respuesta = false;
+            }
+        }
         console.log("respuesta ",respuesta)
-       
         if (respuesta) {
           
           let formValues = { [changedField]: newValue, 'id': newRow.id };
@@ -123,12 +122,11 @@ export function DataTable({loggedUser}) {
              formValues = { ['linkPago']: newValue, 'id': newRow.id };
           }
 
-          if ("correo" in newRow && newRow.correo) {
-            console.log("1 📤 Enviando update_email:")
-
-            if (ws && ws.readyState === WebSocket.OPEN){
-              
-              console.log("2 📤 Enviando update_email:")
+          console.log(" 1  📤 Enviando update_email:", )
+          if (changedField == "correo") {
+            console.log(" 2  📤 Enviando update_email:", )
+            if (ws && ws.readyState == WebSocket.OPEN) {
+              console.log(" 3  📤 Enviando update_email:", )
               ws.send(
                 JSON.stringify({
                   type: "update_email",
@@ -137,15 +135,10 @@ export function DataTable({loggedUser}) {
                   value: newRow.correo,
                 })
               );
-
             }
-
           }
-
           console.log(" formValues ",formValues)
-        
           dispatch(updateThunks(formValues, 'tramite'));
-        
         }
       }
     
@@ -335,7 +328,6 @@ export function DataTable({loggedUser}) {
     let { etiqueta }  = useSelector(state => state.etiquetasStore);
     let { correo }    = useSelector(state => state.tramitesStore);
 
-    const [rowsTest,  setRowsTest] = useState("");
     const [activeRow, setActiveRow] = useState(null);
    
     const handleCellClick = (id) => {
@@ -352,10 +344,6 @@ export function DataTable({loggedUser}) {
 
     const handleCallEtiquetas = () => {
       dispatch(etiquetasAllThunks());
-    }
-
-    const handleSaveCorreo = (correo = "") => {
-      dispatch(handleFormStoreThunk({name: 'correo', value:correo }));
     }
     
 
@@ -421,7 +409,9 @@ export function DataTable({loggedUser}) {
 
 
     useEffect(() => {
+      console.log("loggedUser changed:", loggedUser);
       if (!loggedUser) return;
+      console.log("Iniciando WebSocket para usuario:", loggedUser);
 
       const socket = new WebSocket(`${scheme}://${URLws}/ws/table/?token=${token}`);
       setWs(socket);
@@ -788,7 +778,7 @@ export function DataTable({loggedUser}) {
         field: "escribirlink",
         headerName: "Escribir link",
         width: 200,
-        editable: false, // Manejo manual con el input
+        editable: true, // Manejo manual con el input
         renderCell: (params) => <EditableCell params={params} />,
       },
       {
