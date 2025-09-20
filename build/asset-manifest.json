@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.4b74ceec.css",
+    "main.js": "/static/js/main.026a539a.js",
+    "static/js/453.68693753.chunk.js": "/static/js/453.68693753.chunk.js",
+    "static/media/fondoMovilidad.jpg": "/static/media/fondoMovilidad.a3237000b0b464bb9746.jpg",
+    "static/media/img-login.svg": "/static/media/img-login.339d1afb2c0b604a4665ad8d90b73684.svg",
+    "static/media/token.svg": "/static/media/token.efc4fb88f9de5ca4e371c2c308a0c94f.svg",
+    "static/media/bienvenidos.webp": "/static/media/bienvenidos.e3a082bd959e937c1b6a.webp",
+    "static/media/movilidadA2.jpeg": "/static/media/movilidadA2.d78755c96214bbf43792.jpeg",
+    "static/media/404cda.svg": "/static/media/404cda.62e062ffb1aa9a40611965004c50973a.svg",
+    "static/media/mp-davivienda.webp": "/static/media/mp-davivienda.08cd92c09e2b0da09913.webp",
+    "static/media/mp-banco-bogota.webp": "/static/media/mp-banco-bogota.e8d8ff7fcdedab05bf17.webp",
+    "static/media/mp-bancolombia.webp": "/static/media/mp-bancolombia.3791f532df8c53b04182.webp",
+    "static/media/mp-dinners-club.webp": "/static/media/mp-dinners-club.069b47eb13cd1224cdf6.webp",
+    "static/media/mp-mastercard.webp": "/static/media/mp-mastercard.21ac53b239b404d0eaa8.webp",
+    "index.html": "/index.html",
+    "static/media/mp-nequi.webp": "/static/media/mp-nequi.9f6e1264859ae5cef57a.webp",
+    "main.4b74ceec.css.map": "/static/css/main.4b74ceec.css.map",
+    "main.026a539a.js.map": "/static/js/main.026a539a.js.map",
+    "453.68693753.chunk.js.map": "/static/js/453.68693753.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4b74ceec.css",
+    "static/js/main.026a539a.js"
+  ]
+}
