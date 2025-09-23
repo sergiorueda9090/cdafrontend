@@ -336,20 +336,6 @@ export function DataTable({loggedUser}) {
     };
     
     const handleSelectionChange = (id, newValue) => {
-
-      if(ws && ws.readyState === WebSocket.OPEN) {
-
-        console.log("📤 Enviando update_etiqueta:", {rowId: id,value: newValue.nombre,});
-
-        ws.send(JSON.stringify({
-          type: "update_etiqueta",
-          user: loggedUser,
-          rowId: id,
-          value: newValue.nombre, 
-        }));
-
-      }
-
       dispatch(handleFormStoreThunk({name: 'etiqueta', value:newValue.nombre }));
       dispatch(updateThunks({ id:id, etiquetaDos: newValue.nombre}, 'tramite'));
       dispatch(clearAllEtiquetas())
@@ -423,9 +409,10 @@ export function DataTable({loggedUser}) {
 
 
     useEffect(() => {
-     
+      console.log("loggedUser changed:", loggedUser);
       if (!loggedUser) return;
-      
+      console.log("Iniciando WebSocket para usuario:", loggedUser);
+
       const socket = new WebSocket(`${scheme}://${URLws}/ws/table/?token=${token}`);
       setWs(socket);
 
@@ -712,7 +699,6 @@ export function DataTable({loggedUser}) {
           );
           return renderCellWithSelections(params, content);
         },
-        
       },
       {
         field: 'etiquetaDos',
@@ -730,8 +716,10 @@ export function DataTable({loggedUser}) {
                 onChange={(_, newValue) => {
                   if (newValue) {
                     handleSelectionChange(params.id, newValue);
-
-                    /*if(ws && ws.readyState === WebSocket.OPEN) {
+                    console.log(" === ws === ", ws);
+                    console.log(" === ws.readyState === ", ws.readyState);
+                    console.log(" === WebSocket.OPEN === ", WebSocket.OPEN);
+                    if(ws && ws.readyState === WebSocket.OPEN) {
                        console.log("📤 Enviando update_etiqueta:", {
                         rowId: params.id,
                         value: newValue.nombre,
@@ -743,7 +731,7 @@ export function DataTable({loggedUser}) {
                         rowId: params.id,
                         value: newValue.nombre, 
                       }));
-                    }*/
+                    }
 
                   } else {
                     handleCallEtiquetas(); // Manejo cuando se borra la selección
@@ -1271,10 +1259,10 @@ export function DataTable({loggedUser}) {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
-        /*onCellClick={(params, event) => {
+        onCellClick={(params, event) => {
           //handleCellClick(params, event);
           handleCellClickWs(params.id, params.field);
-        }}*/
+        }}
         slots={{
           noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
         }}
