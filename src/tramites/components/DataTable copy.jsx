@@ -74,9 +74,6 @@ export function DataTable({loggedUser}) {
    
     const [rows, setRows] = useState(cotizadores);
 
-    const [editingField, setEditingField] = useState("");
-    const [editingValue, setEditingValue] = useState("");
-
     const [idRow, setIdRow] = useState('');
 
     const [loading, setLoading] = useState(false);
@@ -118,17 +115,18 @@ export function DataTable({loggedUser}) {
         }
         console.log("respuesta ",respuesta)
         if (respuesta) {
-
-          setEditingField(changedField);
-          setEditingValue(newValue);
           
           let formValues = { [changedField]: newValue, 'id': newRow.id };
 
           if(changedField === "escribirlink"){
              formValues = { ['linkPago']: newValue, 'id': newRow.id };
           }
-          if ("correo" in newRow && newRow.correo) {
-            if (ws && ws.readyState === WebSocket.OPEN) {
+
+          console.log(" 1  📤 Enviando update_email:", )
+          if (changedField == "correo") {
+            console.log(" 2  📤 Enviando update_email:", )
+            if (ws && ws.readyState == WebSocket.OPEN) {
+              console.log(" 3  📤 Enviando update_email:", )
               ws.send(
                 JSON.stringify({
                   type: "update_email",
@@ -321,11 +319,8 @@ export function DataTable({loggedUser}) {
     const handleDevolverConfirmar = (data) => {
       dispatch(update_cotizador_devolver({'id':data.id, 'devolver':data.devolver}))
     }
-    const confirmDelete = (rowId) => {
-      alert("llama el endpoint de elminar el archivo");
-    }
 
-    
+
     /* ====================== */
 
     /* ============== PRUEBAS ========== */
@@ -333,7 +328,6 @@ export function DataTable({loggedUser}) {
     let { etiqueta }  = useSelector(state => state.etiquetasStore);
     let { correo }    = useSelector(state => state.tramitesStore);
 
-    const [rowsTest,  setRowsTest] = useState("");
     const [activeRow, setActiveRow] = useState(null);
    
     const handleCellClick = (id) => {
@@ -350,10 +344,6 @@ export function DataTable({loggedUser}) {
 
     const handleCallEtiquetas = () => {
       dispatch(etiquetasAllThunks());
-    }
-
-    const handleSaveCorreo = (correo = "") => {
-      dispatch(handleFormStoreThunk({name: 'correo', value:correo }));
     }
     
 
@@ -419,7 +409,9 @@ export function DataTable({loggedUser}) {
 
 
     useEffect(() => {
+      console.log("loggedUser changed:", loggedUser);
       if (!loggedUser) return;
+      console.log("Iniciando WebSocket para usuario:", loggedUser);
 
       const socket = new WebSocket(`${scheme}://${URLws}/ws/table/?token=${token}`);
       setWs(socket);
@@ -543,10 +535,11 @@ export function DataTable({loggedUser}) {
 
 
     const handleCellClickWs = (rowId, column) => {
+
         if (ws && ws.readyState === WebSocket.OPEN) {
+      
           const currentKey = `${rowId}-${column}`;
-          const alreadySelected =
-            cellSelections[currentKey]?.some((u) => u.user === loggedUser);
+          const alreadySelected = cellSelections[currentKey]?.some((u) => u.user === loggedUser);
 
           if (alreadySelected) {
             ws.send(
@@ -569,6 +562,7 @@ export function DataTable({loggedUser}) {
                 );
               }
             }
+            console.log("oooooo")
             // enviar nueva selección
             ws.send(
               JSON.stringify({
@@ -786,7 +780,7 @@ export function DataTable({loggedUser}) {
         field: "escribirlink",
         headerName: "Escribir link",
         width: 200,
-        editable: false, // Manejo manual con el input
+        editable: true, // Manejo manual con el input
         renderCell: (params) => <EditableCell params={params} />,
       },
       {
@@ -1239,6 +1233,21 @@ export function DataTable({loggedUser}) {
         rows={rows}
         columns={columns}
         processRowUpdate={processRowUpdate}
+        /*processRowUpdate={(newRow, oldRow) => {
+          if (newRow.correo !== oldRow.correo) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(
+                JSON.stringify({
+                  type: "update_email",
+                  user: loggedUser,
+                  rowId: newRow.id,
+                  value: newRow.correo,
+                })
+              );
+            }
+          }
+          return newRow;
+        }}*/
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         sx={{
