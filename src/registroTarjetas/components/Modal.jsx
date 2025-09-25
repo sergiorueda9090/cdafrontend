@@ -360,7 +360,7 @@ export const FormDialogUser = () => {
                       color="primary"
                     />
                   }
-                  label="¿Es cuenta DaviPlata?"
+                  label="¿La cuenta está EXENTA de 4XMIL?"
                 />
               </Grid>
             </Grid>

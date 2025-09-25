@@ -1,4 +1,4 @@
-import { useEffect }        from 'react';
+import { useState, useEffect }        from 'react';
 import { Grid, Typography } from '@mui/material';
 import Button               from '@mui/material/Button';
 import PersonAddAltIcon     from '@mui/icons-material/PersonAddAlt';
@@ -14,12 +14,33 @@ import { SimpleBackdrop }               from "../../components/Backdrop/BackDrop
 import { getAllCotizadorPdfsThunks }    from '../../store/cotizadorStore/cotizadorThunks';                
 
 import { ToastContainer, toast } from 'react-toastify';
-
+import { URL } from "../../constants.js/constantGlogal";
 export const SelectViews = () => {
 
     const dispatch = useDispatch();
     
     const { alert }  = useSelector( state => state.globalStore );
+    const { token } = useSelector((state) => state.authStore);
+    const [loggedUser, setLoggedUser] = useState(null);
+    
+    useEffect(() => {
+      if (!token) return;
+  
+      // Consumir endpoint /chat/api/me/ para obtener el username
+      fetch(`${URL}/cotizador/me/api/me/`, {
+          method: "GET",
+          headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+          },
+      })
+          .then((res) => res.json())
+          .then((data) => {
+          console.log("Datos del usuario tramites:", data);
+          setLoggedUser(data.username); // Ajusta según la respuesta de tu API
+          })
+          .catch((err) => console.error("Error al obtener usuario:", err));
+      }, [token]);
 
     useEffect(() => {
         if (alert) {
@@ -49,7 +70,7 @@ export const SelectViews = () => {
         </Grid>
 
         <Grid container sx={{ mt:2, width:"99.99%" }}>
-            < DataTable/>
+             <DataTable loggedUser={loggedUser}/>
         </Grid>
         
         {/* START MODAL */}

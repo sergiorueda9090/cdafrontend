@@ -56,7 +56,7 @@ export const BalanceIntervalo = () => {
                 }}
                 >
                 <Typography variant="subtitle1" align="center" color="textSecondary">
-                    2 Patrimonio Neto del periodo
+                    2. Patrimonio Neto del periodo
                 </Typography>
                 <ul style={{ marginTop: "16px", paddingLeft: "20px" }}>
                     <li>

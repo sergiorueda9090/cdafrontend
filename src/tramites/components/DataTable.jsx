@@ -146,7 +146,6 @@ export function DataTable({loggedUser}) {
     };
     
     const handleCopyToClipboard = (text, id="") => {
-
       navigator.clipboard.writeText(text).then(() => {
         if(id != ""){
           mostrarToast(id)
@@ -254,27 +253,27 @@ export function DataTable({loggedUser}) {
       });
     };
   
-  const noPuedePagar = async (idToast, id = "") => {
-    await toast.dismiss(idToast);
+    const noPuedePagar = async (idToast, id = "") => {
+      await toast.dismiss(idToast);
 
-    // 🔄 Apagar la ruedita para todos
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(
-        JSON.stringify({
-          type: "stop_loading",
-          rowId: id,
-        })
-      );
-    }
+      // 🔄 Apagar la ruedita para todos
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(
+          JSON.stringify({
+            type: "stop_loading",
+            rowId: id,
+          })
+        );
+      }
 
-    setLoading(false);
-    setIdRow("");
+      setLoading(false);
+      setIdRow("");
 
-    await toast.error("❌ No pudiste realizar el pago.", {
-      position: "bottom-right",
-      autoClose: 1500,
-    });
-  };
+      await toast.error("❌ No pudiste realizar el pago.", {
+        position: "bottom-right",
+        autoClose: 1500,
+      });
+    };
 
     const handleDevolver = (data="") => {
       if(data == "") return
@@ -384,6 +383,7 @@ export function DataTable({loggedUser}) {
     useEffect(() => {
       setRows(cotizadores);
     }, [cotizadores]);
+
     /************************************
     ******** START WEBSOCKET ********
     * ******************************** */
@@ -676,7 +676,7 @@ export function DataTable({loggedUser}) {
             );
             return renderCellWithSelections(params, content);
           },
-        },
+      },
       {
         field: "nombre_cliente",
         headerName: "Cliente",
@@ -716,10 +716,9 @@ export function DataTable({loggedUser}) {
                 onChange={(_, newValue) => {
                   if (newValue) {
                     handleSelectionChange(params.id, newValue);
-                    console.log(" === ws === ", ws);
-                    console.log(" === ws.readyState === ", ws.readyState);
-                    console.log(" === WebSocket.OPEN === ", WebSocket.OPEN);
+
                     if(ws && ws.readyState === WebSocket.OPEN) {
+
                        console.log("📤 Enviando update_etiqueta:", {
                         rowId: params.id,
                         value: newValue.nombre,
@@ -731,6 +730,7 @@ export function DataTable({loggedUser}) {
                         rowId: params.id,
                         value: newValue.nombre, 
                       }));
+                      
                     }
 
                   } else {
@@ -1234,21 +1234,6 @@ export function DataTable({loggedUser}) {
         rows={rows}
         columns={columns}
         processRowUpdate={processRowUpdate}
-        /*processRowUpdate={(newRow, oldRow) => {
-          if (newRow.correo !== oldRow.correo) {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-              ws.send(
-                JSON.stringify({
-                  type: "update_email",
-                  user: loggedUser,
-                  rowId: newRow.id,
-                  value: newRow.correo,
-                })
-              );
-            }
-          }
-          return newRow;
-        }}*/
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         sx={{
