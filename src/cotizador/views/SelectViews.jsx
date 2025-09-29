@@ -26,32 +26,32 @@ export const SelectViews = () => {
     const { alert } = useSelector( state => state.globalStore );
     const { token } = useSelector((state) => state.authStore);
    
-    const useIntervalDispatch = () => {
-    useEffect(() => {
-        let isMounted = true;
-        let timeoutId;
-        let controller = new AbortController();
+    /*const useIntervalDispatch = () => {
+        useEffect(() => {
+            let isMounted = true;
+            let timeoutId;
+            let controller = new AbortController();
 
-        const fetchLoop = async () => {
-        controller.abort(); // cancela petición previa
-        controller = new AbortController();
+            const fetchLoop = async () => {
+            controller.abort(); // cancela petición previa
+            controller = new AbortController();
 
-        await dispatch(getAllThunksSecond(controller.signal));
+            await dispatch(getAllThunksSecond(controller.signal));
 
-        if (isMounted) {
-            timeoutId = setTimeout(fetchLoop, 1000);
-        }
-        };
+            if (isMounted) {
+                timeoutId = setTimeout(fetchLoop, 1000);
+            }
+            };
 
-        fetchLoop();
+            fetchLoop();
 
-        return () => {
-        isMounted = false;
-        clearTimeout(timeoutId);
-        controller.abort(); // 🔑 aborta request pendiente al desmontar
-        };
-    }, [dispatch]);
-    };
+            return () => {
+            isMounted = false;
+            clearTimeout(timeoutId);
+            controller.abort(); // 🔑 aborta request pendiente al desmontar
+            };
+        }, [dispatch]);
+    };*/
 
     useEffect(() => {
         if (alert) {
@@ -79,7 +79,7 @@ export const SelectViews = () => {
         dispatch(openModalExcel());
     }
     
-    useIntervalDispatch();
+    //useIntervalDispatch();
 
     const [loggedUser, setLoggedUser] = useState(null);
 

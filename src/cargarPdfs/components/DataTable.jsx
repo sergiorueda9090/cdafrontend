@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
-import { Box, Tooltip } from "@mui/material";
+import { Box, Tooltip, Avatar, Typography } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import UndoIcon from '@mui/icons-material/Undo';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -78,6 +78,16 @@ export function DataTable({loggedUser}) {
 
       const file = event.target.files[0];
       
+      if (!file) return;
+
+        // ✅ Validar extensión PDF
+      const isPdf = file.name.toLowerCase().endsWith(".pdf");
+      if (!isPdf) {
+        alert("⚠️ Solo se permiten archivos con extensión .pdf");
+        event.target.value = ""; // limpiar el input
+        return;
+      }
+
       setFileUpload(file);
       
       if (file && selectedRow) {
@@ -406,43 +416,69 @@ export function DataTable({loggedUser}) {
         const renderCellWithSelections = (params, content) => {
           const key = `${params.id}-${params.field}`;
           const selections = cellSelections[key] || [];
-          
-            return (
-              <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
-                {content}
-      
-                {selections.length > 0 && (
-                  <Box
+
+          return (
+            <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
+              {content}
+
+              {selections.length > 0 && (
+                <Tooltip
+                  arrow
+                  placement="top"
+                  title={
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                      {selections.map((s) => (
+                        <Box
+                          key={s.user}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            bgcolor: "#f5f5f5",
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: "8px",
+                          }}
+                        >
+                          <Avatar
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              fontSize: "0.75rem",
+                              bgcolor: s.color,
+                              color: "white",
+                            }}
+                          >
+                            {s.user[0].toUpperCase()}
+                          </Avatar>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: "0.8rem", color: "#333" }}
+                          >
+                            {s.user}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Box>
+                  }
+                >
+                  <Chip
+                    label={`👥 ${selections.length}`}
+                    size="small"
                     sx={{
                       position: "absolute",
                       bottom: 2,
                       right: 2,
-                      display: "flex",
-                      gap: "2px",
-                      flexWrap: "wrap",
+                      bgcolor: "#1976d2",
+                      color: "white",
+                      fontSize: "0.7rem",
+                      height: 20,
                     }}
-                  >
-                    {selections.map((s) => (
-                      <Chip
-                        key={s.user}
-                        label={s.user}
-                        size="small"
-                        sx={{
-                          bgcolor: s.color || "#1976d2", // color de fondo
-                          color: "white",                // texto blanco
-                          fontSize: "0.9rem",            // más grande
-                          fontWeight: "bold",            // más grueso
-                          height: 28,                    // más alto
-                          px: 1.5,                       // padding horizontal extra
-                          borderRadius: "8px",           // esquinas más redondeadas
-                          boxShadow: "0px 2px 6px rgba(0,0,0,0.15)", // sombra ligera
-                        }}
-                      />
-                    ))}
-                  </Box>
-                )}
-              </Box>
-            );
+                  />
+                </Tooltip>
+              )}
+            </Box>
+          );
         };
         /************************************
          ********** END WEBSOCKET ***********

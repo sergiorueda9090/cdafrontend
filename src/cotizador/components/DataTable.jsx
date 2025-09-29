@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
@@ -10,7 +10,7 @@ import UndoIcon from '@mui/icons-material/Undo';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import { useSelector, useDispatch } from 'react-redux';
 import { resetFormularioStore }     from '../../store/cotizadorStore/cotizadorStore'
-import { showThunk, deleteThunk, updateThunks }   from '../../store/cotizadorStore/cotizadorThunks';
+import { showThunk, deleteThunk, updateThunks, getAllCotizadorCotizadorRemoveThunks }   from '../../store/cotizadorStore/cotizadorThunks';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-toastify';
 
@@ -92,48 +92,70 @@ export function DataTable({loggedUser}) {
       const socket = new WebSocket(`${scheme}://${URLws}/ws/table/?token=${token}`);
       setWs(socket);
 
-      socket.onopen = () => console.log("✅ Conectado al WebSocket ==== ");
+      socket.onopen = () => console.log("✅ Conectado al WebSocket ====");
+
+      const handleCellClick = (message) => {
+        setCellSelections((prev) => {
+          const newSelections = { ...prev };
+
+          // Quitar selección previa del usuario en cualquier celda
+          for (const key in newSelections) {
+            newSelections[key] = newSelections[key].filter(
+              (entry) => entry.user !== message.user
+            );
+            if (newSelections[key].length === 0) {
+              delete newSelections[key];
+            }
+          }
+
+          // Agregar nueva selección
+          const key = `${message.rowId}-${message.column}`;
+          const color = getUserColor(message.user);
+          if (!newSelections[key]) newSelections[key] = [];
+          newSelections[key].push({ user: message.user, color });
+
+          return newSelections;
+        });
+      };
+
+      const handleCellUnselect = (message) => {
+        setCellSelections((prev) => {
+          const newSelections = { ...prev };
+          if (newSelections[message.key]) {
+            newSelections[message.key] = newSelections[message.key].filter(
+              (entry) => entry.user !== message.user
+            );
+            if (newSelections[message.key].length === 0) {
+              delete newSelections[message.key];
+            }
+          }
+          return newSelections;
+        });
+      };
+
+      const handleRefreshRequest = (message) => {
+        dispatch(getAllCotizadorCotizadorRemoveThunks(message.rowId));
+      };
 
       socket.onmessage = (e) => {
         const message = JSON.parse(e.data);
 
-        if (message.type === "cell_click") {
-          setCellSelections((prev) => {
-            const newSelections = { ...prev };
+        switch (message.type) {
+          case "cell_click":
+            handleCellClick(message);
+            break;
 
-            // quitar selección previa del usuario en cualquier celda
-            for (const key in newSelections) {
-              newSelections[key] = newSelections[key].filter(
-                (entry) => entry.user !== message.user
-              );
-              if (newSelections[key].length === 0) {
-                delete newSelections[key];
-              }
-            }
+          case "cell_unselect":
+            handleCellUnselect(message);
+            break;
 
-            // agregar nueva selección
-            const key = `${message.rowId}-${message.column}`;
-            const color = getUserColor(message.user);
-            if (!newSelections[key]) newSelections[key] = [];
-            newSelections[key].push({ user: message.user, color });
+          case "refresh_request_cotizador":
+            handleRefreshRequest(message);
+            break;
 
-            return newSelections;
-          });
-        }
-
-        if (message.type === "cell_unselect") {
-          setCellSelections((prev) => {
-            const newSelections = { ...prev };
-            if (newSelections[message.key]) {
-              newSelections[message.key] = newSelections[message.key].filter(
-                (entry) => entry.user !== message.user
-              );
-              if (newSelections[message.key].length === 0) {
-                delete newSelections[message.key];
-              }
-            }
-            return newSelections;
-          });
+          default:
+            console.warn("⚠️ Tipo de mensaje desconocido:", message.type);
+            break;
         }
       };
 
@@ -185,42 +207,72 @@ export function DataTable({loggedUser}) {
     };
 
     const renderCellWithSelections = (params, content) => {
-    const key = `${params.id}-${params.field}`;
-    const selections = cellSelections[key] || [];
+      const key = `${params.id}-${params.field}`;
+      const selections = cellSelections[key] || [];
 
       return (
         <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
           {content}
 
           {selections.length > 0 && (
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 2,
-                right: 2,
-                display: "flex",
-                gap: "2px",
-                flexWrap: "wrap",
-              }}
+            <Tooltip
+              arrow
+              placement="top"
+              title={
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                  {selections.map((s) => (
+                    <Box
+                      key={s.user}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        bgcolor: "#f5f5f5",
+                        px: 1,
+                        py: 0.5,
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <Avatar
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          fontSize: "0.75rem",
+                          bgcolor: s.color,
+                          color: "white",
+                        }}
+                      >
+                        {s.user[0].toUpperCase()}
+                      </Avatar>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontSize: "0.8rem", color: "#333" }}
+                      >
+                        {s.user}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              }
             >
-              {selections.map((s) => (
-                <Chip
-                  key={s.user}
-                  label={s.user}
-                  size="small"
-                  sx={{
-                    bgcolor: s.color,
-                    color: "white",
-                    fontSize: "0.7rem",
-                    height: 20,
-                  }}
-                />
-              ))}
-            </Box>
+              <Chip
+                label={`👥 ${selections.length}`}
+                size="small"
+                sx={{
+                  position: "absolute",
+                  bottom: 2,
+                  right: 2,
+                  bgcolor: "#1976d2",
+                  color: "white",
+                  fontSize: "0.7rem",
+                  height: 20,
+                }}
+              />
+            </Tooltip>
           )}
         </Box>
       );
-  };
+    };
   /************************************
    ********** END WEBSOCKET ***********
    * ******************************** */
@@ -232,7 +284,7 @@ export function DataTable({loggedUser}) {
         const bogotaTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Bogota" }));
 
         // Obtener componentes de la fecha
-        const year = bogotaTime.getFullYear();
+        const year  = bogotaTime.getFullYear();
         const month = String(bogotaTime.getMonth() + 1).padStart(2, "0");
         const day = String(bogotaTime.getDate()).padStart(2, "0");
         const hours = String(bogotaTime.getHours()).padStart(2, "0");
@@ -245,11 +297,21 @@ export function DataTable({loggedUser}) {
 
         let data = {id:row.id, cotizadorModulo:0, tramiteModulo:1, confirmacionPreciosModulo:0, pdfsModulo:0, fechaTramite:formattedDate}
         dispatch(updateThunks(data, "cotizador"));
+
+              // 🔄 Apagar la ruedita para todos
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type : "refresh_request_cotizador",
+            rowId: row.id,
+            user : loggedUser,
+          }));
+        }
+
       }
     }
     
-    let { tramitesArray: cotizadores, dateFilter } = useSelector(state => state.cotizadorStore);
-
+    let { cotizadores, dateFilter } = useSelector(state => state.cotizadorStore);
+    
     const handleCopyToClipboard = (value) => {
       navigator.clipboard.writeText(value);
     };
@@ -259,368 +321,368 @@ export function DataTable({loggedUser}) {
       return `hsl(${hue}, 70%, 85%)`; // 70% de saturación y 85% de luminosidad para colores suaves
     };
 
-const columns = [
-  { field: "id", headerName: "ID", width: 90 },
-  {
-    field: "image_usuario",
-    headerName: "Usuario",
-    width: 100,
-    sortable: false,
-    renderCell: (params) => {
-      const imageUrl = URL + params.row.image_usuario;
-      const fullName = params.row.nombre_usuario || "Usuario";
-      const colorPunto = getPastelColor();
+    const columns = [
+      { field: "id", headerName: "ID", width: 90 },
+      {
+        field: "image_usuario",
+        headerName: "Usuario",
+        width: 100,
+        sortable: false,
+        renderCell: (params) => {
+          const imageUrl = URL + params.row.image_usuario;
+          const fullName = params.row.nombre_usuario || "Usuario";
+          const colorPunto = getPastelColor();
 
-      const content = (
-        <Tooltip title={fullName} arrow>
-          <Box sx={{ position: "relative", display: "inline-block" }}>
-            <Avatar
-              alt={fullName}
-              src={imageUrl || ""}
-              sx={{
-                width: 40,
-                height: 40,
-                fontSize: 16,
-                bgcolor: "#2196f3",
-                cursor: "pointer",
+          const content = (
+            <Tooltip title={fullName} arrow>
+              <Box sx={{ position: "relative", display: "inline-block" }}>
+                <Avatar
+                  alt={fullName}
+                  src={imageUrl || ""}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    fontSize: 16,
+                    bgcolor: "#2196f3",
+                    cursor: "pointer",
+                  }}
+                >
+                  {!imageUrl ? fullName[0] : ""}
+                </Avatar>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    width: 10,
+                    height: 10,
+                    borderRadius: "50%",
+                    backgroundColor: colorPunto,
+                    border: "2px solid white",
+                  }}
+                />
+              </Box>
+            </Tooltip>
+          );
+
+          return renderCellWithSelections(params, content);
+        },
+      },
+
+      {
+        field: "nombre_cliente",
+        headerName: "Cliente",
+        width: 150,
+        renderCell: (params) => {
+          const colorFondo = params.row.color_cliente || "#ddd";
+          const colorTexto = getContrastColor(colorFondo);
+
+          const content = (
+            <Chip
+              style={{
+                backgroundColor: colorFondo,
+                color: colorTexto,
+                padding: "5px",
+                borderRadius: "5px",
+                textAlign: "center",
+                width: "100%",
               }}
-            >
-              {!imageUrl ? fullName[0] : ""}
-            </Avatar>
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 0,
-                right: 0,
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                backgroundColor: colorPunto,
-                border: "2px solid white",
-              }}
+              label={params.value}
             />
-          </Box>
-        </Tooltip>
-      );
+          );
 
-      return renderCellWithSelections(params, content);
-    },
-  },
+          return renderCellWithSelections(params, content);
+        },
+      },
 
-  {
-    field: "nombre_cliente",
-    headerName: "Cliente",
-    width: 150,
-    renderCell: (params) => {
-      const colorFondo = params.row.color_cliente || "#ddd";
-      const colorTexto = getContrastColor(colorFondo);
+      {
+        field: "etiquetaDos",
+        headerName: "Etiqueta",
+        width: 170,
+        renderCell: (params) => {
+          const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd";
+          const colorTexto = getContrastColor(colorFondoEtiqueta);
 
-      const content = (
-        <Chip
-          style={{
-            backgroundColor: colorFondo,
-            color: colorTexto,
-            padding: "5px",
-            borderRadius: "5px",
-            textAlign: "center",
-            width: "100%",
-          }}
-          label={params.value}
-        />
-      );
+          const content = (
+            <Chip
+              style={{
+                backgroundColor: colorFondoEtiqueta,
+                color: colorTexto,
+                padding: "5px",
+                borderRadius: "5px",
+                textAlign: "center",
+                width: "100%",
+              }}
+              label={params.value}
+            />
+          );
 
-      return renderCellWithSelections(params, content);
-    },
-  },
+          return renderCellWithSelections(params, content);
+        },
+      },
 
-  {
-    field: "etiquetaDos",
-    headerName: "Etiqueta",
-    width: 170,
-    renderCell: (params) => {
-      const colorFondoEtiqueta = params.row.color_etiqueta || "#ddd";
-      const colorTexto = getContrastColor(colorFondoEtiqueta);
+      {
+        field: "placa",
+        headerName: "Placa",
+        width: 150,
+        renderCell: (params) => {
+          const content = (
+            <>
+              <Tooltip title="Copiar placa">
+                <IconButton
+                  aria-label="Copiar placa"
+                  onClick={() => handleCopyToClipboard(params.value)}
+                  color="primary"
+                  size="small"
+                >
+                  <ContentCopyIcon />
+                </IconButton>
+              </Tooltip>
+              {params.value}
+            </>
+          );
 
-      const content = (
-        <Chip
-          style={{
-            backgroundColor: colorFondoEtiqueta,
-            color: colorTexto,
-            padding: "5px",
-            borderRadius: "5px",
-            textAlign: "center",
-            width: "100%",
-          }}
-          label={params.value}
-        />
-      );
+          return renderCellWithSelections(params, content);
+        },
+      },
 
-      return renderCellWithSelections(params, content);
-    },
-  },
+      {
+        field: "cilindraje",
+        headerName: "Cilindraje",
+        width: 150,
+        renderCell: (params) => {
+          const content = (
+            <>
+              <Tooltip title="Copiar cilindraje">
+                <IconButton
+                  aria-label="Copiar cilindraje"
+                  onClick={() => handleCopyToClipboard(params.value)}
+                  color="primary"
+                  size="small"
+                >
+                  <ContentCopyIcon />
+                </IconButton>
+              </Tooltip>
+              {params.value}
+            </>
+          );
 
-  {
-    field: "placa",
-    headerName: "Placa",
-    width: 150,
-    renderCell: (params) => {
-      const content = (
-        <>
-          <Tooltip title="Copiar placa">
-            <IconButton
-              aria-label="Copiar placa"
-              onClick={() => handleCopyToClipboard(params.value)}
-              color="primary"
-              size="small"
-            >
-              <ContentCopyIcon />
-            </IconButton>
-          </Tooltip>
-          {params.value}
-        </>
-      );
+          return renderCellWithSelections(params, content);
+        },
+      },
 
-      return renderCellWithSelections(params, content);
-    },
-  },
+      {
+        field: "modelo",
+        headerName: "Modelo",
+        width: 150,
+        renderCell: (params) => {
+          const content = (
+            <>
+              <Tooltip title="Copiar modelo">
+                <IconButton
+                  aria-label="Copiar modelo"
+                  onClick={() => handleCopyToClipboard(params.value)}
+                  color="primary"
+                  size="small"
+                >
+                  <ContentCopyIcon />
+                </IconButton>
+              </Tooltip>
+              {params.value}
+            </>
+          );
 
-  {
-    field: "cilindraje",
-    headerName: "Cilindraje",
-    width: 150,
-    renderCell: (params) => {
-      const content = (
-        <>
-          <Tooltip title="Copiar cilindraje">
-            <IconButton
-              aria-label="Copiar cilindraje"
-              onClick={() => handleCopyToClipboard(params.value)}
-              color="primary"
-              size="small"
-            >
-              <ContentCopyIcon />
-            </IconButton>
-          </Tooltip>
-          {params.value}
-        </>
-      );
+          return renderCellWithSelections(params, content);
+        },
+      },
 
-      return renderCellWithSelections(params, content);
-    },
-  },
+      {
+        field: "chasis",
+        headerName: "Chasis",
+        width: 180,
+        renderCell: (params) => {
+          const content = (
+            <>
+              <Tooltip title="Copiar chasis">
+                <IconButton
+                  aria-label="Copiar chasis"
+                  onClick={() => handleCopyToClipboard(params.value)}
+                  color="primary"
+                  size="small"
+                >
+                  <ContentCopyIcon />
+                </IconButton>
+              </Tooltip>
+              {params.value}
+            </>
+          );
 
-  {
-    field: "modelo",
-    headerName: "Modelo",
-    width: 150,
-    renderCell: (params) => {
-      const content = (
-        <>
-          <Tooltip title="Copiar modelo">
-            <IconButton
-              aria-label="Copiar modelo"
-              onClick={() => handleCopyToClipboard(params.value)}
-              color="primary"
-              size="small"
-            >
-              <ContentCopyIcon />
-            </IconButton>
-          </Tooltip>
-          {params.value}
-        </>
-      );
+          return renderCellWithSelections(params, content);
+        },
+      },
 
-      return renderCellWithSelections(params, content);
-    },
-  },
+      {
+        field: "numeroDocumento",
+        headerName: "Documento",
+        width: 150,
+        renderCell: (params) => {
+          const content = (
+            <>
+              <Tooltip title="Copiar Documento">
+                <IconButton
+                  aria-label="Copiar Documento"
+                  onClick={() => handleCopyToClipboard(params.value)}
+                  color="primary"
+                  size="small"
+                >
+                  <ContentCopyIcon />
+                </IconButton>
+              </Tooltip>
+              {params.value}
+            </>
+          );
 
-  {
-    field: "chasis",
-    headerName: "Chasis",
-    width: 180,
-    renderCell: (params) => {
-      const content = (
-        <>
-          <Tooltip title="Copiar chasis">
-            <IconButton
-              aria-label="Copiar chasis"
-              onClick={() => handleCopyToClipboard(params.value)}
-              color="primary"
-              size="small"
-            >
-              <ContentCopyIcon />
-            </IconButton>
-          </Tooltip>
-          {params.value}
-        </>
-      );
+          return renderCellWithSelections(params, content);
+        },
+      },
 
-      return renderCellWithSelections(params, content);
-    },
-  },
+      {
+        field: "nombreCompleto",
+        headerName: "Nombre",
+        width: 130,
+        renderCell: (params) => {
+          const content = (
+            <>
+              <Tooltip title="Copiar Nombre">
+                <IconButton
+                  aria-label="Copiar Nombre"
+                  onClick={() => handleCopyToClipboard(params.value)}
+                  color="primary"
+                  size="small"
+                >
+                  <ContentCopyIcon />
+                </IconButton>
+              </Tooltip>
+              {params.value}
+            </>
+          );
 
-  {
-    field: "numeroDocumento",
-    headerName: "Documento",
-    width: 150,
-    renderCell: (params) => {
-      const content = (
-        <>
-          <Tooltip title="Copiar Documento">
-            <IconButton
-              aria-label="Copiar Documento"
-              onClick={() => handleCopyToClipboard(params.value)}
-              color="primary"
-              size="small"
-            >
-              <ContentCopyIcon />
-            </IconButton>
-          </Tooltip>
-          {params.value}
-        </>
-      );
+          return renderCellWithSelections(params, content);
+        },
+      },
 
-      return renderCellWithSelections(params, content);
-    },
-  },
+      {
+        field: "telefono",
+        headerName: "Teléfono ",
+        width: 130,
+        renderCell: (params) => {
+          const content = (
+            <>
+              {params.value != "" ? (
+                <Tooltip title="Copiar Teléfono">
+                  <IconButton
+                    aria-label="Copiar Teléfono"
+                    onClick={() => handleCopyToClipboard(params.value)}
+                    color="primary"
+                    size="small"
+                  >
+                    <ContentCopyIcon />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                ""
+              )}
+              {params.value}
+            </>
+          );
 
-  {
-    field: "nombreCompleto",
-    headerName: "Nombre",
-    width: 130,
-    renderCell: (params) => {
-      const content = (
-        <>
-          <Tooltip title="Copiar Nombre">
-            <IconButton
-              aria-label="Copiar Nombre"
-              onClick={() => handleCopyToClipboard(params.value)}
-              color="primary"
-              size="small"
-            >
-              <ContentCopyIcon />
-            </IconButton>
-          </Tooltip>
-          {params.value}
-        </>
-      );
+          return renderCellWithSelections(params, content);
+        },
+      },
 
-      return renderCellWithSelections(params, content);
-    },
-  },
+      {
+        field: "correo",
+        headerName: "Correo",
+        width: 130,
+        renderCell: (params) => {
+          const content = (
+            <>
+              {params.value != "" ? (
+                <Tooltip title="Copiar correo">
+                  <IconButton
+                    aria-label="Copiar correo"
+                    onClick={() => handleCopyToClipboard(params.value)}
+                    color="primary"
+                    size="small"
+                  >
+                    <ContentCopyIcon />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                ""
+              )}
+              {params.value}
+            </>
+          );
 
-  {
-    field: "telefono",
-    headerName: "Teléfono ",
-    width: 130,
-    renderCell: (params) => {
-      const content = (
-        <>
-          {params.value != "" ? (
-            <Tooltip title="Copiar Teléfono">
+          return renderCellWithSelections(params, content);
+        },
+      },
+
+      {
+        field: "actions",
+        headerName: "Actions",
+        width: 180,
+        sortable: false,
+        renderCell: (params) => (
+          <>
+            <Tooltip title="Editar" arrow>
               <IconButton
-                aria-label="Copiar Teléfono"
-                onClick={() => handleCopyToClipboard(params.value)}
+                aria-label="edit"
+                onClick={() => handleEdit(params.row)}
                 color="primary"
-                size="small"
               >
-                <ContentCopyIcon />
+                <EditIcon />
               </IconButton>
             </Tooltip>
-          ) : (
-            ""
-          )}
-          {params.value}
-        </>
-      );
 
-      return renderCellWithSelections(params, content);
-    },
-  },
-
-  {
-    field: "correo",
-    headerName: "Correo",
-    width: 130,
-    renderCell: (params) => {
-      const content = (
-        <>
-          {params.value != "" ? (
-            <Tooltip title="Copiar correo">
+            <Tooltip title="Pasar a Emision" arrow>
               <IconButton
-                aria-label="Copiar correo"
-                onClick={() => handleCopyToClipboard(params.value)}
-                color="primary"
-                size="small"
+                aria-label="Pasar a Emision"
+                onClick={() => handleShowUserSelect(params.row)}
+                color="warning"
               >
-                <ContentCopyIcon />
+                <DoubleArrowIcon />
               </IconButton>
             </Tooltip>
-          ) : (
-            ""
-          )}
-          {params.value}
-        </>
-      );
 
-      return renderCellWithSelections(params, content);
-    },
-  },
+            <Tooltip title="Eliminar Registro" arrow>
+              <IconButton
+                aria-label="Eliminar Registro"
+                onClick={() => handleDelete(params.row.id)}
+                color="error"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
 
-  {
-    field: "actions",
-    headerName: "Actions",
-    width: 180,
-    sortable: false,
-    renderCell: (params) => (
-      <>
-        <Tooltip title="Editar" arrow>
-          <IconButton
-            aria-label="edit"
-            onClick={() => handleEdit(params.row)}
-            color="primary"
-          >
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Pasar a Emision" arrow>
-          <IconButton
-            aria-label="Pasar a Emision"
-            onClick={() => handleShowUserSelect(params.row)}
-            color="warning"
-          >
-            <DoubleArrowIcon />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Eliminar Registro" arrow>
-          <IconButton
-            aria-label="Eliminar Registro"
-            onClick={() => handleDelete(params.row.id)}
-            color="error"
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-
-        {!dateFilter ? (
-          <Tooltip title="Historia de registros" arrow>
-            <IconButton
-              aria-label="Show"
-              onClick={() => handleShow(params.row.id)}
-              color="success"
-            >
-              <ReceiptLongIcon />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          ""
-        )}
-      </>
-    ),
-  },
-];
+            {!dateFilter ? (
+              <Tooltip title="Historia de registros" arrow>
+                <IconButton
+                  aria-label="Show"
+                  onClick={() => handleShow(params.row.id)}
+                  color="success"
+                >
+                  <ReceiptLongIcon />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              ""
+            )}
+          </>
+        ),
+      },
+    ];
 
     
     const NoRowsOverlay = () => (

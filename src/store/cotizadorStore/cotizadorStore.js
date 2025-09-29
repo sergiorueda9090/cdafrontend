@@ -158,6 +158,7 @@ export const cotizadorStore = createSlice({
       
     },
     listRemoveStore:(state, action) => {
+      console.log('Eliminar cotizador con ID:', action.payload.id);
       state.cotizadores = state.cotizadores.filter((cotizador) => cotizador.id !== action.payload.id);
     },
     resetFormularioStore:(state) => {

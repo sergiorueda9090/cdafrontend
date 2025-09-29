@@ -286,7 +286,7 @@ export const showThunk= (id = "") => {
 }
 
 export const updateThunks = (data, modulo="", confirmar="") => {
-    console.log("confirmar", confirmar);
+  
     return async (dispatch, getState) => {
 
         const {authStore} = getState();
@@ -328,14 +328,11 @@ export const updateThunks = (data, modulo="", confirmar="") => {
                 }else if(modulo == "confirmarprecio"){
 
                     if(confirmar == "confirmar"){
-                        //await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
                         await dispatch(getAllCotizadorConfirmacionPreciosRemoveThunks(data.id) );
                     }else{
                         await dispatch( getAllCotizadorConfirmacionPreciosIdThunks(data.id) );
                     }
-                    //await dispatch( getAllCotizadorConfirmacionPreciosThunks() );
-                    //await dispatch( getAllCotizadorTramitesThunks() );
-                    
+
 
                 }else if(modulo == "pdf"){
 
@@ -610,6 +607,12 @@ export const getAllCotizadorTramitesThunks = () => {
     };
 };
 
+export const getAllCotizadorCotizadorRemoveThunks = (id) => {
+    return async (dispatch, getState) => {
+        await dispatch(listRemoveStore({'id':id}));        
+    };
+};
+
 export const getAllCotizadorTramitesSecondThunks = () => {
 
     return async (dispatch, getState) => {
@@ -846,27 +849,6 @@ export const getAllCotizadorConfirmacionPreciosRemoveThunks = (id) => {
                     await dispatch(listRemoveStore({'id':id}));
                     // Filtrar los elementos con etiqueta_nombre "seguros generales"
 
-                    /*await dispatch(getAllThunksProveedores())
-
-                            
-                    const {proveedoresStore} = getState();
-                  
-                    for (const item of data) {
-                        const dataConfirmacionPrecio = {
-                            id_row            : item.id,
-                            idProveedor       : proveedoresStore.defaultProv.id,
-                            nombre            : "Seguros generales",
-                            etiqueta          : "seguros generales",
-                            comisionProveedor : 0,
-                            banco             : "",
-                            idBanco           : ""
-                        };
-
-                        await dispatch(handleFormColumnsConfirmacionPrecioStore({
-                            name: 'columnsConfirmacionPrecios',
-                            value: dataConfirmacionPrecio
-                        }));
-                    }*/
 
                     await dispatch(hideBackDropStore());
 
@@ -1316,8 +1298,6 @@ export const getAllThunksSecond = () => {
         const {authStore} = getState();
         const token = authStore.token
         
-        //await dispatch(listStore({'cotizadores':[]}))
-
         // Iniciar la carga
         const options = {
             method: 'GET',

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import { Tooltip } from "@mui/material";
@@ -94,6 +94,11 @@ export function DataTable({loggedUser}) {
     
         if(changedField === "escribirlink") {
 
+            if (!newValue.startsWith("https://")) {
+              alert("⚠️ El link debe iniciar con https://");
+              return oldRow; // No sigue con el update
+            }
+
             try {
               respuesta = await handleConfirmar(`Esta seguro que la url es: ${newValue}`);
               if (respuesta) {
@@ -113,7 +118,7 @@ export function DataTable({loggedUser}) {
               respuesta = false;
             }
         }
-        console.log("respuesta ",respuesta)
+   
         if (respuesta) {
           
           let formValues = { [changedField]: newValue, 'id': newRow.id };
@@ -124,7 +129,14 @@ export function DataTable({loggedUser}) {
 
           console.log(" 1  📤 Enviando update_email:", )
           if (changedField == "correo") {
-            console.log(" 2  📤 Enviando update_email:", )
+            
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(newValue)) {
+              alert("⚠️ El correo no es válido, por favor verifíquelo.");
+              return oldRow; // No sigue con el update
+            }
+
             if (ws && ws.readyState == WebSocket.OPEN) {
               console.log(" 3  📤 Enviando update_email:", )
               ws.send(
@@ -137,6 +149,21 @@ export function DataTable({loggedUser}) {
               );
             }
           }
+
+                // 🚗 Cambio de placa → notificar a todos los usuarios
+          if (changedField === "placa") {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(
+                JSON.stringify({
+                  type: "update_placa",
+                  user: loggedUser,
+                  rowId: newRow.id,
+                  value: newValue,
+                })
+              );
+            }
+          }
+
           console.log(" formValues ",formValues)
           dispatch(updateThunks(formValues, 'tramite'));
         }
@@ -148,7 +175,7 @@ export function DataTable({loggedUser}) {
     const handleCopyToClipboard = (text, id="") => {
       navigator.clipboard.writeText(text).then(() => {
         if(id != ""){
-          mostrarToast(id)
+          mostrarToast(id, text.row.placa)
         }
       });
     };
@@ -159,15 +186,15 @@ export function DataTable({loggedUser}) {
     };
 
     /* ====================== */
-    const mostrarToast = (id) => {
+    const mostrarToast = (id, placa="") => {
       let tiempoRestante = 180; // 3 minutos en segundos
       
       const idToast = toast(
-        <div>
-          ⏳ Tienes <span id="contador">3:00</span> minutos para confirmar el link de pago.
+        <div> 
+          ⏳ Tienes <span id="contador">3:00</span> para confirmar el pago de. <strong>{placa}</strong>
           <div style={{ marginTop: "10px", display: "flex", justifyContent: "space-between" }}>
             <button 
-              onClick={() => confirmarPago(idToast,id)} 
+              onClick={() => confirmarPago(idToast,id, placa)} 
               style={{ background: "green", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
               ✅ Pago Exitoso
             </button>
@@ -200,10 +227,10 @@ export function DataTable({loggedUser}) {
         toast.update(idToast, {
           render: (
             <div>
-              ⏳ Tienes <span id="contador">{tiempoFormato}</span> minutos para confirmar el link de pago.
+              ⏳ Tienes <span id="contador">{tiempoFormato}</span> para confirmar el pago de. <strong> {placa}</strong>
               <div style={{ marginTop: "10px", display: "flex", justifyContent: "space-between" }}>
                 <button 
-                  onClick={() => confirmarPago(idToast,id)} 
+                  onClick={() => confirmarPago(idToast,id, placa)} 
                   style={{ background: "green", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
                   ✅ Pago Exitoso
                 </button>
@@ -224,7 +251,8 @@ export function DataTable({loggedUser}) {
       }, 1000);
     };
   
-    const confirmarPago = async (idToast, id = "") => {
+    const confirmarPago = async (idToast, id = "", placa="") => {
+
       await toast.dismiss(idToast);
 
       await handleConfirmEmitido(id);
@@ -241,13 +269,12 @@ export function DataTable({loggedUser}) {
         ws.send(JSON.stringify({
           type: "refresh_request"
         }));
-
       }
 
       setLoading(false);
       setIdRow("");
 
-      await toast.success("✅ Pago confirmado con éxito.", {
+      await toast.success(`✅ Pago confirmado con éxito. ${placa}`, {
         position: "bottom-right",
         autoClose: 5000,
       });
@@ -493,6 +520,14 @@ export function DataTable({loggedUser}) {
         dispatch(getAllCotizadorTramitesSecondThunks());
       };
 
+      const handleUpdatePlaca = (message) => {
+        setRows((prevRows) =>
+          prevRows.map((row) =>
+            row.id === message.rowId ? { ...row, placa: message.value } : row
+          )
+        );
+      };
+
       socket.onmessage = (e) => {
         const message = JSON.parse(e.data);
         console.log("📩 WS recibido:", message);
@@ -521,6 +556,9 @@ export function DataTable({loggedUser}) {
             break;
           case "refresh_request":
             handleRefreshRequest();
+            break;
+          case "update_placa": // 🚗 NUEVO EVENTO
+            handleUpdatePlaca(message);
             break;
           default:
             console.warn("⚠️ Evento WS no manejado:", message);
@@ -579,43 +617,69 @@ export function DataTable({loggedUser}) {
     const renderCellWithSelections = (params, content) => {
       const key = `${params.id}-${params.field}`;
       const selections = cellSelections[key] || [];
-      
-        return (
-          <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
-            {content}
-  
-            {selections.length > 0 && (
-              <Box
+
+      return (
+        <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
+          {content}
+
+          {selections.length > 0 && (
+            <Tooltip
+              arrow
+              placement="top"
+              title={
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                  {selections.map((s) => (
+                    <Box
+                      key={s.user}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        bgcolor: "#f5f5f5",
+                        px: 1,
+                        py: 0.5,
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <Avatar
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          fontSize: "0.75rem",
+                          bgcolor: s.color,
+                          color: "white",
+                        }}
+                      >
+                        {s.user[0].toUpperCase()}
+                      </Avatar>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontSize: "0.8rem", color: "#333" }}
+                      >
+                        {s.user}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              }
+            >
+              <Chip
+                label={`👥 ${selections.length}`}
+                size="small"
                 sx={{
                   position: "absolute",
                   bottom: 2,
                   right: 2,
-                  display: "flex",
-                  gap: "2px",
-                  flexWrap: "wrap",
+                  bgcolor: "#1976d2",
+                  color: "white",
+                  fontSize: "0.7rem",
+                  height: 20,
                 }}
-              >
-                {selections.map((s) => (
-                  <Chip
-                    key={s.user}
-                    label={s.user}
-                    size="small"
-                    sx={{
-                      bgcolor: s.color || "#1976d2", // color de fondo
-                      color: "white",                // texto blanco
-                      fontSize: "0.9rem",            // más grande
-                      fontWeight: "bold",            // más grueso
-                      height: 28,                    // más alto
-                      px: 1.5,                       // padding horizontal extra
-                      borderRadius: "8px",           // esquinas más redondeadas
-                      boxShadow: "0px 2px 6px rgba(0,0,0,0.15)", // sombra ligera
-                    }}
-                  />
-                ))}
-              </Box>
-            )}
-          </Box>
-        );
+              />
+            </Tooltip>
+          )}
+        </Box>
+      );
     };
     /************************************
      ********** END WEBSOCKET ***********
@@ -903,7 +967,8 @@ export function DataTable({loggedUser}) {
           return renderCellWithSelections(params, content);
         },
       },
-      { field: 'placa',           headerName: 'Placa',              width: 130, editable: true,  
+      { 
+        field: 'placa',           headerName: 'Placa',              width: 130, editable: true,  
         renderCell: (params) => {
           const content = (<>
             <Tooltip title="Copiar Placa">
