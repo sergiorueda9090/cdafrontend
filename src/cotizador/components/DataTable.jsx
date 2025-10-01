@@ -68,6 +68,9 @@ export function DataTable({loggedUser}) {
 
     const [ws, setWs] = useState(null);
     const [cellSelections, setCellSelections] = useState({});
+    
+    const [rowSelections, setRowSelections] = useState({});
+
     const userColorsRef = useRef({}); // usar ref para que no se reinicie en cada render
 
     // asignar color único determinista a cada usuario
@@ -133,6 +136,40 @@ export function DataTable({loggedUser}) {
         });
       };
 
+      const handleRowSelect = (message) => {
+        setRowSelections((prev) => {
+          const newSelections = { ...prev };
+
+          // quitar selecciones anteriores del usuario
+          for (const key in newSelections) {
+            newSelections[key] = newSelections[key].filter(
+              (entry) => entry.user !== message.user
+            );
+            if (newSelections[key].length === 0) delete newSelections[key];
+          }
+
+          // agregar selección nueva
+          const color = getUserColor(message.user);
+          if (!newSelections[message.rowId]) newSelections[message.rowId] = [];
+          newSelections[message.rowId].push({ user: message.user, color });
+
+          return newSelections;
+        });
+      };
+
+      const handleRowUnselect = (message) => {
+        setRowSelections((prev) => {
+          const newSelections = { ...prev };
+          if (newSelections[message.rowId]) {
+            newSelections[message.rowId] = newSelections[message.rowId].filter(
+              (entry) => entry.user !== message.user
+            );
+            if (newSelections[message.rowId].length === 0) delete newSelections[message.rowId];
+          }
+          return newSelections;
+        });
+      };
+
       const handleRefreshRequest = (message) => {
         dispatch(getAllCotizadorCotizadorRemoveThunks(message.rowId));
       };
@@ -141,6 +178,11 @@ export function DataTable({loggedUser}) {
         const message = JSON.parse(e.data);
 
         switch (message.type) {
+          case "initial_state":
+            setRowSelections(message.rowSelections || {});
+            setCellSelections(message.cellSelections || {});
+            break;
+
           case "cell_click":
             handleCellClick(message);
             break;
@@ -151,6 +193,14 @@ export function DataTable({loggedUser}) {
 
           case "refresh_request_cotizador":
             handleRefreshRequest(message);
+            break;
+
+          case "row_select":
+            handleRowSelect(message);
+            break;
+
+          case "row_unselect":
+            handleRowUnselect(message);
             break;
 
           default:
@@ -272,6 +322,32 @@ export function DataTable({loggedUser}) {
           )}
         </Box>
       );
+    };
+
+    const handleRowClickWs = (rowId) => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        // eliminar selecciones previas del usuario
+        for (const key in rowSelections) {
+          if (rowSelections[key].some((u) => u.user === loggedUser)) {
+            ws.send(
+              JSON.stringify({
+                type: "row_unselect",
+                user: loggedUser,
+                rowId: key,
+              })
+            );
+          }
+        }
+
+        // enviar nueva selección
+        ws.send(
+          JSON.stringify({
+            type: "row_select",
+            user: loggedUser,
+            rowId,
+          })
+        );
+      }
     };
   /************************************
    ********** END WEBSOCKET ***********
@@ -808,19 +884,31 @@ export function DataTable({loggedUser}) {
           handleCellClick(params, event);
           handleCellClickWs(params.id, params.field);
         }}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
+        onRowClick={(params) => handleRowClickWs(params.id)}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 100, page: 0 } },
+        }}
+        pageSizeOptions={[5, 10, 25, 50, 100]}
         sx={{
           border: 0,
           "& .even-row": { backgroundColor: "#f5f5f5" },
           "& .odd-row": { backgroundColor: "#ffffff" },
-          "& .selected-cell": {
-            border: "2px solid green",
+          "& .MuiDataGrid-row.selected-row": {
+            outline: "2px solid green",
+            outlineOffset: "-2px",
+            borderRadius: "4px",
           },
         }}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
-        }
+        getRowClassName={(params) => {
+          const baseClass =
+            params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row";
+
+          // si esta fila está seleccionada por alguien → agregar clase extra
+          if (rowSelections[params.id]?.length > 0) {
+            return `${baseClass} selected-row`;
+          }
+          return baseClass;
+        }}
         slots={{
           noRowsOverlay: NoRowsOverlay,
         }}
