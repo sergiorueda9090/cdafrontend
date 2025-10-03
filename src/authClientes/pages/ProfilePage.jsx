@@ -101,7 +101,7 @@ export const ProfilePage = () => {
 
   const hasData = Array.isArray(data) && data.length > 0;
   const cliente = hasData ? data[0] : null;
-
+  console.log(" ======== cliente ======== ",cliente)
   const columnsRecepcion = [
     { field: 'id',                      headerName: 'ID',                     width: 100 },
     {

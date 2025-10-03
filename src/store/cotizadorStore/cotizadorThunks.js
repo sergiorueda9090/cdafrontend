@@ -4,7 +4,7 @@ import { loginFail } from "../authStore/authStore.js";
 import { showThunk as precioClientesShow } from "../clientesStore/clientesThunks.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { showStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore, listTramitesStore  } from "./cotizadorStore.js";
+import { showStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore, listTramitesStore, listAddStore  } from "./cotizadorStore.js";
 import { handleFormColumnsConfirmacionPrecioStore } from "../proveedoresStore/proveedoresStore.js";
 import { getAllThunks as getAllThunksProveedores }   from "../proveedoresStore/proveedoresThunks.js";
 
@@ -877,6 +877,71 @@ export const getAllCotizadorConfirmacionPreciosRemoveThunks = (id) => {
             
             await dispatch( hideBackDropStore() );
 
+        }
+    };
+};
+
+export const getAllCotizadorConfirmacionPreciosAddThunks = (id) => {
+
+    return async (dispatch, getState) => {
+       
+        await dispatch(showBackDropStore());
+        console.log("==========================")
+        const {authStore} = getState();
+
+        //defaultProv
+        const token = authStore.token;
+
+        // Iniciar la carga
+        const options = {
+            method: 'GET',
+            url: `${URL}/cotizador/get_cotizadores_confirmacion_precios/api`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+        };
+          
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+        
+            if(response.status === 200){
+
+                let data = response.data;
+
+                if(data.length > 0){
+
+                    console.log("data ", data);
+
+                    // En vez de eliminar, ahora agregamos
+                    // Buscar el cotizador en la lista por ID
+                    const cotizadorEncontrado = data.find(c => c.id === id);
+
+                    if (cotizadorEncontrado) {
+                        await dispatch(listAddStore(cotizadorEncontrado));
+                    } else {
+                        console.log(`⚠️ No se encontró cotizador con id ${id}`);
+                        await dispatch(listAddStore(cotizadorEncontrado));
+                    }
+
+                    await dispatch(hideBackDropStore());
+
+                } else {
+
+                    await dispatch(listStore({'cotizadores': []}));
+
+                    await dispatch(hideBackDropStore());
+                }
+
+            } else {
+                await dispatch(hideBackDropStore());
+            }
+
+        } catch (error) {
+            
+            await dispatch(hideBackDropStore());
+
+            console.error(error);
         }
     };
 };

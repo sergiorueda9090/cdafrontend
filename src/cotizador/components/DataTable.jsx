@@ -10,7 +10,7 @@ import UndoIcon from '@mui/icons-material/Undo';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import { useSelector, useDispatch } from 'react-redux';
 import { resetFormularioStore }     from '../../store/cotizadorStore/cotizadorStore'
-import { showThunk, deleteThunk, updateThunks, getAllCotizadorCotizadorRemoveThunks }   from '../../store/cotizadorStore/cotizadorThunks';
+import { showThunk, deleteThunk, updateThunks, getAllCotizadorCotizadorRemoveThunks, getAllCotizadorTramitesSecondThunks }   from '../../store/cotizadorStore/cotizadorThunks';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-toastify';
 
@@ -173,6 +173,7 @@ export function DataTable({loggedUser}) {
       const handleRefreshRequest = (message) => {
         dispatch(getAllCotizadorCotizadorRemoveThunks(message.rowId));
       };
+
 
       socket.onmessage = (e) => {
         const message = JSON.parse(e.data);
@@ -381,6 +382,7 @@ export function DataTable({loggedUser}) {
             rowId: row.id,
             user : loggedUser,
           }));
+
         }
 
       }

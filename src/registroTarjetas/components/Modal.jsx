@@ -204,8 +204,6 @@ export const FormDialogUser = () => {
         id_tarjeta_bancaria_recibe: idTarTranMoney,
         valor                     : soldoTransferencia,
       };
-
-      console.log(dataSend)
       
       dispatch(updateTranferirThunks(dataSend));
 

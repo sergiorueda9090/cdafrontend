@@ -267,7 +267,8 @@ export function DataTable({loggedUser}) {
         );
 
         ws.send(JSON.stringify({
-          type: "refresh_request"
+          type: "refresh_request_cotizador",
+          rowId: id,
         }));
       }
 
@@ -518,7 +519,9 @@ export function DataTable({loggedUser}) {
       };
 
       const handleRefreshRequest = () => {
-        dispatch(getAllCotizadorTramitesSecondThunks());
+        setTimeout(() => {
+          dispatch(getAllCotizadorTramitesSecondThunks());
+        }, 600); // 300ms de espera
       };
 
       const handleUpdatePlaca = (message) => {
@@ -594,7 +597,7 @@ export function DataTable({loggedUser}) {
           case "stop_loading":
             handleStopLoading();
             break;
-          case "refresh_request":
+          case "refresh_request_cotizador":
             handleRefreshRequest();
             break;
           case "update_placa": // 🚗 NUEVO EVENTO
@@ -1279,7 +1282,8 @@ export function DataTable({loggedUser}) {
       
         if (ws && ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({
-            type: "refresh_request"
+            type: "refresh_request_cotizador",
+            rowId: id,
           }));
         }
       //navigate('/confirmacionprecios')

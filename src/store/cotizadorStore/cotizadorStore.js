@@ -161,6 +161,18 @@ export const cotizadorStore = createSlice({
       console.log('Eliminar cotizador con ID:', action.payload.id);
       state.cotizadores = state.cotizadores.filter((cotizador) => cotizador.id !== action.payload.id);
     },
+
+    listAddStore: (state, action) => {
+      console.log('Agregar cotizador:', action.payload);
+
+      // Verificar si ya existe antes de agregar
+      const exists = state.cotizadores.some(c => c.id === action.payload.id);
+      console.log("exists ",exists)
+      if (!exists) {
+        state.cotizadores.push(action.payload);
+      }
+    },
+
     resetFormularioStore:(state) => {
       state.id              = '';
       state.idUsuario       = '';
@@ -250,4 +262,4 @@ export const cotizadorStore = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listTramitesStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore } = cotizadorStore.actions;
+export const { showStore, listTramitesStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore, listAddStore } = cotizadorStore.actions;

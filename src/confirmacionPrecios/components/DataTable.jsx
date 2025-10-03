@@ -18,7 +18,7 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { getAllCotizadorConfirmacionPreciosRemoveThunks, showThunk, updateThunks } from '../../store/cotizadorStore/cotizadorThunks';
+import { getAllCotizadorConfirmacionPreciosAddThunks, getAllCotizadorConfirmacionPreciosRemoveThunks, showThunk, updateThunks } from '../../store/cotizadorStore/cotizadorThunks';
 import { getAllThunks as getAllTarjetas, handleFormStoreThunk, handleDisplayAllTarjetasThunk } from '../../store/registroTarjetasStore/registroTarjetasStoreThunks';
 import { handleFormStoreThunk as handleFormStoreThunkCotizador, update_cotizador_devolver } from '../../store/cotizadorStore/cotizadorThunks';
 import { clearAllProveedores, handleFormStoreThunk as handleFormStoreThunkProveedores, getAllThunks as getAllProveedores } from '../../store/proveedoresStore/proveedoresThunks';
@@ -409,7 +409,10 @@ export function DataTable({loggedUser}) {
           };
 
           const handleRefreshConfirmacionRequest = (message) => {
-            dispatch(getAllCotizadorConfirmacionPreciosRemoveThunks(message.rowId) );
+              setTimeout(() => {
+                 dispatch(getAllCotizadorConfirmacionPreciosRemoveThunks(message.rowId));
+                 dispatch(getAllCotizadorConfirmacionPreciosAddThunks(message.rowId));
+              }, 600);
           };
 
           const handleUpdateTarjeta = (message) => {
@@ -500,7 +503,7 @@ export function DataTable({loggedUser}) {
               case "delete_local_file": // 👈 Nuevo caso
                 handleDeleteArchivo(message);
                 break;
-              case "refresh_request_confirmacion": // 👈 Nuevo caso
+              case "refresh_request_cotizador": // 👈 Nuevo caso
                 handleRefreshConfirmacionRequest(message);
                 break;
               case "update_tarjeta":
@@ -1399,7 +1402,7 @@ export function DataTable({loggedUser}) {
     const file = entries.find(([key]) => Number(key) === id)?.[1];
 
       if (!file) {
-        alert("Por favor selecciona un archivo.");
+        alert("Por favor selecciona una imagen.");
         return;
     }
 
@@ -1454,7 +1457,7 @@ export function DataTable({loggedUser}) {
 
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({
-        type: "refresh_request_confirmacion",
+        type: "refresh_request_cotizador",
         rowId: id,
         ser: loggedUser,
       }));

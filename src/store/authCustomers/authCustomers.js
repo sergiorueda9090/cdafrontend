@@ -13,6 +13,7 @@ export const authCustomerStore = createSlice({
     data      : [],
     recepcionPagoArray: [],
     total: 0,
+    cargosNoRegistradosArray: [],
   },
   reducers: {
     loginSuccess: (state, action) => {
@@ -34,9 +35,14 @@ export const authCustomerStore = createSlice({
     },
     showStoreRecepcionPago: (state, action) => {
       state.recepcionPagoArray = action.payload.data;
-      state.total = action.payload.total;
+      state.total              = action.payload.total;
     },
+    showStoreCargosNoRegistrados: (state, action) => {
+      console.log("action.payload",action.payload);
+      console.log("action.payload.data ",action.payload.data);
+      state.cargosNoRegistradosArray = action.payload.data;
+    }
   }
 }); 
 // Action creators are generated for each case reducer function
-export const {loginSuccess,  loginFail, showStoreRecepcionPago } = authCustomerStore.actions;
+export const {loginSuccess,  loginFail, showStoreRecepcionPago, showStoreCargosNoRegistrados } = authCustomerStore.actions;
