@@ -109,11 +109,11 @@ import { URL } from "../../constants.js/constantGlogal";
           "Cuenta destino" → recibe
           "Cuenta origen" → envía 
         */
-        if (origen === "Tarjeta Cuenta destino") {
-            backgroundColor = "#d7f0baff"; // verde suave
-          }
+        if(origen.includes("Tarjeta Cuenta destino")){
+          backgroundColor = "#d7f0baff"; // verde suave
+        }
         
-        if (origen === "Tarjeta Cuenta origen") {
+        if(origen.includes("Tarjeta Cuenta origen")) {
           backgroundColor = "#f8d7da"; // rojo suave
         }
     
