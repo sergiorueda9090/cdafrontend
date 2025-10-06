@@ -61,7 +61,7 @@ export const getAllThunks = () => {
             // Manejar errores
             console.error(error);
             
-            //await dispatch ( loginFail() );
+            await dispatch ( loginFail() );
             
             await dispatch( hideBackDropStore() );
 

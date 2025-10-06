@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {
   Box,
   Grid,
@@ -6,9 +6,9 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import NotFoundImage from "../../assets/images/404cda.svg";
-import bienvenidos from "../../assets/images/bienvenidos.webp";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { useDispatch } from "react-redux";
+import { getAllThunks } from "../../store/usersStore/usersThunks";
 
 export const NothingSelectedView = () => {
   const navigate = useNavigate();
@@ -16,6 +16,12 @@ export const NothingSelectedView = () => {
   const handleGoBack = () => {
     navigate("/users"); // Redirige al dashboard o a la página de inicio
   };
+  
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+      dispatch(getAllThunks());
+    },[])
 
   return (
     <Grid

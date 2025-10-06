@@ -92,7 +92,7 @@ export const AppRouter = () => {
           
         }
         
-        {/* ✅ Siempre disponible para clientes */}
+        {/*Siempre disponible para clientes */}
         <Route path="/cliente/*" element={ <AuthRoutesCustomer /> } />
       </Routes>
   )
