@@ -69,6 +69,37 @@ export const getAllThunks = () => {
     };
 };
 
+export const searchClientesThunks = (query = "") => {
+  return async (dispatch, getState) => {
+    await dispatch(showBackDropStore());
+    
+    const { authStore } = getState();
+    const token = authStore.token;
+
+    const options = {
+      method: 'GET',
+      url: `${URL}/clientes/api/search/?q=${encodeURIComponent(query)}`,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+
+    try {
+      const response = await axios.request(options);
+
+      if (response.status === 200) {
+        const data = response.data;
+        await dispatch(listStoreMain({ clientes: data }));
+      }
+    } catch (error) {
+      console.error("❌ Error al buscar clientes:", error);
+      await dispatch(loginFail());
+    } finally {
+      await dispatch(hideBackDropStore());
+    }
+  };
+};
+
 export const createThunks = (data) => {
 
     return async (dispatch, getState) => {

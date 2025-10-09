@@ -14,6 +14,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import { green, blue } from '@mui/material/colors';
 
 import { Chip, Box } from "@mui/material";
+import { FilterData } from '../../cotizador/components/FilterData';
 
 export function DataTable() {
 
@@ -154,21 +155,27 @@ export function DataTable() {
 
   return (
     <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
-      <DataGrid
-        rows={clientesMain}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        //checkboxSelection
-        sx={{
-          border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
-          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
-        }}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
-        }
-      />
+
+    <Box display="flex" justifyContent="space-between" marginBottom={2}>
+      <FilterData cotizador="clientes" />
+    </Box>
+
+    <DataGrid
+      rows={clientesMain}
+      columns={columns}
+      initialState={{
+        pagination: { paginationModel: { pageSize: 100, page: 0 } },
+      }}
+      pageSizeOptions={[10, 25, 50, 100]}
+      sx={{
+        border: 0,
+        "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
+        "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+      }}
+      getRowClassName={(params) =>
+        params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
+      }
+    />
     </Box>
   );
 }

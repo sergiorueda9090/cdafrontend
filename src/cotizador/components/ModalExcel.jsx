@@ -48,6 +48,7 @@ export const ModalExcel = () => {
                     <li><Typography variant="body2">tipo documento</Typography></li>
                     <li><Typography variant="body2">numero documento</Typography></li>
                     <li><Typography variant="body2">nombre completo</Typography></li>
+                    <li><Typography variant="body2">telefono</Typography></li>
                   </ul>
                 </Box>
 

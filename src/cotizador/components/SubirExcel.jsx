@@ -19,7 +19,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { createExcelThunks } from "../../store/cotizadorStore/cotizadorThunks";
 import { useDispatch } from "react-redux";
 
-
 export const ExcelUploader = () => {
   const dispatch = useDispatch();
   const [data, setData] = useState([]);
@@ -49,7 +48,6 @@ export const ExcelUploader = () => {
 
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
-
       const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
       const validatedData = jsonData.map((row, index) => {
@@ -60,7 +58,9 @@ export const ExcelUploader = () => {
         let cilindraje = parseInt(row.cilindraje);
         let numeroDocumento = row["numero documento"]?.toString().trim();
         let chasis = row.chasis?.toString().toUpperCase();
+        let telefono = row["telefono"]?.toString().trim() || row["teléfono"]?.toString().trim() || "";
 
+        // Validaciones
         if (!tiposDocumentoPermitidos.includes(tipoDocumento)) {
           errors.push("Tipo de documento no válido");
         }
@@ -77,6 +77,10 @@ export const ExcelUploader = () => {
           errors.push("Número de documento demasiado corto");
         }
 
+        if (telefono && !/^[0-9+\s()-]{7,15}$/.test(telefono)) {
+          errors.push("Teléfono inválido");
+        }
+
         return {
           index: index + 2,
           nombre_cliente: row["nombre cliente"] || "",
@@ -88,6 +92,7 @@ export const ExcelUploader = () => {
           tipo_documento: tipoDocumento,
           numero_documento: numeroDocumento,
           nombre_completo: row["nombre completo"] || "",
+          telefono,
           errors,
         };
       });
@@ -98,7 +103,6 @@ export const ExcelUploader = () => {
     reader.readAsBinaryString(file);
   };
 
-  // Resetear carga
   const handleClear = () => {
     setData([]);
     setFileName("");
@@ -107,46 +111,22 @@ export const ExcelUploader = () => {
     }
   };
 
-  // Verifica si todos los registros son válidos
   const allValid = data.length > 0 && data.every((row) => row.errors.length === 0);
 
-  // Guardar en backend
-    const handleSave = async () => {
+  const handleSave = async () => {
     if (!allValid) return;
-
     setLoading(true);
     try {
-
-        dispatch(createExcelThunks(data)); // 🔥 Llama al thunk para guardar los datos
-        /*const response = await fetch("/api/create_cotizador_excel/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // ⚡ JWT
-        },
-        body: JSON.stringify({ registros: data }), // 🔥 envías todos los registros juntos
-        });
-
-        const result = await response.json();
-
-        if (!response.ok || result.error) {
-        alert(`❌ Error: ${result.error || "Error desconocido"}`);
-        setLoading(false);
-        return;
-        }
-
-        alert("✅ Todos los registros fueron guardados correctamente");*/
-        //handleClear();
+      dispatch(createExcelThunks(data));
     } catch (error) {
-        alert("⚠️ Error de conexión con el servidor");
+      alert("⚠️ Error de conexión con el servidor");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-    };
+  };
 
   return (
     <Box p={4}>
-
       {/* Botones */}
       <Stack direction="row" spacing={2} mb={2}>
         <Button
@@ -198,6 +178,7 @@ export const ExcelUploader = () => {
                 <TableCell><b>Tipo Documento</b></TableCell>
                 <TableCell><b>Número Documento</b></TableCell>
                 <TableCell><b>Nombre Completo</b></TableCell>
+                <TableCell><b>Teléfono</b></TableCell>
                 <TableCell><b>Estado</b></TableCell>
               </TableRow>
             </TableHead>
@@ -220,6 +201,7 @@ export const ExcelUploader = () => {
                   <TableCell>{row.tipo_documento}</TableCell>
                   <TableCell>{row.numero_documento}</TableCell>
                   <TableCell>{row.nombre_completo}</TableCell>
+                  <TableCell>{row.telefono}</TableCell>
                   <TableCell>
                     {row.errors.length > 0 ? (
                       row.errors.map((err, i) => (

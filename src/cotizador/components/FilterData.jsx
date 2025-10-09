@@ -17,6 +17,7 @@ import { getAllThunks as getAllThunksArchivo }              from '../../store/ar
 import { getAllThunks as getAllThunksHistorial }            from '../../store/historialtramitesemitidosStore/historialtramitesemitidosStoreThunks';
 import { getFichaProveedorByIdThunk }                       from "../../store/fichaProveedoresStore/fichaProveedoresThunks";
 import { getAllThunks as getAllThunksUtilidadFilter }       from "../../store/utilidadStore/utilidadStoreThunks";
+import { searchClientesThunks,  getAllThunks as getAllThunksClientes } from "../../store/clientesStore/clientesThunks";
 
 
 export const FilterData = ({cotizador, id=''}) => {
@@ -69,6 +70,10 @@ export const FilterData = ({cotizador, id=''}) => {
             
             dispatch( getAllThunksHistorial(startDate, endDate, searchQuery)) ;
         
+        }else if(cotizador == "clientes"){
+            
+            dispatch( searchClientesThunks(searchQuery)) ;
+        
         }else{
 
             dispatch(getAllFilterDateThunks(startDate, endDate));
@@ -119,6 +124,10 @@ export const FilterData = ({cotizador, id=''}) => {
 
             dispatch(getAllThunksUtilidadFilter());
 
+        }else if(cotizador == "clientes"){
+            
+            dispatch( getAllThunksClientes() ) ;
+        
         }else{
 
             dispatch(getAllThunks());

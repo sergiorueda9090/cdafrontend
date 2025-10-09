@@ -7,7 +7,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
 import { showThunk, deleteThunk } from '../../store/proveedoresStore/proveedoresThunks';
 import { toast } from 'react-toastify';
-import { Chip } from "@mui/material";
+import { Chip, Box } from "@mui/material";
+
 export function DataTable() {
 
     const dispatch = useDispatch();
@@ -130,22 +131,23 @@ export function DataTable() {
 
 
   return (
-    <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
+    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
       <DataGrid
         rows={proveedores}
         columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        //checkboxSelection
+        initialState={{
+          pagination: { paginationModel: { pageSize: 100, page: 0 } },
+        }}
+        pageSizeOptions={[10, 25, 50, 100]}
         sx={{
           border: 0,
           "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
-          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+          "& .odd-row": { backgroundColor: "#ffffff" },  // Blanco
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
       />
-    </Paper>
+    </Box>
   );
 }
