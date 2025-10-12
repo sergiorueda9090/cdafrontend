@@ -24,8 +24,7 @@ export const EtapaUno = () => {
   const { preciosLey }  = useSelector((state) => state.clientesStore);
   const { etiquetas }   = useSelector((state)  => state.etiquetasStore);
     
-  console.log("preciosLey ",preciosLey);
-
+ 
   const tipoDocumentoOptions    = ['Cedula', 'Pasaporte', 'Tarjeta de Identidad', 'Número de Identificación Tributaria', 'Cédula de Extranjería', 'Permiso por Protección Temporal'];
   const prefijos                = ['319', '314', '313', '300', '301', '321', '322'];
   const etiquetaDosCondiciones  = ["LINK DE PAGO","AMALFI","AURA","CENTRO",]
@@ -165,16 +164,39 @@ export const EtapaUno = () => {
     if (!etiquetaDos) newErrors.etiquetaDos = 'Seleccione una opción para Etiqueta Dos.';
 
     setErrors(newErrors);
-  
+    
+    let data = { 
+        idCliente, 
+        precioDeLey, 
+        comisionPrecioLey, 
+        etiquetaDos,
+        idEtiqueta,
+        placa, 
+        cilindraje,
+        modelo, 
+        chasis, 
+        telefono, 
+        nombreCompleto,
+        numeroDocumento,
+        tipoDocumento,
+        correo, 
+        direccion,
+        total,
+        cotizadorModulo:1,
+        tramiteModulo:0,
+        confirmacionPreciosModulo:0,
+        pdfsModulo:0
+      }
+
     // Si no hay errores, procede con la lógica de guardado
     if (Object.keys(newErrors).length === 0) {
       // Aquí puedes enviar los datos al backend o realizar alguna acción
       if (id) {
         // Actualizar trámite existente
-        dispatch(updateThunks(formValues, "cotizador"));
+        dispatch(updateThunks(data, "cotizador"));
       } else {
         // Crear nuevo trámite
-        dispatch(createThunks(formValues));
+        dispatch(createThunks(data));
       }
     }
   };
@@ -234,7 +256,7 @@ export const EtapaUno = () => {
         //dispatch(getAllThunks())
         //navigate(`/tramites`);
     
-      }
+    }
 
     return (
       <form onSubmit={handleSubmit}>

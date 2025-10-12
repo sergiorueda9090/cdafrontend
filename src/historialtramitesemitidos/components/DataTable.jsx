@@ -94,13 +94,30 @@ export function DataTable() {
       },
       {
         field: "archivo",
-        headerName: "Archivo",
+        headerName: "Imagen",
         width: 150,
         renderCell: (params) => {
-          return params.value ? (
-            <img src={URL +params.value} alt="Archivo" style={{ width: 50, height: 50 }} />
+          const imageUrl = params.value ? `${params.value}` : null;
+
+          return imageUrl ? (
+            <Tooltip title="Ver imagen">
+              <a href={imageUrl} target="_blank" rel="noopener noreferrer">
+                <ImageIcon
+                  style={{
+                    color: "#1c3b6a",
+                    fontSize: 40,
+                    cursor: "pointer",
+                    transition: "color 0.3s ease",
+                  }}
+                  onMouseOver={(e) => (e.currentTarget.style.color = "#335b9c")}
+                  onMouseOut={(e) => (e.currentTarget.style.color = "#1c3b6a")}
+                />
+              </a>
+            </Tooltip>
           ) : (
-            <ImageIcon style={{ color: "gray", fontSize: 40 }} />
+            <Tooltip title="Sin imagen disponible">
+              <ImageIcon style={{ color: "gray", fontSize: 40 }} />
+            </Tooltip>
           );
         },
       },
@@ -109,14 +126,27 @@ export function DataTable() {
         headerName: "PDF",
         width: 150,
         renderCell: (params) => {
-          const fileUrl = params.value ? `${URL}${params.value}` : null;
+          const fileUrl = params.value ? `${params.value}` : null;
 
           return fileUrl ? (
-            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-              <PictureAsPdfIcon style={{ color: "red", fontSize: 40 }} />
-            </a>
+            <Tooltip title="Ver PDF">
+              <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                <PictureAsPdfIcon
+                  style={{
+                    color: "red",
+                    fontSize: 40,
+                    cursor: "pointer",
+                    transition: "color 0.3s ease",
+                  }}
+                  onMouseOver={(e) => (e.currentTarget.style.color = "#ff5555")}
+                  onMouseOut={(e) => (e.currentTarget.style.color = "red")}
+                />
+              </a>
+            </Tooltip>
           ) : (
-            "No disponible"
+            <Tooltip title="Sin PDF disponible">
+              <PictureAsPdfIcon style={{ color: "gray", fontSize: 40 }} />
+            </Tooltip>
           );
         },
       },
@@ -127,17 +157,18 @@ export function DataTable() {
         sortable: false,
         renderCell: (params) => (
           <>
-            <IconButton
-              aria-label="edit"
-              onClick={() => handleEdit(params.row)}
-              color="primary"
-            >
-              <VisibilityIcon />
-            </IconButton>
-
+            <Tooltip title="Ver">
+              <IconButton
+                aria-label="edit"
+                onClick={() => handleEdit(params.row)}
+                color="primary"
+              >
+                <VisibilityIcon />
+              </IconButton>
+            </Tooltip>
           </>
         ),
-      },
+      }
     ];
     
     
@@ -208,13 +239,14 @@ export function DataTable() {
       <DataGrid
         rows={historial}
         columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        //checkboxSelection
+        initialState={{
+          pagination: { paginationModel: { pageSize: 100, page: 0 } },
+        }}
+        pageSizeOptions={[5, 10, 25, 50, 100]} // agregamos 100 como opción
         sx={{
           border: 0,
           "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
-          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+          "& .odd-row": { backgroundColor: "#ffffff" },  // Blanco
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"

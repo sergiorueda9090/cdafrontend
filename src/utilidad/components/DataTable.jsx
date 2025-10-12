@@ -15,6 +15,18 @@ export function DataTable() {
 
     const columns = [
       { field: 'id',              headerName: 'ID',                    width: 100 },
+      { field: 'fecha',           headerName: 'Fecha',        width: 230,         renderCell: (params) => {
+        if (!params.value) return '';
+          const fecha = new Date(params.value);
+          const año = fecha.getFullYear();
+          const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+          const dia = String(fecha.getDate()).padStart(2, '0');
+          const horas = String(fecha.getHours()).padStart(2, '0');
+          const minutos = String(fecha.getMinutes()).padStart(2, '0');
+          const segundos = String(fecha.getSeconds()).padStart(2, '0');
+          return `${año}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
+        } 
+      },
       { field: 'nombre',          headerName: 'Nombre Proveedor',      width: 230 },
       {
         field: 'comisionproveedor',

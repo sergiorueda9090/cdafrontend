@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef  } from "react";
 import {
   AppBar,
   Toolbar,
@@ -43,22 +43,23 @@ export const ProfilePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-    useEffect(() => {
-      const clienteDataString = localStorage.getItem("cliente_data");
-      console.log("¿Qué hay en localStorage?:", clienteDataString);
+  useEffect(() => {
+    const clienteDataString = localStorage.getItem("cliente_data");
+    console.log("¿Qué hay en localStorage?:", clienteDataString);
 
-      if (clienteDataString) {
-        const clienteData = JSON.parse(clienteDataString);
-        console.log("clienteData decodificado:", clienteData);
-      } else {
-        console.warn("No hay datos en localStorage al cargar.");
-        localStorage.removeItem("cliente_data")
-      }
+    if (clienteDataString) {
+      const clienteData = JSON.parse(clienteDataString);
+      console.log("clienteData decodificado:", clienteData);
+    } else {
+      console.warn("No hay datos en localStorage al cargar.");
+      localStorage.removeItem("cliente_data");
+    }
+  }, []);
 
-  }, [])
+  const pollingRefs = useRef([]); // <== Guardamos los IDs de los intervalos
 
   const startPollingRecepcionPago = () => {
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       const clienteData = JSON.parse(localStorage.getItem("cliente_data"));
       const idCliente = clienteData?.id_cliente;
 
@@ -68,11 +69,13 @@ export const ProfilePage = () => {
       } else {
         console.warn("ID cliente no encontrado en localStorage.");
       }
-    }, 1000); // 1000 ms = 1 segundo
+    }, 1000);
+
+    pollingRefs.current.push(intervalId);
   };
 
   const startPollingCotizadores = () => {
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       const clienteData = JSON.parse(localStorage.getItem("cliente_data"));
 
       if (
@@ -85,17 +88,36 @@ export const ProfilePage = () => {
       } else {
         console.warn("Faltan datos válidos en localStorage para getCotizadoresClienteSecond.");
       }
-    }, 1000); // cada segundo
+    }, 1000);
+
+    pollingRefs.current.push(intervalId);
   };
 
+  // Iniciar los pollings cuando carga el componente
   useEffect(() => {
     startPollingRecepcionPago();
     startPollingCotizadores();
+
+    // Limpiar automáticamente cuando el componente se desmonta
+    return () => {
+      pollingRefs.current.forEach(clearInterval);
+      pollingRefs.current = [];
+    };
   }, []);
 
+  // Manejar logout
   const handleLogout = () => {
+    // Detener todos los intervalos activos
+    pollingRefs.current.forEach(clearInterval);
+    pollingRefs.current = [];
+
+    // Borrar datos del cliente
     localStorage.removeItem("cliente_data");
+
+    // Resetear estado global (por ejemplo, token)
     dispatch(loginFail());
+
+    // Redirigir
     navigate("/cliente", { replace: true });
   };
 
@@ -161,7 +183,7 @@ export const ProfilePage = () => {
 
         return (
           <a
-            href={`${URL}${params.row.pdf}`} // Construcción correcta de la ruta
+            href={`${params.row.pdf}`} // Construcción correcta de la ruta
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -41,15 +41,15 @@ const getContrastColor = (hexColor) => {
 
 // 🎨 Paleta cálida pastel
 const colors = [
-  "#FFD6A5", // durazno pastel
-  "#FFB5A7", // rosado pastel
-  "#FEC89A", // naranja melón pastel
-  "#FCD5CE", // coral pastel
-  "#FFF1B6", // amarillo suave
-  "#EAC4D5", // rosa cálido pastel
-  "#FFDAC1", // durazno claro
-  "#FFE0AC", // amarillo cálido
-  "#FFD1BA", // salmón pastel
+  "#FF6B6B", // rojo coral vibrante
+  "#FFA931", // naranja brillante
+  "#FFD93D", // amarillo vivo
+  "#6BCB77", // verde fresco
+  "#4D96FF", // azul intenso
+  "#A06CD5", // morado vibrante
+  "#FF7F50", // coral fuerte
+  "#00BFA6", // turquesa brillante
+  "#F15BB5", // rosa vibrante
 ];
 
 
@@ -353,6 +353,10 @@ export function DataTable({loggedUser}) {
   /************************************
    ********** END WEBSOCKET ***********
    * ******************************** */
+    
+    const getRowSelectionData = (rowId) => {
+      return rowSelections[rowId];
+    };
 
     const handleShowUserSelect = (row) => {
       if(row.id){
@@ -882,37 +886,65 @@ export function DataTable({loggedUser}) {
       <DataGrid
         rows={cotizadores}
         columns={enhancedColumns}
-        onCellClick={(params, event) => {
-          handleCellClick(params, event);
-          handleCellClickWs(params.id, params.field);
+        initialState={{
+        pagination: { paginationModel: { pageSize: 100, page: 0 } },
         }}
         onRowClick={(params) => handleRowClickWs(params.id)}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 100, page: 0 } },
-        }}
         pageSizeOptions={[5, 10, 25, 50, 100]}
         sx={{
-          border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" },
-          "& .odd-row": { backgroundColor: "#ffffff" },
-          "& .MuiDataGrid-row.selected-row": {
-            outline: "2px solid green",
-            outlineOffset: "-2px",
-            borderRadius: "4px",
+        border: 0,
+        "& .even-row": { backgroundColor: "#f5f5f5" },
+        "& .odd-row": { backgroundColor: "#ffffff" },
+        
+        // REGLAS DINÁMICAS BASADAS EN rowSelections
+        ...Object.keys(rowSelections).reduce((acc, rowId) => {
+        const selections = getRowSelectionData(rowId);
+        // Solo necesitamos el primer usuario que seleccionó la fila para el color
+        if (selections && selections.length > 0) {
+          const color = selections[0].color; 
+          const rowClass = `& .row-selected-${rowId}`;
+          
+          // Define los estilos para la clase dinámica
+          acc[rowClass] = {
+          // Color de fondo suave (usando 20% de opacidad: '33' en HEX)
+          backgroundColor: `${color}33 !important`, 
+          
+          // Borde izquierdo del color del usuario
+          borderLeft: `5px solid ${color}`, 
+          
+          // Asegura que el hover mantenga el color y no el predeterminado de MUI
+          '&:hover': {
+          backgroundColor: `${color}4D !important`, // Ligeramente más opaco al pasar el ratón ('4D' es 30%)
           },
+          };
+        }
+        return acc;
+        }, {}),
+        
+        // Puedes eliminar el estilo original de selected-row si ya no quieres el borde verde
+        "& .MuiDataGrid-row.selected-row": {
+        // Estilo original comentado:
+        // outline: "2px solid green",
+        // outlineOffset: "-2px",
+        // borderRadius: "4px",
+        },
         }}
         getRowClassName={(params) => {
-          const baseClass =
-            params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row";
+        const baseClass =
+        params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row";
 
-          // si esta fila está seleccionada por alguien → agregar clase extra
-          if (rowSelections[params.id]?.length > 0) {
-            return `${baseClass} selected-row`;
-          }
-          return baseClass;
+        // Aplicar la clase de color dinámico si la fila está seleccionada por cualquier usuario
+        if (rowSelections[params.id]?.length > 0) {
+        return `${baseClass} row-selected-${params.id}`;
+        }
+        return baseClass;
+        }}
+        onCellClick={(params, event) => {
+        //handleCellClick(params, event);
+        handleCellClickWs(params.id, params.field);
         }}
         slots={{
-          noRowsOverlay: NoRowsOverlay,
+        noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
         }}
       />
       

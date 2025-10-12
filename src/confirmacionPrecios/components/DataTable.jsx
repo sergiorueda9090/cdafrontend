@@ -667,6 +667,11 @@ export function DataTable({loggedUser}) {
         /************************************
          ********** END WEBSOCKET ***********
         * ******************************** */
+
+      const getRowSelectionData = (rowId) => {
+        return rowSelections[rowId];
+      };
+
       const [comisiones, setComisiones] = useState({});
 
       const handleComisionChange = (event, id) => {
@@ -1490,40 +1495,70 @@ export function DataTable({loggedUser}) {
         style={{ display: "none" }}
         onChange={handleUpload}
       />
-      <DataGrid
-        //rows={cotizadores}
+      
+     <DataGrid
         rows={rows}
         columns={columns}
         initialState={{
-          pagination: { paginationModel: { pageSize: 100, page: 0 } },
+        pagination: { paginationModel: { pageSize: 100, page: 0 } },
         }}
         onRowClick={(params) => handleRowClickWs(params.id)}
         pageSizeOptions={[5, 10, 25, 50, 100]}
-        sx={{
-          border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" },
-          "& .odd-row": { backgroundColor: "#ffffff" },
-          "& .MuiDataGrid-row.selected-row": {
-            outline: "2px solid green",
-            outlineOffset: "-2px",
-            borderRadius: "4px",
-          },
+          
+          sx={{
+            border: 0,
+            "& .even-row": { backgroundColor: "#f5f5f5" },
+            "& .odd-row": { backgroundColor: "#ffffff" },
+            
+            // REGLAS DINÁMICAS BASADAS EN rowSelections
+            ...Object.keys(rowSelections).reduce((acc, rowId) => {
+            const selections = getRowSelectionData(rowId);
+            // Solo necesitamos el primer usuario que seleccionó la fila para el color
+            if (selections && selections.length > 0) {
+              const color = selections[0].color; 
+              const rowClass = `& .row-selected-${rowId}`;
+              
+              // Define los estilos para la clase dinámica
+              acc[rowClass] = {
+              // Color de fondo suave (usando 20% de opacidad: '33' en HEX)
+              backgroundColor: `${color}33 !important`, 
+              
+              // Borde izquierdo del color del usuario
+              borderLeft: `5px solid ${color}`, 
+              
+              // Asegura que el hover mantenga el color y no el predeterminado de MUI
+              '&:hover': {
+              backgroundColor: `${color}4D !important`, // Ligeramente más opaco al pasar el ratón ('4D' es 30%)
+              },
+              };
+            }
+            return acc;
+          }, {}),
+        
+        // Puedes eliminar el estilo original de selected-row si ya no quieres el borde verde
+        "& .MuiDataGrid-row.selected-row": {
+        // Estilo original comentado:
+        // outline: "2px solid green",
+        // outlineOffset: "-2px",
+        // borderRadius: "4px",
+        },
         }}
         getRowClassName={(params) => {
-          const baseClass =
-            params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row";
+        const baseClass =
+        params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row";
 
-          // si esta fila está seleccionada por alguien → agregar clase extra
-          if (rowSelections[params.id]?.length > 0) {
-            return `${baseClass} selected-row`;
-          }
-          return baseClass;
+        // Aplicar la clase de color dinámico si la fila está seleccionada por cualquier usuario
+        if (rowSelections[params.id]?.length > 0) {
+        return `${baseClass} row-selected-${params.id}`;
+        }
+        return baseClass;
         }}
         onCellClick={(params, event) => {
-          handleCellClickWs(params.id, params.field);
+        //handleCellClick(params, event);
+        handleCellClickWs(params.id, params.field);
         }}
         slots={{
-          noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
+        noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
         }}
       />
     </Box>

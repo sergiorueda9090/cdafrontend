@@ -16,10 +16,11 @@ import {
 } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { createExcelThunks } from "../../store/cotizadorStore/cotizadorThunks";
+import { createExcelThunks, createTramiteExcelThunks } from "../../store/cotizadorStore/cotizadorThunks";
 import { useDispatch } from "react-redux";
 
-export const ExcelUploader = () => {
+export const ExcelUploader = ({modulo}) => {
+console.log("=== ExcelUploader modulo ==== ",modulo)
   const dispatch = useDispatch();
   const [data, setData] = useState([]);
   const [fileName, setFileName] = useState("");
@@ -117,7 +118,13 @@ export const ExcelUploader = () => {
     if (!allValid) return;
     setLoading(true);
     try {
-      dispatch(createExcelThunks(data));
+
+      if(modulo == "tramites"){
+         dispatch(createTramiteExcelThunks(data));
+      }else{
+         dispatch(createExcelThunks(data));
+      }
+     
     } catch (error) {
       alert("⚠️ Error de conexión con el servidor");
     } finally {

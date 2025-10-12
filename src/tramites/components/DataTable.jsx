@@ -762,6 +762,10 @@ export function DataTable({loggedUser}) {
      ********** END WEBSOCKET ***********
     * ******************************** */
 
+    const getRowSelectionData = (rowId) => {
+      return rowSelections[rowId];
+    };
+   
     const columns = [
       { field: 'id',              headerName: 'ID',                 width: 80},
       {
@@ -1373,44 +1377,72 @@ export function DataTable({loggedUser}) {
         <DateRange  cotizador="tramite"/>  {/* Componente para selección de rango de fechas */}
       </Box>
 
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        processRowUpdate={processRowUpdate}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 100, page: 0 } },
-        }}
-        onRowClick={(params) => handleRowClickWs(params.id)}
-        pageSizeOptions={[5, 10, 25, 50, 100]}
-        sx={{
-          border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" },
-          "& .odd-row": { backgroundColor: "#ffffff" },
-          "& .MuiDataGrid-row.selected-row": {
-            outline: "2px solid green",
-            outlineOffset: "-2px",
-            borderRadius: "4px",
-          },
-        }}
-        getRowClassName={(params) => {
-          const baseClass =
+         <DataGrid
+            rows={rows}
+            columns={columns}
+            processRowUpdate={processRowUpdate}
+            initialState={{
+            pagination: { paginationModel: { pageSize: 100, page: 0 } },
+            }}
+            onRowClick={(params) => handleRowClickWs(params.id)}
+            pageSizeOptions={[5, 10, 25, 50, 100]}
+              
+              sx={{
+                border: 0,
+                "& .even-row": { backgroundColor: "#f5f5f5" },
+                "& .odd-row": { backgroundColor: "#ffffff" },
+                
+                // REGLAS DINÁMICAS BASADAS EN rowSelections
+                ...Object.keys(rowSelections).reduce((acc, rowId) => {
+                const selections = getRowSelectionData(rowId);
+                // Solo necesitamos el primer usuario que seleccionó la fila para el color
+                if (selections && selections.length > 0) {
+                  const color = selections[0].color; 
+                  const rowClass = `& .row-selected-${rowId}`;
+                  
+                  // Define los estilos para la clase dinámica
+                  acc[rowClass] = {
+                  // Color de fondo suave (usando 20% de opacidad: '33' en HEX)
+                  backgroundColor: `${color}33 !important`, 
+                  
+                  // Borde izquierdo del color del usuario
+                  borderLeft: `5px solid ${color}`, 
+                  
+                  // Asegura que el hover mantenga el color y no el predeterminado de MUI
+                  '&:hover': {
+                  backgroundColor: `${color}4D !important`, // Ligeramente más opaco al pasar el ratón ('4D' es 30%)
+                  },
+                  };
+                }
+                return acc;
+              }, {}),
+            
+            // Puedes eliminar el estilo original de selected-row si ya no quieres el borde verde
+            "& .MuiDataGrid-row.selected-row": {
+            // Estilo original comentado:
+            // outline: "2px solid green",
+            // outlineOffset: "-2px",
+            // borderRadius: "4px",
+            },
+            }}
+            getRowClassName={(params) => {
+            const baseClass =
             params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row";
-
-          // si esta fila está seleccionada por alguien → agregar clase extra
-          if (rowSelections[params.id]?.length > 0) {
-            return `${baseClass} selected-row`;
-          }
-          return baseClass;
-        }}
-        onCellClick={(params, event) => {
-          //handleCellClick(params, event);
-          handleCellClickWs(params.id, params.field);
-        }}
-        slots={{
-          noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
-        }}
-        //onCellEditCommit={handleEditCellCommit}
-      />
+    
+            // Aplicar la clase de color dinámico si la fila está seleccionada por cualquier usuario
+            if (rowSelections[params.id]?.length > 0) {
+            return `${baseClass} row-selected-${params.id}`;
+            }
+            return baseClass;
+            }}
+            onCellClick={(params, event) => {
+            //handleCellClick(params, event);
+            handleCellClickWs(params.id, params.field);
+            }}
+            slots={{
+            noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
+            }}
+          />
     </Box>
   );
 }

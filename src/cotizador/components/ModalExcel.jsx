@@ -6,8 +6,8 @@ import { closeModalExcel } from '../../store/globalStore/globalStore';
 import { ExcelUploader } from "./SubirExcel";
 
 
-export const ModalExcel = () => {
-
+export const ModalExcel = ({modulo}) => {
+    console.log("=== ModalExcel modulo ==== ",modulo)
     const dispatch = useDispatch();
 
     // Estado global del modal y cliente actual
@@ -93,7 +93,7 @@ export const ModalExcel = () => {
                 <Divider sx={{ my: 2 }} />
 
                 {/* Uploader */}
-                <ExcelUploader />
+                <ExcelUploader modulo={modulo}/>
               </Box>
             </DialogContent>
           </Dialog>
