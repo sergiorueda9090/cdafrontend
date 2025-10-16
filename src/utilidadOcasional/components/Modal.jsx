@@ -91,10 +91,29 @@ export const FormDialogUser = () => {
     dispatch(closeModalShared());
   };
 
+  // const formatCurrency = (value) => {
+  //   if (!value) return "";
+  //   const number = value.toString().replace(/\./g, ""); // Elimina puntos existentes
+  //   return new Intl.NumberFormat("es-CO").format(number); // Aplica formato de moneda
+  // };
+
   const formatCurrency = (value) => {
     if (!value) return "";
-    const number = value.toString().replace(/\./g, ""); // Elimina puntos existentes
-    return new Intl.NumberFormat("es-CO").format(number); // Aplica formato de moneda
+    
+    // Permitir que el primer carácter sea un signo negativo
+    const isNegative = value.toString().startsWith("-");
+
+    // Eliminar todo lo que no sea número
+    const number = value.toString().replace(/[^0-9]/g, "");
+
+    // Si no hay número, devolver solo el signo si es negativo
+    if (!number) return isNegative ? "-" : "";
+
+    // Convertir a número y aplicar formato con puntos
+    const formatted = new Intl.NumberFormat("es-CO").format(number);
+
+    // Si es negativo, anteponer el signo "-"
+    return isNegative ? `-${formatted}` : formatted;
   };
 
   //Función para actualizar valores en la lista con formato de moneda
@@ -188,7 +207,7 @@ export const FormDialogUser = () => {
             Cancelar
           </Button>
           <Button type="submit" variant="outlined" color="primary">
-            {id ? "Editar Utilidad ocasional" : "Crear Utilidad ocasional"}
+            {id ? "Editar Utilidad ocasional" : "Crear Utilidad ocasional 1"}
           </Button>
         </DialogActions>
       </form>

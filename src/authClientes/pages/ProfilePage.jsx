@@ -152,6 +152,12 @@ export const ProfilePage = () => {
       width: 260,
       align: "right", headerAlign: "right",
     },
+    {
+      field: 'tipo',
+      headerName: 'tipo',
+      width: 260,
+      align: "right", headerAlign: "right",
+    },
   ];
 
   const columns = [

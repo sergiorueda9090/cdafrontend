@@ -711,6 +711,19 @@ export function DataTable({loggedUser}) {
                 </Typography>
               </Box>
             );
+          }else{
+            content = (
+              <Box display="flex" alignItems="center" gap={1}>
+                <Typography
+                  variant="body2"
+                  color="text.primary"
+                  noWrap
+                  sx={{ fontSize: "0.9rem", maxWidth: 180 }}
+                >
+                  {nombreCompleto}
+                </Typography>
+              </Box>
+            );
           }
 
           return renderCellWithSelections(params, content);
