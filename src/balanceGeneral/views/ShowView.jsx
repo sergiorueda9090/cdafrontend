@@ -56,7 +56,7 @@ const columns = [
         // Definir colores según el origen  
         let backgroundColor = "transparent";
         if (origen === "tarjetas") backgroundColor = "#E6F4EA"; 
-        if (origen === "Clientes") backgroundColor = "#FFF4DE"; 
+        if (origen?.startsWith("Cliente")) backgroundColor = "#FFF4DE"; 
         if (origen === "gasto") backgroundColor = "#F8D7DA";
         if (origen === "fichaproveedor") backgroundColor = "#D1ECF1";
         if (origen === "Utilidad Ocasional") backgroundColor = "#F6F0ED"; 
@@ -99,8 +99,10 @@ export const ShowView = () => {
         totalGastosGenerales,
         totalComisionesProveedores,
         totalTarjetas,
+        total_cargo_no_deseados,
+        total_recepcion_pago,
         sumaTotal, utilidades, tarjetas, clientes }    = useSelector(state => state.balancegeneralStore);
-
+  console.log(" total_cargo_no_deseados ",total_cargo_no_deseados)
   const { startDate, endDate } = useSelector(state => state.globalStore);
 
 
@@ -127,7 +129,7 @@ const data = [
   },
   {
     name: "Cargos no registrados",
-    value: totalTarjetas,
+    value: total_cargo_no_deseados,
     color: "#a9f3efff",
   }
 ];
@@ -348,7 +350,7 @@ const dataBalanceUtilidad = [
               <Typography variant="subtitle2" color="text.secondary">
                 Recepción de pagos
               </Typography>
-              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_recepcionDePagos)}</Typography>
+              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_recepcion_pago)}</Typography>
             </Box>
           </Card>
         </Grid>
@@ -367,7 +369,7 @@ const dataBalanceUtilidad = [
               <Typography variant="subtitle2" color="text.secondary">
                 Cargos no registrados
               </Typography>
-              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_recepcionDePagos)}</Typography>
+              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_cargo_no_deseados)}</Typography>
             </Box>
           </Card>
         </Grid>

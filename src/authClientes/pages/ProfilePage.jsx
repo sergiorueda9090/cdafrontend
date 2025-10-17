@@ -69,7 +69,7 @@ export const ProfilePage = () => {
       } else {
         console.warn("ID cliente no encontrado en localStorage.");
       }
-    }, 1000);
+    }, 3000);
 
     pollingRefs.current.push(intervalId);
   };
@@ -88,7 +88,7 @@ export const ProfilePage = () => {
       } else {
         console.warn("Faltan datos válidos en localStorage para getCotizadoresClienteSecond.");
       }
-    }, 1000);
+    }, 3000);
 
     pollingRefs.current.push(intervalId);
   };
@@ -123,40 +123,81 @@ export const ProfilePage = () => {
 
   const hasData = Array.isArray(data) && data.length > 0;
   const cliente = hasData ? data[0] : null;
-  console.log(" ======== cliente ======== ",cliente)
+
   const columnsRecepcion = [
-    { field: 'id',                      headerName: 'ID',                     width: 100 },
+    { field: 'id', headerName: 'ID', width: 100 },
     {
       field: 'fecha_ingreso',
       headerName: 'Fecha de Ingreso',
-      width: 320,
+      width: 250,
       valueFormatter: (params) => {
         if (!params) return "";
-        // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
         return params.slice(0, 16).replace("T", " ");
-      }
+      },
     },
     {
       field: 'fecha_transaccion',
       headerName: 'Fecha de Transacción',
-      width: 320,
+      width: 250,
       valueFormatter: (params) => {
         if (!params) return "";
-        // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
         return params.slice(0, 16).replace("T", " ");
-      }
+      },
     },
     {
       field: 'valor',
       headerName: 'Valor',
-      width: 260,
-      align: "right", headerAlign: "right",
+      width: 220,
+      align: "right",
+      headerAlign: "right",
+      renderCell: (params) => {
+        const value = params.value?.toString().replace(/\./g, "").replace(/,/g, "");
+        const numericValue = parseFloat(value) || 0;
+        const color = numericValue >= 0 ? "#2E7D32" : "#C62828"; // verde oscuro / rojo intenso
+
+        return (
+          <strong
+            style={{
+              color,
+              fontSize: "1.9rem",
+              fontWeight: "bold",
+            }}
+          >
+            {params.value}
+          </strong>
+        );
+      },
     },
     {
       field: 'tipo',
-      headerName: 'tipo',
-      width: 260,
-      align: "right", headerAlign: "right",
+      headerName: 'Origen',
+      width: 280,
+      renderCell: (params) => {
+        const origen = params.value?.toLowerCase() || "";
+        let backgroundColor = "#f0f0f0"; // color base
+
+        if (origen.includes("cotizador")) backgroundColor = "#E8F5E9"; // verde claro
+        else if (origen.includes("recepcion")) backgroundColor = "#FFF4DE"; // amarillo suave
+        else if (origen.includes("ajuste")) backgroundColor = "#E3F2FD"; // azul claro
+        else if (origen.includes("devolucion")) backgroundColor = "#F3E5F5"; // violeta suave
+        else if (origen.includes("cargo")) backgroundColor = "#FFEBEE"; // rosado suave
+
+        return (
+          <div
+            style={{
+              backgroundColor,
+              borderRadius: "10px",
+              padding: "4px 8px",
+              fontWeight: "500",
+              fontSize: "1.2rem",
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
+            {params.value}
+          </div>
+        );
+      },
     },
   ];
 

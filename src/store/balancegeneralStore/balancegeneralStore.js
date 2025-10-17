@@ -8,6 +8,8 @@ export const balancegeneralStore = createSlice({
     totalSaldoClientes: 0,
     totalGastosGenerales: 0,
     totalComisionesProveedores: 0,
+    total_cargo_no_deseados: 0,
+    total_recepcion_pago: 0,
     totalTarjetas: 0,
     patrimonioBruto:0,
     sumaTotal:0,
@@ -26,6 +28,8 @@ export const balancegeneralStore = createSlice({
       state.totalSaldoClientes = action.payload.totalSaldoClientes || 0;
       state.totalGastosGenerales = action.payload.totalGastosGenerales || 0;
       state.totalComisionesProveedores = action.payload.totalComisionesProveedores || 0;
+      state.total_cargo_no_deseados = action.payload.total_cargo_no_deseados || 0;
+      state.total_recepcion_pago = action.payload.total_recepcion_pago || 0;
       state.totalTarjetas = action.payload.totalTarjetas || 0;
       state.sumaTotal = action.payload.sumaTotal || 0;
       state.utilidades = action.payload.utilidades || 0;
@@ -38,6 +42,8 @@ export const balancegeneralStore = createSlice({
       state.totalSaldoClientes = 0;
       state.totalGastosGenerales = 0;
       state.totalComisionesProveedores = 0;
+      state.total_cargo_no_deseados = 0;
+      state.total_recepcion_pago = 0;
       state.totalTarjetas = 0;
       state.sumaTotal = 0;
       state.utilidades = 0;

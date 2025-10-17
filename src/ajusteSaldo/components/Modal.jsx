@@ -94,16 +94,43 @@ export const FormDialogUser = () => {
     dispatch(closeModalShared());
   };
 
+  // const formatCurrency = (value) => {
+  //   if (!value) return "";
+  //   const number = value.toString().replace(/\./g, ""); // Elimina puntos existentes
+  //   return new Intl.NumberFormat("es-CO").format(number); // Aplica formato de moneda
+  // };
+
+  // Permitir formato con valores negativos
   const formatCurrency = (value) => {
-    if (!value) return "";
-    const number = value.toString().replace(/\./g, ""); // Elimina puntos existentes
-    return new Intl.NumberFormat("es-CO").format(number); // Aplica formato de moneda
+    if (value === "" || value === null) return "";
+
+    // Mantener el signo negativo si existe
+    const isNegative = value.toString().startsWith("-");
+
+    // Eliminar puntos y signos negativos antes de formatear
+    const number = value.toString().replace(/\./g, "").replace(/-/g, "");
+
+    // Si no hay número válido, retornar vacío
+    if (number === "") return isNegative ? "-" : "";
+
+    const formatted = new Intl.NumberFormat("es-CO").format(number);
+    return isNegative ? `-${formatted}` : formatted;
   };
 
   //Función para actualizar valores en la lista con formato de moneda
+  // const handlePrecioLeyChange = (e) => {
+  //   const formattedValue = formatCurrency(e.target.value);
+  //   dispatch(handleFormStoreThunk({ name: 'valor', value:formattedValue }));
+  // };
+
   const handlePrecioLeyChange = (e) => {
-    const formattedValue = formatCurrency(e.target.value);
-    dispatch(handleFormStoreThunk({ name: 'valor', value:formattedValue }));
+    let value = e.target.value;
+
+    // Permitir solo números, puntos y un posible "-" al inicio
+    if (!/^[-]?\d*\.?\d*$/.test(value.replace(/\./g, ""))) return;
+
+    const formattedValue = formatCurrency(value);
+    dispatch(handleFormStoreThunk({ name: "valor", value: formattedValue }));
   };
 
   return (

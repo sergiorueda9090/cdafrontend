@@ -114,7 +114,15 @@ export const EtapaUno = () => {
     // Validar campos requeridos
     const newErrors = {};
     if (!idCliente)   newErrors.idCliente   = "Debe seleccionar un cliente.";
-    if (!placa)       newErrors.placa       = "Este campo es obligatorio.";
+    
+    //Validar placa (máximo 6 caracteres)
+    if (!placa) {
+      newErrors.placa = "Este campo es obligatorio.";
+    } else if (placa.length > 6) {
+      newErrors.placa = "La placa no puede tener más de 6 caracteres.";
+    }
+
+
     if (!cilindraje) {
       newErrors.cilindraje = "Este campo es obligatorio.";
     } else if (isNaN(cilindraje)) {

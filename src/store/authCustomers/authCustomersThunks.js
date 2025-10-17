@@ -99,7 +99,7 @@ export const getCotizadoresCliente = (clienteData) => {
 
                 localStorage.removeItem("cliente_data");
 
-                window.location.href = '/customer/customer';
+                window.location.href = '/cliente';
 
                 await dispatch(setAlert({ message: data.error, type: 'error'}));
                 
@@ -118,7 +118,7 @@ export const getCotizadoresCliente = (clienteData) => {
 
                 localStorage.removeItem("cliente_data");
 
-                window.location.href = '/customer/customer';
+                window.location.href = '/cliente';
 
                 await dispatch(setAlert({ message: error.response.data.error, type: 'error'}));
                 
@@ -252,7 +252,7 @@ export const getCotizadoresClienteSecond = (clienteData) => {
 
                 localStorage.removeItem("cliente_data");
 
-                window.location.href = '/customer/customer';
+                window.location.href = '/cliente';
 
                 await dispatch(setAlert({ message: data.error, type: 'error'}));
                 
@@ -266,7 +266,7 @@ export const getCotizadoresClienteSecond = (clienteData) => {
 
                 localStorage.removeItem("cliente_data");
 
-                window.location.href = '/customer/customer';
+                window.location.href = '/cliente';
 
                 await dispatch(setAlert({ message: error.response.data.error, type: 'error'}));
                 

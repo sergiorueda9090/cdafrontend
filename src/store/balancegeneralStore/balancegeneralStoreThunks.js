@@ -48,11 +48,14 @@ export const getAllThunks = (fechaInicio, fechaFin) => {
 
                 // Validación básica de estructura esperada
                 if (data && Array.isArray(data.datos) && data.datos.length > 0) {
+                  console.log(" data.datos ",data.datos)
                     await dispatch(listStore({
                         balanceGeneral: data.datos,
                         totalSaldoClientes: data.total_saldo_clientes,
                         totalGastosGenerales: data.total_gastos_generales,
                         totalComisionesProveedores: data.total_comisiones_proveedores,
+                        total_cargo_no_deseados: data.total_cargo_no_deseados,
+                        total_recepcion_pago: data.total_recepcion_pago,
                         totalTarjetas: data.totalTarjetas,
                         sumaTotal: data.sumaTotal,
                         utilidades:data.utilidades,
@@ -65,6 +68,8 @@ export const getAllThunks = (fechaInicio, fechaFin) => {
                         totalSaldoClientes: 0,
                         totalGastosGenerales: 0,
                         totalComisionesProveedores: 0,
+                        total_cargo_no_deseados: 0,
+                        total_recepcion_pago: 0,
                         totalTarjetas:0,
                         sumaTotal:0,
                         utilidades:0,
