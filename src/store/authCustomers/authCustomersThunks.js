@@ -84,6 +84,7 @@ export const getCotizadoresCliente = (clienteData) => {
             if (response.status === 200) {
                 
                 let data = response.data.data.filter((d) => d.pdf);
+                
                 localStorage.setItem("cliente_data", JSON.stringify({isLogin: true, token:clienteData.token, 
                                                                      username:clienteData.username, id_cliente:clienteData.id_cliente }));
 

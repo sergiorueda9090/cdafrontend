@@ -69,7 +69,7 @@ export const ProfilePage = () => {
       } else {
         console.warn("ID cliente no encontrado en localStorage.");
       }
-    }, 3000);
+    }, 1113000);
 
     pollingRefs.current.push(intervalId);
   };
@@ -88,7 +88,7 @@ export const ProfilePage = () => {
       } else {
         console.warn("Faltan datos válidos en localStorage para getCotizadoresClienteSecond.");
       }
-    }, 3000);
+    }, 1113000);
 
     pollingRefs.current.push(intervalId);
   };
@@ -125,7 +125,7 @@ export const ProfilePage = () => {
   const cliente = hasData ? data[0] : null;
 
   const columnsRecepcion = [
-    { field: 'id', headerName: 'ID', width: 100 },
+    //{ field: 'id', headerName: 'ID', width: 100 },
     {
       field: 'fecha_ingreso',
       headerName: 'Fecha de Ingreso',
@@ -394,7 +394,7 @@ export const ProfilePage = () => {
 
               <Tabs value={tabIndex} onChange={handleTabChange} sx={{ mb: 2 }}>
                 <Tab label="Información de Trámites" />
-                <Tab label="Recepción de Pago" />
+                <Tab label="Movimientos" />
               </Tabs>
                 <TabPanel value={tabIndex} index={0}>
                   {/* Barra de búsqueda */}
@@ -449,7 +449,6 @@ export const ProfilePage = () => {
 
                   <DataGrid
                       rows={data.filter((row) => {
-                        console.log("row ",row.fechaTramite)
                       // 🔍 Filtrar por buscador
                       const matchesSearch = Object.values(row).some((value) =>
                         String(value).toLowerCase().includes(searchText.toLowerCase())
@@ -521,6 +520,7 @@ export const ProfilePage = () => {
                 />
 
                 <DataGrid
+                  getRowId={(row) => row.id}
                   rows={recepcionPagoArray.filter((row) => {
                     // 🔍 Filtro por buscador
                     const matchesSearch = Object.values(row).some((value) =>
