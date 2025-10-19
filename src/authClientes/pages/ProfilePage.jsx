@@ -69,7 +69,7 @@ export const ProfilePage = () => {
       } else {
         console.warn("ID cliente no encontrado en localStorage.");
       }
-    }, 1113000);
+    }, 3000);
 
     pollingRefs.current.push(intervalId);
   };
@@ -88,7 +88,7 @@ export const ProfilePage = () => {
       } else {
         console.warn("Faltan datos válidos en localStorage para getCotizadoresClienteSecond.");
       }
-    }, 1113000);
+    }, 3000);
 
     pollingRefs.current.push(intervalId);
   };

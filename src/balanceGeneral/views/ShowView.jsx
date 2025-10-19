@@ -101,6 +101,7 @@ export const ShowView = () => {
         totalTarjetas,
         total_cargo_no_deseados,
         total_recepcion_pago,
+        total_cuatro_por_mil,
         sumaTotal, utilidades, tarjetas, clientes }    = useSelector(state => state.balancegeneralStore);
   console.log(" total_cargo_no_deseados ",total_cargo_no_deseados)
   const { startDate, endDate } = useSelector(state => state.globalStore);
@@ -319,7 +320,7 @@ const dataBalanceUtilidad = [
           </Card>
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
@@ -337,7 +338,7 @@ const dataBalanceUtilidad = [
           </Card>
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
@@ -356,7 +357,7 @@ const dataBalanceUtilidad = [
         </Grid>
 
 
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
                                 p: 2,
@@ -370,6 +371,25 @@ const dataBalanceUtilidad = [
                 Cargos no registrados
               </Typography>
               <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_cargo_no_deseados)}</Typography>
+            </Box>
+          </Card>
+        </Grid>
+
+
+        <Grid item xs={3}>
+          <Card elevation={0} sx={{
+                                borderRadius: 2,
+                                p: 2,
+                                backgroundColor: "#f5ceb7ff", // 🎨 Fondo suave
+                              }}>
+            <Box display="flex" justifyContent="space-between">
+              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
+            </Box>
+            <Box mt={2}>
+              <Typography variant="subtitle2" color="text.secondary">
+                4 X MIL
+              </Typography>
+              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_cuatro_por_mil)}</Typography>
             </Box>
           </Card>
         </Grid>

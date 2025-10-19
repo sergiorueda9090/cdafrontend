@@ -44,7 +44,34 @@ export function DataTable() {
       { field: 'username',  headerName: 'UserName', width: 180 },
       { field: 'first_name', headerName: 'First name', width: 180 },
       { field: 'last_name',  headerName: 'Last name', width: 180 },
-      { field: 'last_name',  headerName: 'Last name', width: 180 },
+      {
+        field: 'idrol',
+        headerName: 'Rol',
+        width: 180,
+        renderCell: (params) => {
+          const idRol = params.row.idrol;
+          let rolNombre = "";
+
+          switch (idRol) {
+            case 1:
+              rolNombre = "SuperAdmin";
+              break;
+            case 2:
+              rolNombre = "Admin";
+              break;
+            case 3:
+              rolNombre = "Auxiliar";
+              break;
+            case 4:
+              rolNombre = "Cliente";
+              break;
+            default:
+              rolNombre = "Desconocido";
+          }
+
+          return <span>{rolNombre}</span>;
+        },
+      },
       {
         field: 'actions',
         headerName: 'Actions',

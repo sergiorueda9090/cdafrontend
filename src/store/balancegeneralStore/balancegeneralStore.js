@@ -10,6 +10,7 @@ export const balancegeneralStore = createSlice({
     totalComisionesProveedores: 0,
     total_cargo_no_deseados: 0,
     total_recepcion_pago: 0,
+    total_cuatro_por_mil: 0,
     totalTarjetas: 0,
     patrimonioBruto:0,
     sumaTotal:0,
@@ -30,6 +31,7 @@ export const balancegeneralStore = createSlice({
       state.totalComisionesProveedores = action.payload.totalComisionesProveedores || 0;
       state.total_cargo_no_deseados = action.payload.total_cargo_no_deseados || 0;
       state.total_recepcion_pago = action.payload.total_recepcion_pago || 0;
+      state.total_cuatro_por_mil = action.payload.total_cuatro_por_mil || 0;
       state.totalTarjetas = action.payload.totalTarjetas || 0;
       state.sumaTotal = action.payload.sumaTotal || 0;
       state.utilidades = action.payload.utilidades || 0;
