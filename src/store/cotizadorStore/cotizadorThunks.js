@@ -287,7 +287,7 @@ export const showThunk= (id = "") => {
 }
 
 export const updateThunks = (data, modulo="", confirmar="") => {
-  
+    console.log(" == data modulo == ",modulo)
     return async (dispatch, getState) => {
 
         const {authStore} = getState();
@@ -324,7 +324,7 @@ export const updateThunks = (data, modulo="", confirmar="") => {
 
                 }else if(modulo == "tramite"){
 
-                    //await dispatch( getAllCotizadorTramitesThunks() );
+                    await dispatch( getAllCotizadorTramitesThunks() );
 
                 }else if(modulo == "confirmarprecio"){
 
@@ -550,7 +550,7 @@ export const getAllCotizadorTramitesThunks = () => {
         
         await dispatch(showBackDropStore());
         
-        await dispatch(listStore({'cotizadores':[]}))
+        //await dispatch(listStore({'cotizadores':[]}))
 
         const {authStore} = getState();
         const token = authStore.token
@@ -581,7 +581,7 @@ export const getAllCotizadorTramitesThunks = () => {
 
                 }else{
 
-                    await dispatch(listStore({'cotizadores':[]}))
+                    //await dispatch(listStore({'cotizadores':[]}))
 
                     await dispatch(hideBackDropStore());
                 }

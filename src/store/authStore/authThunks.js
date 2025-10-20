@@ -40,6 +40,7 @@ export const getAuth = (email,password) => {
                 const userData = userResponse.data;
 
                 await dispatch(setAuthenticated({"access":data.access, "islogin":true, "idrol":userData.idrol}));
+                
                 await dispatch(hideBackDropStore());
 
             }else{

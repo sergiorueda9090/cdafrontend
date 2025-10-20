@@ -370,7 +370,7 @@ export const FormDialogUser = () => {
                                 <option value="1">SuperAdmin</option>
                                 <option value="2">Admin</option>
                                 <option value="3">Auxiliar</option>
-                                <option value="4">Cliente</option>
+                                {/*<option value="4">Cliente</option>*/}
                             </TextField>
                         </Grid>
 
