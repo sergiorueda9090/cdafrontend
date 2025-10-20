@@ -213,6 +213,7 @@ export const FormDialogUser = () => {
                 
                 let data = {
                     id          : formValues.idUser,
+                    username    : formValues.username,
                     email       : formValues.email,
                     first_name  : formValues.first_name,
                     last_name   : formValues.last_name,
