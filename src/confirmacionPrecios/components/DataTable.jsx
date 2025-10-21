@@ -1223,6 +1223,7 @@ export function DataTable({loggedUser}) {
                     <IconButton
                       aria-label="confirmar-archivo"
                       color="success"
+                      disabled={isDisabled}
                       onClick={() =>
                         handleUploadFile(params.row.id, "confirmar")
                       }
@@ -1309,8 +1310,10 @@ export function DataTable({loggedUser}) {
       navigate(`/tramites/PageShow/${id}`);
     };
 
+    const [isDisabled, setIsDisabled] = useState(false);
+
     const handleUploadFile = (id, confirmar="") => {
-    
+      setIsDisabled(true);
       toast(
         ({ closeToast }) => (
           <div>
@@ -1319,6 +1322,7 @@ export function DataTable({loggedUser}) {
               onClick={() => {
                 closeToast();
                 handleUploadFileConfirmar(id, confirmar); // Confirmar eliminación
+                setIsDisabled(false);
               }}
               style={{
                 marginRight: '10px',
@@ -1332,7 +1336,12 @@ export function DataTable({loggedUser}) {
               Sí, Confirmar
             </button>
             <button
-              onClick={closeToast} // Cancelar eliminación
+  
+              onClick={() => {
+                closeToast();
+                setIsDisabled(false);
+              }}
+
               style={{
                 backgroundColor: 'gray',
                 color: 'white',
