@@ -581,7 +581,7 @@ export const getAllCotizadorTramitesThunks = () => {
 
                 }else{
 
-                    //await dispatch(listStore({'cotizadores':[]}))
+                    await dispatch(listStore({'cotizadores':[]}))
 
                     await dispatch(hideBackDropStore());
                 }
