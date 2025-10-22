@@ -20,7 +20,7 @@ import { createExcelThunks, createTramiteExcelThunks } from "../../store/cotizad
 import { useDispatch } from "react-redux";
 
 export const ExcelUploader = ({modulo}) => {
-console.log("=== ExcelUploader modulo ==== ",modulo)
+
   const dispatch = useDispatch();
   const [data, setData] = useState([]);
   const [fileName, setFileName] = useState("");
@@ -70,8 +70,8 @@ console.log("=== ExcelUploader modulo ==== ",modulo)
           errors.push("Año de modelo inválido (mínimo 1960)");
         }
 
-        if (isNaN(cilindraje) || cilindraje < 80 || cilindraje > 22000) {
-          errors.push("Cilindraje inválido (80 - 22000)");
+        if (isNaN(cilindraje) || cilindraje < 80 || cilindraje > 22000 || cilindraje === 100) {
+          errors.push("Cilindraje inválido (80 - 22000, no puede ser 100)");
         }
 
         if (!numeroDocumento || numeroDocumento.length < 5) {
