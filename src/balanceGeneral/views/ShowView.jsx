@@ -39,12 +39,30 @@ const columns = [
       width: 350,
       align: "right",
       headerAlign: "right",
-      valueFormatter: (params) => new Intl.NumberFormat('es-CO').format(params.value),
-      renderCell: (params) => (
-        <span style={{ color: params.value < 0 ? "red" : "green", fontWeight: "bold", fontSize:"26px" }}>
-          {new Intl.NumberFormat('es-CO').format(params.value)}
-        </span>
-      )
+      valueFormatter: (params) => {
+        const value = Number(params.value);
+        if (isNaN(value)) return "$0";
+        return new Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+          minimumFractionDigits: 0,
+        }).format(value);
+      },
+      renderCell: (params) => {
+        const value = Number(params.value);
+        const color = value < 0 ? "red" : "green";
+        const safeValue = isNaN(value) ? 0 : value;
+
+        return (
+          <span style={{ color, fontWeight: "bold", fontSize: "26px" }}>
+            {new Intl.NumberFormat('es-CO', {
+              style: 'currency',
+              currency: 'COP',
+              minimumFractionDigits: 0,
+            }).format(safeValue)}
+          </span>
+        );
+      }
     },
     {
       field: "origen",
