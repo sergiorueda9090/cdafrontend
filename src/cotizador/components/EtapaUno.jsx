@@ -127,7 +127,7 @@ export const EtapaUno = () => {
       newErrors.cilindraje = "Este campo es obligatorio.";
     } else if (isNaN(cilindraje)) {
       newErrors.cilindraje = "El cilindraje debe ser un número válido.";
-    } else if (cilindraje === 100) {
+    } else if (cilindraje == 100) {
       newErrors.cilindraje = "El cilindraje no puede ser 100 cc.";
     } else if (cilindraje < 80) {
       newErrors.cilindraje = "El cilindraje no puede ser menor a 80 cc.";

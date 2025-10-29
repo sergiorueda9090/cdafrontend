@@ -8,62 +8,57 @@ import { listStore, showStore  } from "./historialtramitesemitidosStore.js";
 // Función asincrónica para obtener los Pokemons
 const urlPatter = "historialtramitesemitidos";
 
-export const getAllThunks = (fechaInicio, fechaFin, query="") => {
+export const getAllThunks = (fechaInicio = "", fechaFin = "", query = "", page = 1, pageSize = 15) => {
+  return async (dispatch, getState) => {
+    await dispatch(showBackDropStore());
 
-    return async (dispatch, getState) => {
-        await dispatch(showBackDropStore());
-        
-        const { authStore } = getState();
-        const token = authStore.token;
+    const { authStore } = getState();
+    const token = authStore.token;
 
-        // Construir la URL con los parámetros de fecha
-        let url = `${URL}/${urlPatter}/api/historialtramitesemitidos/`;
+    // Construcción base de la URL
+    let url = `${URL}/${urlPatter}/api/historialtramitesemitidos/`;
 
-        // Construcción de parámetros
-        const params = new URLSearchParams();
-        if (fechaInicio) params.append("fechaInicio", fechaInicio);
-        if (fechaFin)    params.append("fechaFin", fechaFin);
-        if (query.trim()) params.append("q", query.trim());
+    // Parámetros dinámicos
+    const params = new URLSearchParams();
+    if (fechaInicio) params.append("fechaInicio", fechaInicio);
+    if (fechaFin) params.append("fechaFin", fechaFin);
+    if (query.trim()) params.append("q", query.trim());
+    
+    // ✅ Paginación
+    params.append("page", page);
+    params.append("page_size", pageSize);
 
-        // Agregar parámetros si existen
-        if ([...params].length > 0) {
-            url += `?${params.toString()}`;
-        }
+    // Concatenar los parámetros a la URL
+    url += `?${params.toString()}`;
 
-        // Agregar las fechas a los parámetros de la URL si existen
-        /*if (fechaInicio || fechaFin) {
-            const params = new URLSearchParams();
-            if (fechaInicio) params.append("fecha_inicio", fechaInicio);
-            if (fechaFin) params.append("fecha_fin", fechaFin);
-            url += `?${params.toString()}`;
-        }*/
-
-        const options = {
-            method: "GET",
-            url: url,
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        };
-
-        try {
-            // Hacer la solicitud
-            const response = await axios.request(options);
-
-            if (response.status === 200) {
-                let data = response.data;
-
-                // Si hay datos, actualizar el store
-                await dispatch(listStore({ historial: data.length > 0 ? data : [], dateFilter: true }));
-            }
-
-        } catch (error) {
-            console.error("Error al obtener historial:", error);
-        }
-
-        // Ocultar el loader sin importar si hubo éxito o error
-        await dispatch(hideBackDropStore());
+    const options = {
+      method: "GET",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     };
+
+    try {
+      const response = await axios.request(options);
+
+      if (response.status === 200) {
+        const data = response.data.results;
+
+        await dispatch(
+          listStore({
+            historial: data.length > 0 ? data : [],
+            dateFilter: true,
+            count: response.data.count, // ✅ número total de registros
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Error al obtener historial:", error);
+    }
+
+    await dispatch(hideBackDropStore());
+  };
 };
 
 export const sendToThunk= (id = "") => {

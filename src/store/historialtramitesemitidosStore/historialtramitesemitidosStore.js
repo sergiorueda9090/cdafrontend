@@ -33,11 +33,13 @@ export const historialtramitesemitidosStore = createSlice({
     image_usuario : "",
     nombre_cliente: "",
     color_cliente : "",
-    color_etiqueta: ""
+    color_etiqueta: "",
+    count: 0
   },
   reducers: {
     listStore:(state,action) => {
       state.historial = action.payload.historial;
+      state.count     = action.payload.count;
     },
     resetFormularioStore:(state) => {
       state.historial = [];
