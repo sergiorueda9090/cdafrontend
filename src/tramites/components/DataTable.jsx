@@ -173,11 +173,15 @@ export function DataTable({loggedUser}) {
     };
     
     const handleCopyToClipboard = (text, id="") => {
+
       navigator.clipboard.writeText(text).then(() => {
+        
         if(id != ""){
           mostrarToast(id, text.row.placa)
         }
+
       });
+      
     };
    
     const getPastelColor = () => {
@@ -275,7 +279,7 @@ export function DataTable({loggedUser}) {
       setLoading(false);
       setIdRow("");
 
-      await toast.success(`✅ Pago confirmado con éxito. ${placa}`, {
+      toast.success(`✅ Pago confirmado con éxito. ${placa}`, {
         position: "bottom-right",
         autoClose: 5000,
       });
@@ -297,10 +301,11 @@ export function DataTable({loggedUser}) {
       setLoading(false);
       setIdRow("");
 
-      await toast.error("❌ No pudiste realizar el pago.", {
+      toast.error("❌ No pudiste realizar el pago.", {
         position: "bottom-right",
         autoClose: 1500,
       });
+
     };
 
     const handleDevolver = (data="") => {
@@ -420,6 +425,7 @@ export function DataTable({loggedUser}) {
     const [ws, setWs] = useState(null);
     const [cellSelections, setCellSelections] = useState({});
     const [rowSelections, setRowSelections]   = useState({});
+    const [loadingRows, setLoadingRows] = useState({});
     const userColorsRef = useRef({}); // usar ref para que no se reinicie en cada render
 
     // asignar color único determinista a cada usuario
@@ -574,6 +580,7 @@ export function DataTable({loggedUser}) {
           case "initial_state":
             setRowSelections(message.rowSelections || {});
             setCellSelections(message.cellSelections || {});
+            setLoadingRows(message.loadingStates || {});
             break;
 
           case "cell_click":
@@ -592,10 +599,16 @@ export function DataTable({loggedUser}) {
             handleUpdateEmail(message);
             break;
           case "copy_link":
+            setLoadingRows(prev => ({ ...prev, [message.rowId]: true }));
             handleCopyLink(message);
             break;
           case "stop_loading":
             handleStopLoading();
+            setLoadingRows(prev => {
+                const updated = { ...prev };
+                delete updated[message.rowId]; // 🔥 remover el loading
+                return updated;
+              });
             break;
           case "refresh_request_cotizador":
             handleRefreshRequest();
@@ -934,55 +947,74 @@ export function DataTable({loggedUser}) {
         headerName: "Link de Pago",
         width: 200,
         renderCell: (params) => {
-        
+          const isLoading = loadingRows[params.row.id];
+          console.log("params.row.id ", params.row.id);
+          console.log("isLoading ", isLoading);
+
           const handleCopy = () => {
+            if (isLoading) {
+
+              if (ws && ws.readyState === WebSocket.OPEN) {
+                  ws.send( JSON.stringify({ type: "stop_loading", rowId: params.row.id, }) );
+                  toast.dismiss();
+                }
+                
+              // 👇 Si ya está en carga, lo devolvemos al estado normal
+
+              return;
+            }
+
+            // Si no hay correo, mostramos error
             if (!params.row.correo || params.row.correo.trim() === "") {
               toast.error("❌ El correo es obligatorio para confirmar el pago.", {
                 position: "bottom-right",
                 autoClose: 5000,
               });
-              return; // Detiene la ejecución si el correo es inválido
+              return;
             }
+
+            // ✅ Activamos el estado de carga
+            setLoadingRows((prev) => ({
+              ...prev,
+              [params.row.id]: true,
+            }));
 
             if (ws && ws.readyState === WebSocket.OPEN) {
-                  ws.send(
-                    JSON.stringify({
-                      type: "copy_link",
-                      user: loggedUser,
-                      rowId: params.row.id,
-                    })
-                  );
-                }
-
-            let url = params.value;
-
-            // Check if the URL starts with "https://", if not, prepend it
-            if (!url.startsWith("https://")) {
-                url = `https://${url}`;
+              ws.send(
+                JSON.stringify({
+                  type: "copy_link",
+                  user: loggedUser,
+                  rowId: params.row.id,
+                })
+              );
             }
 
-            setIdRow(params.row.id);
-
-            setLoading(true); // Muestra la imagen de carga
-
-            handleCopyToClipboard(params, params.id);
-
-            setTimeout(() => setLoading(false), 180000); // Simula un tiempo de espera
+            let url = params.value;
+            if (!url.startsWith("https://")) {
+              url = `https://${url}`;
+            }
 
             navigator.clipboard.writeText(params.value).then(() => {
-              window.open(`${url}`, "_blank");
-            }).catch(err => {
-              console.error("Error al copiar:", err);
-              setLoading(false);
+              window.open(url, "_blank");
+              mostrarToast(params.row.id, params.row.placa);
             });
-
           };
-    
+
+
           const content = (
             <>
               {params.value && (
                 <>
-                  {!loading ? (
+                  {isLoading ? ( // ✅ solo dependemos de isLoading
+                    <Tooltip title="Cargando link de pago...">
+                      <img
+                        src={smallLoading}
+                        alt="Cargando"
+                        style={{ width: 24, height: 24 }}
+                        onClick={handleCopy}
+                      />
+                    </Tooltip>
+                  ) : (
                     <Tooltip title="Copiar link de pago">
                       <IconButton
                         aria-label="Copiar link de pago"
@@ -993,31 +1025,16 @@ export function DataTable({loggedUser}) {
                         <ContentCopyIcon />
                       </IconButton>
                     </Tooltip>
-                  ) : idRow === params.row.id ? (
-                    <Tooltip title="Link de pago copiado">
-                      <img
-                        src={smallLoading}
-                        alt="Cargando"
-                        style={{ width: 24, height: 24 }}
-                      />
-                    </Tooltip>
-                  ) : (<Tooltip title="Copiar link de pago">
-                    <IconButton
-                      aria-label="Copiar link de pago"
-                      onClick={handleCopy}
-                      color="success"
-                      size="small"
-                    >
-                      <ContentCopyIcon />
-                    </IconButton>
-                  </Tooltip>)}
+                  )}
                 </>
               )}
             </>
           );
+
           return renderCellWithSelections(params, content);
         },
       },
+
       {
         field: "correo",
         headerName: "Email",
@@ -1222,16 +1239,7 @@ export function DataTable({loggedUser}) {
         renderCell: (params) => {
           
           const content = (<>
-          {/* Botón de Editar 
-          <Tooltip title="Editar" arrow>
-            <IconButton
-              aria-label="edit"
-              onClick={() => handleEdit(params.row)}
-              color="primary"
-            >
-              <EditIcon />
-            </IconButton>
-          </Tooltip>*/}
+ 
     
           {/* Botón de Logs (Mostrar detalles) */}
           <Tooltip title="Ver detalles" arrow>
