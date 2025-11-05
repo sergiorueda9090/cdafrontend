@@ -68,33 +68,18 @@ export function DataTable() {
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "nombre_usuario", headerName: "Usuario", width: 120 },
-    { field: "nombre_cliente", headerName: "Cliente", width: 150 },
-    { field: "placa", headerName: "Placa", width: 120 },
-    { field: "modelo", headerName: "Modelo", width: 100 },
-    { field: "telefono", headerName: "Teléfono", width: 150 },
-    { field: "correo", headerName: "Correo", width: 200 },
-    {
-      field: "linkPago",
-      headerName: "Link de Pago",
-      width: 200,
-      renderCell: (params) =>
-        params.value ? (
-          <Tooltip title="Copiar">
-            <ContentCopyIcon
-              style={{ cursor: "pointer", color: "green" }}
-              onClick={() => handleCopy(params.value)}
-            />
-          </Tooltip>
-        ) : "No disponible",
-    },
-    { field: "total", headerName: "Total", width: 120 },
     {
       field: "fechaCreacion",
       headerName: "Fecha Creación",
       width: 200,
       valueGetter: (params) => params ? params.slice(0, 16).replace("T", " ") : ""
     },
+    { field: "nombre_usuario", headerName: "Usuario", width: 120 },
+    { field: "nombre_cliente", headerName: "Cliente", width: 150 },
+    { field: "placa", headerName: "Placa", width: 120 },
+    { field: "precioDeLey", headerName: "Precio de Ley", width: 150 },
+    { field: "comisionPrecioLey", headerName: "Comisión", width: 120 },
+    { field: "total", headerName: "Total", width: 120 },
     {
       field: "pdf",
       headerName: "PDF",
@@ -120,6 +105,28 @@ export function DataTable() {
         );
       },
     },
+    { field: "cilindraje", headerName: "Cilindraje", width: 100 },
+    { field: "modelo", headerName: "Modelo", width: 100 },
+    { field: "chasis", headerName: "Chasis", width: 100 },
+    { field: "tipoDocumento", headerName: "Tipo de Documento", width: 100 },
+    { field: "numeroDocumento", headerName: "Número de Documento", width: 150 },
+    { field: "correo", headerName: "Correo", width: 200 },
+    { field: "telefono", headerName: "Teléfono", width: 150 },
+    {
+      field: "linkPago",
+      headerName: "Link de Pago",
+      width: 200,
+      renderCell: (params) =>
+        params.value ? (
+          <Tooltip title="Copiar">
+            <ContentCopyIcon
+              style={{ cursor: "pointer", color: "green" }}
+              onClick={() => handleCopy(params.value)}
+            />
+          </Tooltip>
+        ) : "No disponible",
+    },
+    
     {
       field: 'actions',
       headerName: 'Acciones',

@@ -742,13 +742,13 @@ export function DataTable({loggedUser}) {
             <>
               {/* Mostrar icono de subir archivo SOLO si no hay archivo cargado */}
               {!archivoFile && !isFileUploaded && (
-                <Tooltip title="Subir archivo">
+                <Tooltip title="Subir archivo pdf">
                   <IconButton
                     aria-label="upload"
                     color="primary"
                     onClick={() => handleOpenFileDialog(params.row)}
                   >
-                    <UploadFileIcon />
+                    <UploadFileIcon sx={{ color: '#D32F2F', fontSize: 30 }} />
                   </IconButton>
                 </Tooltip>
               )}

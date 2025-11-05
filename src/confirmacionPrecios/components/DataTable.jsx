@@ -1147,7 +1147,7 @@ export function DataTable({loggedUser}) {
 
               {/* Subir archivo SOLO si no hay archivo cargado */}
               {!archivoFile && !isFileUploaded && (
-                <Tooltip title="Subir Image">
+                <Tooltip title="Subir Imagen">
                   <IconButton
                     aria-label="upload"
                     color="primary"
@@ -1359,7 +1359,7 @@ export function DataTable({loggedUser}) {
 
     }
 
-    const handleUploadFileConfirmar = (id, confirmar='') => {
+    {/*const handleUploadFileConfirmar = (id, confirmar='') => {
     
       let comisionproveedor = columnsConfirmacionPrecios.filter(item => item.id_row === id)[0]?.comisionProveedor || 0;
       let etiqueta          = columnsConfirmacionPrecios.filter(item => item.id_row === id)[0]?.etiqueta || '';
@@ -1418,7 +1418,7 @@ export function DataTable({loggedUser}) {
       if (!file) {
         alert("Por favor selecciona una imagen.");
         return;
-    }
+      }
 
       const allowedImageTypes = [
                                   'image/jpeg',
@@ -1478,7 +1478,107 @@ export function DataTable({loggedUser}) {
     }
 
     
-    }
+    }*/}
+
+    const handleUploadFileConfirmar = (id, confirmar = '') => {
+
+      const row = columnsConfirmacionPrecios.find(item => item.id_row === id) || {};
+      const {
+        comisionProveedor = "0",
+        etiqueta = "",
+        idBanco = "",
+        idProveedor = ""
+      } = row;
+
+      console.log("=== etiquetaNombre ===", etiqueta);
+
+      // Parseo de comisión
+      let comision = 0;
+      if (comisionProveedor && comisionProveedor.trim() !== "") {
+        comision = parseFloat(comisionProveedor.replace(/\./g, '')) || 0;
+
+        if (etiqueta.toLowerCase() !== "seguros generales") {
+          comision = -Math.abs(comision); // Asegura que sea negativo
+        }
+      }
+
+      // Validación especial para Elvin y Amalfi
+      if (etiqueta && (etiqueta.toLowerCase() === 'elvin' || etiqueta.toLowerCase() === 'amalfi')) {
+        if (comision === 0) {
+          alert("Por favor ingresa una comisión");
+          return;
+        }
+      }
+
+      if (etiqueta.toLowerCase() !== "seguros generales") {
+        comision = -Math.abs(comision);
+      }
+
+      // Validaciones de datos base
+      if (!idBanco && etiqueta === "seguros generales") {
+        alert("Por favor selecciona una Tarjeta.");
+        return;
+      }
+
+      if (!idProveedor) {
+        alert("Por favor selecciona un proveedor.");
+        return;
+      }
+
+      // === VALIDACIÓN DE IMAGEN OPCIONAL ===
+      const entries = Object.entries(fileUpload); // [[13, File], [12, File], ...]
+      const file = entries.find(([key]) => Number(key) === id)?.[1];
+
+      const allowedImageTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'image/svg+xml'
+      ];
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+
+      if (file) {
+        const fileName = file.name;
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+
+        if (!allowedImageTypes.includes(file.type)) {
+          alert("Por favor sube solo archivos de imagen (JPEG, PNG, GIF, WEBP o SVG).");
+          return;
+        }
+
+        if (!allowedExtensions.includes(fileExtension)) {
+          alert("Tipo de archivo no permitido. Sube solo imágenes con extensión .jpg, .jpeg, .png, .gif, .webp o .svg");
+          return;
+        }
+      }
+
+      // === ENVÍO DE DATOS ===
+      dispatch(updateThunks(
+        {
+          id,
+          archivo: file || null, // si no hay imagen, se envía null
+          idBanco,
+          confirmacionPreciosModulo: 0,
+          cotizadorModulo: 0,
+          pdfsModulo: 1,
+          tramiteModulo: 0,
+          idProveedor,
+          comisionproveedor: comision
+        },
+        'confirmarprecio',
+        confirmar
+      ));
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: "refresh_request_cotizador",
+          rowId: id,
+          ser: loggedUser,
+        }));
+      }
+
+    };
     
     const paginationModel = { page: 0, pageSize: 15 };
 
