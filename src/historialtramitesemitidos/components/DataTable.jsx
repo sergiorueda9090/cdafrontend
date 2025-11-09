@@ -24,7 +24,7 @@ export function DataTable() {
   // ✅ Estado de paginación controlada
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
-    pageSize: 30,
+    pageSize: 20,
   });
 
   //Cargar datos al cambiar de página
@@ -80,6 +80,7 @@ export function DataTable() {
     { field: "precioDeLey", headerName: "Precio de Ley", width: 150 },
     { field: "comisionPrecioLey", headerName: "Comisión", width: 120 },
     { field: "total", headerName: "Total", width: 120 },
+    { field: "nombre_tarjeta", headerName: "Tarjeta", width: 120 },
     {
       field: "pdf",
       headerName: "PDF",
