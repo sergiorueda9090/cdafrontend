@@ -25,6 +25,7 @@ import { RoutesFichaProveedores }       from '../fichaproveedores/routes/Routes'
 
 import { RoutesTarjetas }               from '../registroTarjetas/routes/Routes';
 import { PageMain as FichaCliente }     from '../fichaClientes/pages/PageMain';
+import { PageMain as FichaClienteGrupo }     from '../fichaClientesGrupo/pages/PageMain';
 
 
 import { PageMain as RecepcionPago }    from '../recepcionPago/pages/PageMain';
@@ -69,6 +70,7 @@ export const AppRouter = () => {
                 <Route path="/fichaproveedores/*"     element={ <RoutesFichaProveedores /> } />
 
                 <Route path="/fichaCliente"           element={ <FichaCliente /> } />
+                <Route path="/fichaClienteGrupo"      element={ <FichaClienteGrupo /> } />
                 {/*<Route path="/verify"                 element={ <Verify /> }    />*/}
 
                 <Route path="/recepcionpago"          element={ <RecepcionPago />} />

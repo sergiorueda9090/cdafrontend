@@ -19,6 +19,7 @@ import { gastosStore }                from './gastosStore/gastosStore';
 import { gastosGeneralesStore }       from './gastosGeneralesStore/gastosGeneralesStore';
 import { utilidadOcacionalStore }     from './utilidadOcacionalStore/utilidadOcacionalStore';
 import { fichaClienteStore }          from './fichaClienteStore/fichaClienteStore';
+import { fichaClienteGrupoStore }    from './fichaClienteGrupoStore/fichaClienteGrupoStore';
 import { archivocotizacionesantiguasStore } from './archivocotizacionesantiguasStore/archivocotizacionesantiguasStore';
 import { historialtramitesemitidosStore } from './historialtramitesemitidosStore/historialtramitesemitidosStore';
 import { proveedoresStore }           from './proveedoresStore/proveedoresStore';
@@ -58,5 +59,6 @@ export const store = configureStore({
     utilidadStore         : utilidadStore.reducer,
     authCustomerStore     : authCustomerStore.reducer,
     cargosNoRegistradostore : cargosNoRegistradostore.reducer,
+    fichaClienteGrupoStore : fichaClienteGrupoStore.reducer,
   }
 })

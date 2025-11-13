@@ -482,7 +482,7 @@ const dataBalanceUtilidad = [
               </Typography>
             </Paper>*/}
 
-            <DataGrid
+            {/*<DataGrid
               rows={enhancedDashboardData}
               columns={columns}
               pageSize={5}
@@ -498,7 +498,7 @@ const dataBalanceUtilidad = [
                 borderRadius: 2,
                 boxShadow: '0 0 8px rgba(0,0,0,0.1)'
               }}
-            />
+            />*/}
           </Paper>
         </Grid>
 

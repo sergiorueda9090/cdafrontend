@@ -29,6 +29,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import GroupsIcon from '@mui/icons-material/Groups';
 import MoneyOffIcon from '@mui/icons-material/MoneyOff';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import { useSelector } from 'react-redux';
 
@@ -64,6 +65,7 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Balance General',                      icon: <AssuredWorkloadIcon />,  route: '/balancegeneral' },
         { text: 'Utilidades',                           icon: <MonetizationOnIcon />,   route: '/utilidad' },
         { text: 'Ficha del Cliente',                    icon: <ContactPageIcon />,      route: '/fichaCliente' },
+        { text: 'Ficha del Cliente Grupo',              icon: <AccountCircleIcon />,    route: '/fichaClienteGrupo' },
         { text: 'Archivo de cotizaciones antiguas',     icon: <FolderIcon />,           route: '/archivocotizacionesantiguas' },
         { text: 'Historial Tramites emitidos',          icon: <HistoryEduIcon />,       route: '/historialtramitesemitidos' },
     ];
