@@ -31,9 +31,6 @@ export function DataTable() {
     (state) => state.fichaClienteGrupoStore
   );
 
-  // =========================================
-  // 🔎 Buscador principal
-  // =========================================
   const [search, setSearch] = useState("");
 
   const filteredData = useMemo(() => {
@@ -44,11 +41,8 @@ export function DataTable() {
     );
   }, [search, fichasClienteGrupo]);
 
-  // =========================================
-  // 📄 Paginación principal
-  // =========================================
   const pageOptions = [5, 10, 25, 50, "ALL"];
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(1);
 
   const paginatedData = useMemo(() => {
@@ -57,9 +51,6 @@ export function DataTable() {
     return filteredData.slice(start, start + rowsPerPage);
   }, [page, rowsPerPage, filteredData]);
 
-  // =========================================
-  // 🔽 Expandir filas
-  // =========================================
   const [expandedRow, setExpandedRow] = useState(null);
 
   const handleExpand = (id) => {
@@ -72,7 +63,7 @@ export function DataTable() {
         Fichas de Clientes Agrupado
       </Typography>
 
-      {/* BUSCADOR PRINCIPAL */}
+      {/* BUSCADOR */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
         <SearchIcon sx={{ mr: 1, color: "gray" }} />
         <TextField
@@ -88,7 +79,7 @@ export function DataTable() {
         />
       </Box>
 
-      {/* SELECT DE FILAS + CONTADOR DE REGISTROS */}
+      {/* SELECT + CONTADOR */}
       <Box
         sx={{
           display: "flex",
@@ -127,69 +118,78 @@ export function DataTable() {
       <TableContainer component={Paper} sx={{ borderRadius: "10px" }}>
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+            <TableRow sx={{ backgroundColor: "#F7C548" }}>
               <TableCell />
-              <TableCell>
-                <strong>Cliente</strong>
+              <TableCell sx={{ fontWeight: "bold", color: "#000" }}>
+                Cliente
               </TableCell>
-              <TableCell>
-                <strong>Total</strong>
+              <TableCell sx={{ fontWeight: "bold", color: "#000" }}>
+                Total
               </TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {paginatedData.map((row, index) => (
-              <React.Fragment key={index}>
-                {/* FILA PRINCIPAL */}
-                <TableRow hover>
-                  <TableCell width={60}>
-                    <IconButton onClick={() => handleExpand(index)}>
-                      {expandedRow === index ? (
-                        <ExpandLessIcon />
-                      ) : (
-                        <ExpandMoreIcon />
-                      )}
-                    </IconButton>
-                  </TableCell>
+            {paginatedData.map((row, index) => {
+              const bg = index % 2 === 0 ? "#FFF7E6" : "#FFFDF7";
 
-                  <TableCell sx={{ fontSize: "18px", fontWeight: "bold" }}>
-                    {row.cliente}
-                  </TableCell>
-
-                  <TableCell
+              return (
+                <React.Fragment key={index}>
+                  <TableRow
+                    hover
                     sx={{
-                      color: row.total < 0 ? "red" : "green",
-                      fontWeight: "bold",
-                      fontSize: "20px",
+                      backgroundColor: bg,
+                      "&:hover": { backgroundColor: "#FCECC2" },
                     }}
                   >
-                    {new Intl.NumberFormat("es-CO", {
-                      style: "currency",
-                      currency: "COP",
-                    }).format(row.total)}
-                  </TableCell>
-                </TableRow>
+                    <TableCell width={60}>
+                      <IconButton onClick={() => handleExpand(index)}>
+                        {expandedRow === index ? (
+                          <ExpandLessIcon />
+                        ) : (
+                          <ExpandMoreIcon />
+                        )}
+                      </IconButton>
+                    </TableCell>
 
-                {/* FILA EXPANDIDA */}
-                <TableRow>
-                  <TableCell colSpan={3} sx={{ p: 0, border: 0 }}>
-                    <Collapse
-                      in={expandedRow === index}
-                      timeout="auto"
-                      unmountOnExit
+                    <TableCell sx={{ fontSize: "18px", fontWeight: "bold" }}>
+                      {row.cliente}
+                    </TableCell>
+
+                    <TableCell
+                      sx={{
+                        color: row.total < 0 ? "red" : "green",
+                        fontWeight: "bold",
+                        fontSize: "20px",
+                      }}
                     >
-                      <SubTables row={row} />
-                    </Collapse>
-                  </TableCell>
-                </TableRow>
-              </React.Fragment>
-            ))}
+                      {new Intl.NumberFormat("es-CO", {
+                        style: "currency",
+                        currency: "COP",
+                      }).format(row.total)}
+                    </TableCell>
+                  </TableRow>
+
+                  {/* FILA EXPANDIDA */}
+                  <TableRow>
+                    <TableCell colSpan={3} sx={{ p: 0, border: 0 }}>
+                      <Collapse
+                        in={expandedRow === index}
+                        timeout="auto"
+                        unmountOnExit
+                      >
+                        <SubTables row={row} />
+                      </Collapse>
+                    </TableCell>
+                  </TableRow>
+                </React.Fragment>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/* PAGINACIÓN PRINCIPAL */}
+      {/* PAGINACIÓN */}
       {rowsPerPage !== "ALL" && (
         <Stack direction="row" justifyContent="center" mt={2}>
           <Pagination
@@ -205,31 +205,56 @@ export function DataTable() {
   );
 }
 
-// =======================================================
-// ⭐ SUBTABLAS: Movimientos + Cotizadores
-// =======================================================
+/* =======================================================
+   SUBTABLAS
+======================================================== */
 function SubTables({ row }) {
   const [activeTab, setActiveTab] = useState("movimientos");
   const pageOptions = [5, 10, 25, 50, "ALL"];
 
-  // =======================================================
-  // 🔎 MOVIMIENTOS
-  // =======================================================
+  /* =======================
+     MOVIMIENTOS
+  ========================== */
   const [searchMov, setSearchMov] = useState("");
 
   const filteredMov = useMemo(() => {
-    return row.movimientos.filter(
-      (m) =>
-        m.tipo.toLowerCase().includes(searchMov.toLowerCase()) ||
-        m.origen.toLowerCase().includes(searchMov.toLowerCase()) ||
-        (m.observacion || "")
-          .toLowerCase()
-          .includes(searchMov.toLowerCase())
-    );
+    const term = searchMov.toLowerCase().trim();
+
+    return row.movimientos.filter((m) => {
+      const tipo = (m.tipo || "").toLowerCase();
+      const origen = (m.origen || "").toLowerCase();
+      const observacion = (m.observacion || "").toLowerCase();
+      const placa = (m.placa || "").toLowerCase();
+      const cilindraje = (m.cilindraje || "").toString().toLowerCase();
+      const anio = (m.anio || "").toString().toLowerCase();
+      const valor = (m.valor || "").toString().toLowerCase();
+
+      const fecha = (
+        m.fecha ||
+        m.fecha_ingreso ||
+        m.fecha_transaccion ||
+        ""
+      )
+        .toString()
+        .slice(0, 16)
+        .replace("T", " ")
+        .toLowerCase();
+
+      return (
+        tipo.includes(term) ||
+        origen.includes(term) ||
+        observacion.includes(term) ||
+        placa.includes(term) ||
+        cilindraje.includes(term) ||
+        anio.includes(term) ||
+        valor.includes(term) ||
+        fecha.includes(term)
+      );
+    });
   }, [searchMov, row.movimientos]);
 
   const [movPage, setMovPage] = useState(1);
-  const [movPerPage, setMovPerPage] = useState(5);
+  const [movPerPage, setMovPerPage] = useState(10);
 
   const paginatedMov = useMemo(() => {
     if (movPerPage === "ALL") return filteredMov;
@@ -237,9 +262,9 @@ function SubTables({ row }) {
     return filteredMov.slice(start, start + movPerPage);
   }, [filteredMov, movPage, movPerPage]);
 
-  // =======================================================
-  // 🔎 COTIZADORES
-  // =======================================================
+  /* =======================
+     COTIZADORES
+  ========================== */
   const [searchCot, setSearchCot] = useState("");
 
   const filteredCot = useMemo(() => {
@@ -249,7 +274,7 @@ function SubTables({ row }) {
   }, [searchCot, row.cotizador]);
 
   const [cotPage, setCotPage] = useState(1);
-  const [cotPerPage, setCotPerPage] = useState(5);
+  const [cotPerPage, setCotPerPage] = useState(10);
 
   const paginatedCot = useMemo(() => {
     if (cotPerPage === "ALL") return filteredCot;
@@ -260,22 +285,20 @@ function SubTables({ row }) {
   return (
     <Card sx={{ m: 1 }}>
       <CardContent>
-        {/* TABS */}
         <Tabs
           value={activeTab}
           onChange={(e, v) => setActiveTab(v)}
           sx={{ mb: 2 }}
         >
           <Tab label="Movimientos" value="movimientos" />
-          <Tab label="Cotizadores" value="cotizador" />
+          <Tab label="SOAT" value="cotizador" />
         </Tabs>
 
-        {/* ===================================================== */}
-        {/* TAB: MOVIMIENTOS */}
-        {/* ===================================================== */}
+        {/* =======================
+           TAB MOVIMIENTOS
+        ======================= */}
         {activeTab === "movimientos" && (
           <>
-            {/* BUSCADOR + SELECT + CONTADOR */}
             <Box
               sx={{
                 display: "flex",
@@ -335,56 +358,61 @@ function SubTables({ row }) {
             {/* TABLA MOVIMIENTOS */}
             <Table size="small">
               <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <strong>Tipo</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Origen</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Observación</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Valor</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Fecha</strong>
-                  </TableCell>
+                <TableRow sx={{ backgroundColor: "#F7C548" }}>
+                  <TableCell><strong>Tipo</strong></TableCell>
+                  <TableCell><strong>Origen</strong></TableCell>
+                  <TableCell><strong>Año</strong></TableCell>
+                  <TableCell><strong>Cilindraje</strong></TableCell>
+                  <TableCell><strong>Placa</strong></TableCell>
+                  <TableCell><strong>Observación</strong></TableCell>
+                  <TableCell><strong>Valor</strong></TableCell>
+                  <TableCell><strong>Fecha</strong></TableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {paginatedMov.map((m, i) => (
-                  <TableRow key={i}>
-                    <TableCell sx={{ fontSize: "16px" }}>{m.tipo}</TableCell>
-                    <TableCell sx={{ fontSize: "16px" }}>{m.origen}</TableCell>
-                    <TableCell sx={{ fontSize: "16px" }}>
-                      {m.observacion}
-                    </TableCell>
-                    <TableCell
+                {paginatedMov.map((m, i) => {
+                  const bg = i % 2 === 0 ? "#FFF7E6" : "#FFFDF7";
+
+                  return (
+                    <TableRow
+                      key={i}
                       sx={{
-                        fontSize: "18px",
-                        fontWeight: "bold",
-                        color: m.valor.includes("-") ? "red" : "green",
+                        backgroundColor: bg,
+                        "&:hover": { backgroundColor: "#FCECC2" },
                       }}
                     >
-                      {m.valor}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: "16px" }}>
-                      {(m.fecha ||
-                        m.fecha_ingreso ||
-                        m.fecha_transaccion ||
-                        "")
-                        .slice(0, 16)
-                        .replace("T", " ")}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      <TableCell sx={{ fontSize: "16px" }}>{m.tipo}</TableCell>
+                      <TableCell sx={{ fontSize: "16px" }}>{m.origen}</TableCell>
+                      <TableCell sx={{ fontSize: "16px" }}>{m.anio}</TableCell>
+                      <TableCell sx={{ fontSize: "16px" }}>{m.cilindraje}</TableCell>
+                      <TableCell sx={{ fontSize: "16px" }}>{m.placa}</TableCell>
+                      <TableCell sx={{ fontSize: "16px" }}>
+                        {m.observacion}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          color: m.valor.includes("-") ? "red" : "green",
+                        }}
+                      >
+                        {m.valor}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "16px" }}>
+                        {(m.fecha ||
+                          m.fecha_ingreso ||
+                          m.fecha_transaccion ||
+                          "")
+                          .slice(0, 16)
+                          .replace("T", " ")}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
 
-            {/* PAGINACIÓN MOVIMIENTOS */}
             {movPerPage !== "ALL" && (
               <Stack direction="row" justifyContent="center" mt={2}>
                 <Pagination
@@ -399,12 +427,11 @@ function SubTables({ row }) {
           </>
         )}
 
-        {/* ===================================================== */}
-        {/* TAB: COTIZADORES */}
-        {/* ===================================================== */}
+        {/* =======================
+           TAB COTIZADORES
+        ======================= */}
         {activeTab === "cotizador" && (
           <>
-            {/* BUSCADOR + SELECT + CONTADOR */}
             <Box
               sx={{
                 display: "flex",
@@ -464,47 +491,48 @@ function SubTables({ row }) {
             {/* TABLA COTIZADORES */}
             <Table size="small">
               <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <strong>ID</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Precio Ley</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Total</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Fecha Trámite</strong>
-                  </TableCell>
+                <TableRow sx={{ backgroundColor: "#F7C548" }}>
+                  <TableCell><strong>ID</strong></TableCell>
+                  <TableCell><strong>Precio Ley</strong></TableCell>
+                  <TableCell><strong>Total</strong></TableCell>
+                  <TableCell><strong>Fecha Trámite</strong></TableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {paginatedCot.map((c, i) => (
-                  <TableRow key={i}>
-                    <TableCell sx={{ fontSize: "16px" }}>{c.id}</TableCell>
-                    <TableCell sx={{ fontSize: "16px" }}>
-                      {c.precioDeLey}
-                    </TableCell>
-                    <TableCell
+                {paginatedCot.map((c, i) => {
+                  const bg = i % 2 === 0 ? "#FFF7E6" : "#FFFDF7";
+
+                  return (
+                    <TableRow
+                      key={i}
                       sx={{
-                        fontSize: "18px",
-                        fontWeight: "bold",
-                        color: "green",
+                        backgroundColor: bg,
+                        "&:hover": { backgroundColor: "#FCECC2" },
                       }}
                     >
-                      {c.total}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: "16px" }}>
-                      {c.fechaTramite?.slice(0, 16).replace("T", " ")}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      <TableCell sx={{ fontSize: "16px" }}>{c.id}</TableCell>
+                      <TableCell sx={{ fontSize: "16px" }}>
+                        {c.precioDeLey}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          color: "green",
+                        }}
+                      >
+                        {c.total}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "16px" }}>
+                        {c.fechaTramite?.slice(0, 16).replace("T", " ")}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
 
-            {/* PAGINACIÓN COTIZADORES */}
             {cotPerPage !== "ALL" && (
               <Stack direction="row" justifyContent="center" mt={2}>
                 <Pagination
