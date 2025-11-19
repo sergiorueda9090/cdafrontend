@@ -121,6 +121,7 @@ export const ShowView = () => {
         total_recepcion_pago,
         total_cuatro_por_mil,
         sumaTotal, utilidades, tarjetas, clientes }    = useSelector(state => state.balancegeneralStore);
+        
   console.log(" total_cargo_no_deseados ",total_cargo_no_deseados)
   const { startDate, endDate } = useSelector(state => state.globalStore);
 
