@@ -445,7 +445,7 @@ export function DataTable() {
                                 fontWeight: 700,
                                 fontSize: '0.9rem'
                             },
-                            '& .MuiDataGrid-row': {
+                            '& .MuiDataGrid-row': { 
                                 minHeight: '64px !important',
                                 maxHeight: '64px !important',
                                 '&:nth-of-type(even)': {
