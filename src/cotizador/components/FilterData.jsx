@@ -28,6 +28,7 @@ import { getAllThunks as getAllThunksHistorial } from '../../store/historialtram
 import { getFichaProveedorByIdThunk } from "../../store/fichaProveedoresStore/fichaProveedoresThunks";
 import { getAllThunks as getAllThunksUtilidadFilter } from "../../store/utilidadStore/utilidadStoreThunks";
 import { searchClientesThunks, getAllThunks as getAllThunksClientes } from "../../store/clientesStore/clientesThunks";
+import { getAllThunks as getAllThunksEtiquetas } from "../../store/etiquetasStore/etiquetasThunks";
 
 
 export const FilterData = ({ cotizador, id = '' }) => {
@@ -87,6 +88,10 @@ export const FilterData = ({ cotizador, id = '' }) => {
 
             dispatch(searchClientesThunks(searchQuery));
 
+        } else if (cotizador == "etiquetas") {
+
+            dispatch(getAllThunksEtiquetas());
+
         } else {
 
             dispatch(getAllFilterDateThunks(startDate, endDate));
@@ -140,6 +145,10 @@ export const FilterData = ({ cotizador, id = '' }) => {
 
             dispatch(getAllThunksClientes());
 
+        } else if (cotizador == "etiquetas") {
+
+            dispatch(getAllThunksEtiquetas());
+
         } else {
 
             dispatch(getAllThunks());
@@ -161,6 +170,8 @@ export const FilterData = ({ cotizador, id = '' }) => {
                 return "Buscar utilidad...";
             case "fichacliente":
                 return "Buscar ficha...";
+            case "etiquetas":
+                return "Buscar etiqueta...";
             default:
                 return "Buscar...";
         }
