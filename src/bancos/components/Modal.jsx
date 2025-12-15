@@ -1,153 +1,352 @@
-import React, { useEffect, useRef,useState } from "react";
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Grid, TextField, Select, MenuItem, InputLabel, FormControl, Avatar, Box, Typography, Card, CardMedia, CardContent } from "@mui/material";
-
-import {  List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Ícono de check verde
+import React from "react";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    Box,
+    Typography,
+    Card,
+    CardMedia,
+    CardContent,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    useTheme,
+    useMediaQuery,
+    IconButton,
+    Divider
+} from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { useDispatch, useSelector } from 'react-redux';
-
 import { closeModalShared } from '../../store/globalStore/globalStore';
-import { createThunks, updateThunks, handleFormStoreThunk }     from '../../store/etiquetasStore/etiquetasThunks';
-import bancobogota    from "../../assets/images/payments/mp-banco-bogota.webp";
-import  bancolombia   from "../../assets/images/payments/mp-bancolombia.webp";
-import  davienda      from "../../assets/images/payments/mp-davivienda.webp";
-import  dinnersclub   from "../../assets/images/payments/mp-dinners-club.webp";
-import  mastercard    from "../../assets/images/payments/mp-mastercard.webp";
-import  nequi         from "../../assets/images/payments/mp-nequi.webp";
-
-import  bacopopular       from "../../assets/images/payments/bacopopular.png";
-import  bancoaccidente    from "../../assets/images/payments/bancoaccidente.jpg";
-import  bancoavevillas    from "../../assets/images/payments/bancoavevillas.png";
-import  bancobbva         from "../../assets/images/payments/bancobbva.png";
-import  bancocolpatria    from "../../assets/images/payments/bancocolpatria.png";
-import  bancofalabella    from "../../assets/images/payments/bancofalabella.png";
-import  bancoitu          from "../../assets/images/payments/bancoitu.png";
-import  bancolulo         from "../../assets/images/payments/bancolulo.png";
-import  bancopichincha    from "../../assets/images/payments/bancopichincha.png";
-import  bancosantander    from "../../assets/images/payments/bancosantander.png";
-
-
-const paymentMethods = [
-  { name: "Banco de Bogotá", image: bancobogota },
-  { name: "Bancolombia", image: bancolombia },
-  { name: "Davivienda", image: davienda },
-  { name: "Diners Club", image: dinnersclub },
-  { name: "Mastercard", image: mastercard },
-  { name: "Nequi", image: nequi },
-  { name: "Banco Popular", image: bacopopular },
-  { name: "Banco Accidente", image: bancoaccidente },
-  { name: "Banco AV Villas", image: bancoavevillas },
-  { name: "Banco BBVA", image: bancobbva },
-  { name: "Banco Colpatria", image: bancocolpatria },
-  { name: "Banco Falabella", image: bancofalabella },
-  { name: "Banco Itaú", image: bancoitu },
-  { name: "Banco Lulo", image: bancolulo },
-  { name: "Banco Pichincha", image: bancopichincha },
-  { name: "Banco Santander", image: bancosantander },
-];
-
 
 export const FormDialogUser = () => {
+    const dispatch = useDispatch();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const dispatch = useDispatch();
-  const [selectedMethod, setSelectedMethod] = useState("");
-  const { openModalStore }    = useSelector((state) => state.globalStore);
-  const { id, fechaIngreso, fechaTransaccion, descripcion, valor, cilindraje, nombreTitular, archivo } = useSelector((state) => state.cuentasBancariasStore);
-  const [errors, setErrors]   = useState({});
+    const { openModalStore } = useSelector((state) => state.globalStore);
+    const { id, fechaIngreso, fechaTransaccion, descripcion, valor, cilindraje, nombreTitular, archivo } = useSelector((state) => state.cuentasBancariasStore);
 
+    const handleClose = () => {
+        dispatch(closeModalShared());
+    };
 
-  const handleClose = () => {
-    dispatch(closeModalShared());
-  };
+    return (
+        <Dialog
+            open={openModalStore}
+            onClose={handleClose}
+            fullWidth
+            maxWidth="lg"
+            fullScreen={isMobile}
+            PaperProps={{
+                sx: {
+                    borderRadius: isMobile ? 0 : 3,
+                    maxHeight: isMobile ? '100vh' : '90vh'
+                }
+            }}
+        >
+            {/* Header del Modal */}
+            <DialogTitle
+                sx={{
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                    color: 'white',
+                    py: { xs: 2, sm: 3 },
+                    px: { xs: 2, sm: 3 },
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                }}
+            >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <ReceiptIcon sx={{ fontSize: { xs: 28, sm: 32 } }} />
+                    <Box>
+                        <Typography variant={isMobile ? "h6" : "h5"} fontWeight="700">
+                            Soporte de Pago
+                        </Typography>
+                        <Typography variant="caption" sx={{ opacity: 0.9, display: { xs: 'none', sm: 'block' } }}>
+                            Imagen y detalles del comprobante
+                        </Typography>
+                    </Box>
+                </Box>
+                <IconButton
+                    onClick={handleClose}
+                    sx={{
+                        color: 'white',
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
 
+            <DialogContent
+                sx={{
+                    px: { xs: 2, sm: 3 },
+                    py: { xs: 2, sm: 3 }
+                }}
+            >
+                <Grid container spacing={3}>
+                    {/* Imagen del Soporte */}
+                    <Grid item xs={12} md={6}>
+                        <Card
+                            elevation={2}
+                            sx={{
+                                borderRadius: 2,
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}
+                        >
+                            {archivo ? (
+                                <>
+                                    <CardMedia
+                                        component="img"
+                                        image={archivo}
+                                        alt="Soporte de Pago"
+                                        sx={{
+                                            width: '100%',
+                                            height: 'auto',
+                                            maxHeight: { xs: 300, md: 500 },
+                                            objectFit: 'contain',
+                                            backgroundColor: 'action.hover'
+                                        }}
+                                    />
+                                    <CardContent>
+                                        <Typography variant="body2" color="text.secondary" align="center">
+                                            Imagen del soporte de pago
+                                        </Typography>
+                                    </CardContent>
+                                </>
+                            ) : (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        minHeight: 300,
+                                        backgroundColor: 'action.hover',
+                                        borderRadius: 2
+                                    }}
+                                >
+                                    <Typography variant="body1" color="text.secondary">
+                                        No hay imagen disponible
+                                    </Typography>
+                                </Box>
+                            )}
+                        </Card>
+                    </Grid>
 
+                    {/* Información del Pago */}
+                    <Grid item xs={12} md={6}>
+                        <Box>
+                            <Typography variant="h6" gutterBottom fontWeight="600" color="text.primary">
+                                Información del Pago
+                            </Typography>
+                            <Divider sx={{ mb: 2 }} />
 
-  return (
-    <Dialog open={openModalStore} onClose={handleClose} fullWidth maxWidth="lg">
-      <DialogTitle>Imagen del soporte de pago</DialogTitle>
-      <form>
-        <DialogContent>
-          <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Card>
-                    <CardMedia
-                      component="img"
-                      image={archivo} // URL de la imagen
-                      alt="Soporte de Pago"
-                      sx={{
-                        maxWidth: "100%", // Asegura que la imagen no se desborde
-                        height: "auto", // Mantiene la proporción original de la imagen
-                        objectFit: "contain", // Muestra toda la imagen sin recortar
-                      }}
-                    />
-                  <CardContent>
-                    <Typography variant="body2" color="textSecondary">
-                      Imagen del soporte de pago
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
+                            <List sx={{ py: 0 }}>
+                                {fechaIngreso && (
+                                    <ListItem
+                                        sx={{
+                                            px: 0,
+                                            py: 1.5,
+                                            borderRadius: 1,
+                                            '&:hover': {
+                                                backgroundColor: 'action.hover'
+                                            }
+                                        }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 40 }}>
+                                            <CheckCircleIcon color="success" />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary="Fecha de Ingreso"
+                                            secondary={fechaIngreso}
+                                            primaryTypographyProps={{
+                                                fontWeight: 500,
+                                                fontSize: '0.875rem',
+                                                color: 'text.secondary'
+                                            }}
+                                            secondaryTypographyProps={{
+                                                fontWeight: 600,
+                                                fontSize: '1rem',
+                                                color: 'text.primary'
+                                            }}
+                                        />
+                                    </ListItem>
+                                )}
 
-              <Grid item xs={12} md={6}>
-              <Typography variant="h6" gutterBottom>
-                Información del Pago
-              </Typography>
-              
-              <List>
-                <ListItem>
-                  <ListItemIcon>
-                    <CheckCircleIcon color="success" />
-                  </ListItemIcon>
-                  <ListItemText primary={`Fecha de Ingreso: ${fechaIngreso}`} />
-                </ListItem>
+                                {descripcion && (
+                                    <ListItem
+                                        sx={{
+                                            px: 0,
+                                            py: 1.5,
+                                            borderRadius: 1,
+                                            '&:hover': {
+                                                backgroundColor: 'action.hover'
+                                            }
+                                        }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 40 }}>
+                                            <CheckCircleIcon color="success" />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary="Descripción"
+                                            secondary={descripcion}
+                                            primaryTypographyProps={{
+                                                fontWeight: 500,
+                                                fontSize: '0.875rem',
+                                                color: 'text.secondary'
+                                            }}
+                                            secondaryTypographyProps={{
+                                                fontWeight: 600,
+                                                fontSize: '1rem',
+                                                color: 'text.primary'
+                                            }}
+                                        />
+                                    </ListItem>
+                                )}
 
-                <ListItem>
-                  <ListItemIcon>
-                    <CheckCircleIcon color="success" />
-                  </ListItemIcon>
-                  <ListItemText primary={`Descripción: ${descripcion}`} />
-                </ListItem>
+                                {valor !== undefined && valor !== null && (
+                                    <ListItem
+                                        sx={{
+                                            px: 0,
+                                            py: 1.5,
+                                            borderRadius: 1,
+                                            backgroundColor: 'success.lighter',
+                                            '&:hover': {
+                                                backgroundColor: 'success.light'
+                                            }
+                                        }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 40 }}>
+                                            <CheckCircleIcon color="success" />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary="Total"
+                                            secondary={`$${new Intl.NumberFormat('es-CO', {
+                                                minimumFractionDigits: 0,
+                                                maximumFractionDigits: 0
+                                            }).format(valor)} COP`}
+                                            primaryTypographyProps={{
+                                                fontWeight: 500,
+                                                fontSize: '0.875rem',
+                                                color: 'text.secondary'
+                                            }}
+                                            secondaryTypographyProps={{
+                                                fontWeight: 700,
+                                                fontSize: '1.25rem',
+                                                color: 'success.dark'
+                                            }}
+                                        />
+                                    </ListItem>
+                                )}
 
-                <ListItem>
-                  <ListItemIcon>
-                    <CheckCircleIcon color="success" />
-                  </ListItemIcon>
-                  <ListItemText primary={`Total: ${ new Intl.NumberFormat('es-CO', { 
-                                                      minimumFractionDigits: 0, 
-                                                      maximumFractionDigits: 0 
-                                                    }).format(valor)} COP`} />
-                </ListItem>
+                                {cilindraje && (
+                                    <ListItem
+                                        sx={{
+                                            px: 0,
+                                            py: 1.5,
+                                            borderRadius: 1,
+                                            '&:hover': {
+                                                backgroundColor: 'action.hover'
+                                            }
+                                        }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 40 }}>
+                                            <CheckCircleIcon color="success" />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary="Cilindraje"
+                                            secondary={cilindraje}
+                                            primaryTypographyProps={{
+                                                fontWeight: 500,
+                                                fontSize: '0.875rem',
+                                                color: 'text.secondary'
+                                            }}
+                                            secondaryTypographyProps={{
+                                                fontWeight: 600,
+                                                fontSize: '1rem',
+                                                color: 'text.primary'
+                                            }}
+                                        />
+                                    </ListItem>
+                                )}
 
-                <ListItem>
-                  <ListItemIcon>
-                    <CheckCircleIcon color="success" />
-                  </ListItemIcon>
-                  <ListItemText primary={`Cilindraje: ${cilindraje}`} />
-                </ListItem>
+                                {nombreTitular && (
+                                    <ListItem
+                                        sx={{
+                                            px: 0,
+                                            py: 1.5,
+                                            borderRadius: 1,
+                                            '&:hover': {
+                                                backgroundColor: 'action.hover'
+                                            }
+                                        }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 40 }}>
+                                            <CheckCircleIcon color="success" />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary="Titular"
+                                            secondary={nombreTitular}
+                                            primaryTypographyProps={{
+                                                fontWeight: 500,
+                                                fontSize: '0.875rem',
+                                                color: 'text.secondary'
+                                            }}
+                                            secondaryTypographyProps={{
+                                                fontWeight: 600,
+                                                fontSize: '1rem',
+                                                color: 'text.primary'
+                                            }}
+                                        />
+                                    </ListItem>
+                                )}
+                            </List>
+                        </Box>
+                    </Grid>
+                </Grid>
+            </DialogContent>
 
-                <ListItem>
-                  <ListItemIcon>
-                    <CheckCircleIcon color="success" />
-                  </ListItemIcon>
-                  <ListItemText primary={`Titular: ${nombreTitular}`} />
-                </ListItem>
-              </List>
-            </Grid>
-
-            
-
-            </Grid>
-
-          
-        </DialogContent>
-
-      </form>
-    </Dialog>
-  );
+            {/* Footer */}
+            <Divider />
+            <DialogActions
+                sx={{
+                    px: { xs: 2, sm: 3 },
+                    py: { xs: 2, sm: 2 }
+                }}
+            >
+                <Button
+                    onClick={handleClose}
+                    variant="contained"
+                    color="primary"
+                    fullWidth={isMobile}
+                    sx={{
+                        px: 3,
+                        py: 1,
+                        borderRadius: 2,
+                        boxShadow: 2,
+                        '&:hover': {
+                            boxShadow: 4,
+                            transform: 'translateY(-2px)',
+                            transition: 'all 0.2s ease'
+                        }
+                    }}
+                >
+                    Cerrar
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
 };

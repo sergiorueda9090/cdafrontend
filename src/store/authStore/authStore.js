@@ -20,7 +20,10 @@ export const authStore = createSlice({
         state.email     = action.payload.email
       },
       loginFail:(state,action) => {
-        localStorage.removeItem("infoUser");
+        // Limpiar TODO el localStorage cuando expire el token
+        localStorage.clear();
+
+        // Resetear el estado de autenticación
         state.infoUser  = {};
         state.isLogin   = false;
         state.token     = "";
