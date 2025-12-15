@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import {
     Box, Divider, Drawer, List, ListItem, ListItemButton,
-    ListItemIcon, ListItemText, Toolbar, Typography, IconButton, Collapse
+    ListItemIcon, ListItemText, Toolbar, Typography, Collapse, useMediaQuery, useTheme
 } from '@mui/material';
 import { useLocation, Link } from 'react-router-dom';
 import { styled } from '@mui/system';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import PeopleIcon from '@mui/icons-material/People';
 import Face6Icon from '@mui/icons-material/Face6';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
@@ -41,15 +40,14 @@ const StyledLink = styled(Link)({
 
 export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isSidebarOpen }) => {
     const { idrol } = useSelector(state => state.authStore);
-    console.log("idrol ",idrol)
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const location = useLocation();
     const [openMovements, setOpenMovements] = useState(false);
     const [openMovementsTarjeta, setOpenMovementsTarjeta] = useState(false);
 
     const handleToggleMovements = () => setOpenMovements(!openMovements);
     const handleToggleMovementsTarjeta = () => setOpenMovementsTarjeta(!openMovementsTarjeta);
-    {/*{ text: 'Customer', icon: <PeopleIcon />,  route: '/customer' },
-       { text: 'Profile',  icon: <PeopleIcon />,  route: '/customer/profile' },*/}
 
     const items = [
         { text: 'Usuarios',                             icon: <PeopleIcon />,           route: '/users' },
@@ -72,9 +70,9 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
 
     const filteredItems = items.filter(item => {
         if (idrol == 1) return true;
-        if (idrol == 2) return ['Ficha Proveedores', 'Cotizador', 'Trámites', 
-                               'Confirmación de Precios', 'Cargar PDFs', 
-                               'Cuentas Bancarias', 'Ficha del Cliente', 'Archivo de cotizaciones antiguas', 
+        if (idrol == 2) return ['Ficha Proveedores', 'Cotizador', 'Trámites',
+                               'Confirmación de Precios', 'Cargar PDFs',
+                               'Cuentas Bancarias', 'Ficha del Cliente', 'Archivo de cotizaciones antiguas',
                                'Historial Tramites emitidos'].includes(item.text);
         if (idrol == 3) return ['Cotizador','Trámites','Cargar PDFs'].includes(item.text);
         return false;
@@ -95,29 +93,83 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
         { text: 'Utilidad Ocasional', icon: <TrendingUpIcon />, route: '/utilidadocasional' },
     ];
 
-    return (
-        <Box component='nav' sx={{ width: isSidebarOpen ? drawerWidth : 0, flexShrink: { sm: 0 } }}>
-            {/* Drawer Móvil */}
-            <Drawer
-                variant='temporary'
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
+    // Contenido compartido del drawer
+    const drawerContent = (isMobileDrawer = false) => (
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            {/* Header del sidebar */}
+            <Toolbar
                 sx={{
-                    display: { xs: 'block', sm: 'none' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    px: 2,
+                    minHeight: { xs: 56, sm: 64 }
                 }}
             >
-                <Toolbar>
-                    <Typography variant='h6' noWrap>CDA</Typography>
-                </Toolbar>
-                <Divider />
-                <List>
+                <Typography
+                    variant='h6'
+                    noWrap
+                    sx={{
+                        fontWeight: 700,
+                        background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        letterSpacing: 1,
+                        fontSize: { xs: '1.1rem', sm: '1.25rem' }
+                    }}
+                >
+                    CDA
+                </Typography>
+            </Toolbar>
+            <Divider />
+
+            {/* Lista de navegación con scroll */}
+            <Box sx={{
+                flexGrow: 1,
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                '&::-webkit-scrollbar': {
+                    width: '6px',
+                },
+                '&::-webkit-scrollbar-track': {
+                    background: 'transparent',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                    background: '#888',
+                    borderRadius: '3px',
+                },
+                '&::-webkit-scrollbar-thumb:hover': {
+                    background: '#555',
+                }
+            }}>
+                <List sx={{ py: 1 }}>
                     {filteredItems.map(({ text, icon, route }) => (
-                        <ListItem key={text} disablePadding>
-                            <StyledLink to={route} onClick={handleDrawerToggle}>
-                                <ListItemButton selected={location.pathname === route}>
-                                    <ListItemIcon>{icon}</ListItemIcon>
-                                    <ListItemText primary={text} />
+                        <ListItem key={text} disablePadding sx={{ px: 1 }}>
+                            <StyledLink
+                                to={route}
+                                onClick={isMobileDrawer ? handleDrawerToggle : undefined}
+                            >
+                                <ListItemButton
+                                    selected={location.pathname === route}
+                                    sx={{
+                                        borderRadius: 1,
+                                        mb: 0.5,
+                                        '&.Mui-selected': {
+                                            backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                                            '&:hover': {
+                                                backgroundColor: 'rgba(25, 118, 210, 0.2)',
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <ListItemIcon sx={{ minWidth: 40 }}>{icon}</ListItemIcon>
+                                    <ListItemText
+                                        primary={text}
+                                        primaryTypographyProps={{
+                                            fontSize: { xs: '0.875rem', sm: '0.9rem' },
+                                            fontWeight: location.pathname === route ? 600 : 400
+                                        }}
+                                    />
                                 </ListItemButton>
                             </StyledLink>
                         </ListItem>
@@ -126,21 +178,54 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                     {(idrol == 1 || idrol == 2) && (
                         <>
                             {/* Submenú tarjetas */}
-                            <ListItem disablePadding>
-                                <ListItemButton onClick={handleToggleMovementsTarjeta}>
-                                    <ListItemIcon><CreditCardIcon /></ListItemIcon>
-                                    <ListItemText primary="Información de tarjetas bancarias" />
+                            <ListItem disablePadding sx={{ px: 1 }}>
+                                <ListItemButton
+                                    onClick={handleToggleMovementsTarjeta}
+                                    sx={{
+                                        borderRadius: 1,
+                                        mb: 0.5,
+                                    }}
+                                >
+                                    <ListItemIcon sx={{ minWidth: 40 }}>
+                                        <CreditCardIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Información de tarjetas bancarias"
+                                        primaryTypographyProps={{
+                                            fontSize: { xs: '0.875rem', sm: '0.9rem' }
+                                        }}
+                                    />
                                     {openMovementsTarjeta ? <ExpandLess /> : <ExpandMore />}
                                 </ListItemButton>
                             </ListItem>
                             <Collapse in={openMovementsTarjeta} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
                                     {tarjetasSideBar.map(({ text, icon, route }) => (
-                                        <ListItem key={text} disablePadding>
-                                            <StyledLink to={route} onClick={handleDrawerToggle}>
-                                                <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
-                                                    <ListItemIcon>{icon}</ListItemIcon>
-                                                    <ListItemText primary={text} />
+                                        <ListItem key={text} disablePadding sx={{ px: 1 }}>
+                                            <StyledLink
+                                                to={route}
+                                                onClick={isMobileDrawer ? handleDrawerToggle : undefined}
+                                            >
+                                                <ListItemButton
+                                                    sx={{
+                                                        pl: 5,
+                                                        borderRadius: 1,
+                                                        mb: 0.5,
+                                                        '&.Mui-selected': {
+                                                            backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                                                        }
+                                                    }}
+                                                    selected={location.pathname === route}
+                                                >
+                                                    <ListItemIcon sx={{ minWidth: 40 }}>
+                                                        {icon}
+                                                    </ListItemIcon>
+                                                    <ListItemText
+                                                        primary={text}
+                                                        primaryTypographyProps={{
+                                                            fontSize: { xs: '0.875rem', sm: '0.875rem' }
+                                                        }}
+                                                    />
                                                 </ListItemButton>
                                             </StyledLink>
                                         </ListItem>
@@ -149,21 +234,54 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                             </Collapse>
 
                             {/* Submenú movimientos */}
-                            <ListItem disablePadding>
-                                <ListItemButton onClick={handleToggleMovements}>
-                                    <ListItemIcon><AccountBalanceWalletIcon /></ListItemIcon>
-                                    <ListItemText primary="Gestión de Movimientos" />
+                            <ListItem disablePadding sx={{ px: 1 }}>
+                                <ListItemButton
+                                    onClick={handleToggleMovements}
+                                    sx={{
+                                        borderRadius: 1,
+                                        mb: 0.5,
+                                    }}
+                                >
+                                    <ListItemIcon sx={{ minWidth: 40 }}>
+                                        <AccountBalanceWalletIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Gestión de Movimientos"
+                                        primaryTypographyProps={{
+                                            fontSize: { xs: '0.875rem', sm: '0.9rem' }
+                                        }}
+                                    />
                                     {openMovements ? <ExpandLess /> : <ExpandMore />}
                                 </ListItemButton>
                             </ListItem>
                             <Collapse in={openMovements} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
                                     {gestionMovimientos.map(({ text, icon, route }) => (
-                                        <ListItem key={text} disablePadding>
-                                            <StyledLink to={route} onClick={handleDrawerToggle}>
-                                                <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
-                                                    <ListItemIcon>{icon}</ListItemIcon>
-                                                    <ListItemText primary={text} />
+                                        <ListItem key={text} disablePadding sx={{ px: 1 }}>
+                                            <StyledLink
+                                                to={route}
+                                                onClick={isMobileDrawer ? handleDrawerToggle : undefined}
+                                            >
+                                                <ListItemButton
+                                                    sx={{
+                                                        pl: 5,
+                                                        borderRadius: 1,
+                                                        mb: 0.5,
+                                                        '&.Mui-selected': {
+                                                            backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                                                        }
+                                                    }}
+                                                    selected={location.pathname === route}
+                                                >
+                                                    <ListItemIcon sx={{ minWidth: 40 }}>
+                                                        {icon}
+                                                    </ListItemIcon>
+                                                    <ListItemText
+                                                        primary={text}
+                                                        primaryTypographyProps={{
+                                                            fontSize: { xs: '0.875rem', sm: '0.875rem' }
+                                                        }}
+                                                    />
                                                 </ListItemButton>
                                             </StyledLink>
                                         </ListItem>
@@ -173,91 +291,52 @@ export const SideBar = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, isS
                         </>
                     )}
                 </List>
+            </Box>
+        </Box>
+    );
+
+    return (
+        <Box component='nav' sx={{
+            width: { xs: 0, sm: isSidebarOpen ? drawerWidth : 0 },
+            flexShrink: { sm: 0 }
+        }}>
+            {/* Drawer Móvil - Temporal */}
+            <Drawer
+                variant='temporary'
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+                ModalProps={{
+                    keepMounted: true, // Mejor rendimiento en móvil
+                }}
+                sx={{
+                    display: { xs: 'block', sm: 'none' },
+                    '& .MuiDrawer-paper': {
+                        boxSizing: 'border-box',
+                        width: drawerWidth,
+                        backgroundImage: 'none',
+                    },
+                }}
+            >
+                {drawerContent(true)}
             </Drawer>
 
-            {/* Drawer Escritorio */}
+            {/* Drawer Escritorio - Permanente */}
             <Drawer
                 variant='permanent'
                 sx={{
                     display: { xs: 'none', sm: 'block' },
                     '& .MuiDrawer-paper': {
+                        boxSizing: 'border-box',
                         width: isSidebarOpen ? drawerWidth : 0,
-                        transition: 'width 0.3s ease-in-out',
+                        transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                         overflowX: 'hidden',
+                        backgroundImage: 'none',
+                        borderRight: isSidebarOpen ? '1px solid rgba(0, 0, 0, 0.12)' : 'none',
                     },
                 }}
                 open={isSidebarOpen}
             >
-                <Toolbar>
-                    <Typography variant='h6' noWrap>CDA</Typography>
-                    <IconButton onClick={handleDrawerToggle}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-                </Toolbar>
-                <Divider />
-                <List>
-                    {filteredItems.map(({ text, icon, route }) => (
-                        <ListItem key={text} disablePadding>
-                            <StyledLink to={route}>
-                                <ListItemButton selected={location.pathname === route}>
-                                    <ListItemIcon>{icon}</ListItemIcon>
-                                    <ListItemText primary={text} />
-                                </ListItemButton>
-                            </StyledLink>
-                        </ListItem>
-                    ))}
-
-                    {(idrol == 1 || idrol == 2) && (
-                        <>
-                            {/* Submenú tarjetas */}
-                            <ListItem disablePadding>
-                                <ListItemButton onClick={handleToggleMovementsTarjeta}>
-                                    <ListItemIcon><CreditCardIcon /></ListItemIcon>
-                                    <ListItemText primary="Información de tarjetas bancarias" />
-                                    {openMovementsTarjeta ? <ExpandLess /> : <ExpandMore />}
-                                </ListItemButton>
-                            </ListItem>
-                            <Collapse in={openMovementsTarjeta} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    {tarjetasSideBar.map(({ text, icon, route }) => (
-                                        <ListItem key={text} disablePadding>
-                                            <StyledLink to={route}>
-                                                <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
-                                                    <ListItemIcon>{icon}</ListItemIcon>
-                                                    <ListItemText primary={text} />
-                                                </ListItemButton>
-                                            </StyledLink>
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </Collapse>
-
-                            {/* Submenú movimientos */}
-                            <ListItem disablePadding>
-                                <ListItemButton onClick={handleToggleMovements}>
-                                    <ListItemIcon><AccountBalanceWalletIcon /></ListItemIcon>
-                                    <ListItemText primary="Gestión de Movimientos" />
-                                    {openMovements ? <ExpandLess /> : <ExpandMore />}
-                                </ListItemButton>
-                            </ListItem>
-                            <Collapse in={openMovements} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    {gestionMovimientos.map(({ text, icon, route }) => (
-                                        <ListItem key={text} disablePadding>
-                                            <StyledLink to={route}>
-                                                <ListItemButton sx={{ pl: 4 }} selected={location.pathname === route}>
-                                                    <ListItemIcon>{icon}</ListItemIcon>
-                                                    <ListItemText primary={text} />
-                                                </ListItemButton>
-                                            </StyledLink>
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </Collapse>
-                        </>
-                    )}
-                </List>
-                <Divider />
+                {drawerContent(false)}
             </Drawer>
         </Box>
     );
