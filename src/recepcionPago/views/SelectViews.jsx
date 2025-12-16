@@ -44,23 +44,70 @@ export const SelectViews = () => {
     }
   
   return (
-    <Grid container direction="row" justifyContent="space-between" sx={{ mb:1 }} alignItems='center'>
+    <Grid
+      container
+      direction="row"
+      justifyContent="space-between"
+      sx={{ mb: { xs: 1, sm: 1.5, md: 2 } }}
+      alignItems='center'
+    >
 
-        <Grid item>
-            <Typography fontSize={39} fontWeight="light"> </Typography>
+        <Grid item xs={12} sm="auto" sx={{ mb: { xs: 1, sm: 0 } }}>
+            <Typography
+              fontSize={{ xs: 24, sm: 32, md: 39 }}
+              fontWeight="light"
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+            >
+              {" "}
+            </Typography>
         </Grid>
 
-        <Grid item>
-            <Button color="primary" variant="outlined" onClick={ (e) => handleOpenModal() }>
-                <PersonAddAltIcon sx={{ fontSize:30, mr:1 }}/>
-                 Crear Nueva Recepción de pago
+        <Grid
+          item
+          xs={12}
+          sm="auto"
+          sx={{
+            display: 'flex',
+            justifyContent: { xs: 'center', sm: 'flex-end' },
+            width: { xs: '100%', sm: 'auto' }
+          }}
+        >
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={ (e) => handleOpenModal() }
+              fullWidth={window.innerWidth < 600}
+              size={window.innerWidth < 600 ? "medium" : "large"}
+              sx={{
+                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
+                padding: { xs: '8px 12px', sm: '10px 16px' }
+              }}
+            >
+                <PersonAddAltIcon sx={{
+                  fontSize: { xs: 20, sm: 24, md: 30 },
+                  mr: { xs: 0.5, sm: 1 }
+                }}/>
+                 <span style={{ display: window.innerWidth < 400 ? 'none' : 'inline' }}>
+                   Crear Nueva
+                 </span>
+                 <span style={{ display: window.innerWidth < 400 ? 'inline' : 'none' }}>
+                   Nueva
+                 </span>
+                 {" "}Recepción de pago
             </Button>
         </Grid>
 
-        <Grid container sx={{ mt:2, width:"99.99%" }}>
-            < DataTable/>
+        <Grid
+          container
+          sx={{
+            mt: { xs: 1.5, sm: 2 },
+            width: "100%",
+            overflowX: 'auto'
+          }}
+        >
+            <DataTable/>
         </Grid>
-        
+
         {/* START MODAL */}
         <FormDialogUser/>
         {/* END MODAL */}
@@ -71,14 +118,14 @@ export const SelectViews = () => {
 
         {/* START ALERT */}
         <ToastContainer
-            position="top-center" // Posición predeterminada
-            autoClose={1000} // Tiempo de cierre automático
-            hideProgressBar={false} // Mostrar barra de progreso
-            newestOnTop={true} // Notificaciones más recientes arriba
-            closeOnClick // Cierre al hacer clic
-            draggable // Arrastrar para cerrar
-            pauseOnHover // Pausar al pasar el ratón
-            theme="colored" // Tema colorido
+            position="top-center"
+            autoClose={1000}
+            hideProgressBar={false}
+            newestOnTop={true}
+            closeOnClick
+            draggable
+            pauseOnHover
+            theme="colored"
         />
         {/* END ALERT */}
 

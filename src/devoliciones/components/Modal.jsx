@@ -115,15 +115,35 @@ export const FormDialogUser = () => {
   };
 
   return (
-    <Dialog open={openModalStore} onClose={handleClose} fullWidth maxWidth="lg">
-      <DialogTitle>{id ? "Editar Devolucion" : "Crear Devolucion"}</DialogTitle>
+    <Dialog
+      open={openModalStore}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="lg"
+      fullScreen={window.innerWidth < 600}
+      sx={{
+        '& .MuiDialog-paper': {
+          margin: { xs: 0, sm: 2 },
+          maxHeight: { xs: '100%', sm: 'calc(100% - 64px)' }
+        }
+      }}
+    >
+      <DialogTitle sx={{
+        fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' },
+        padding: { xs: '12px 16px', sm: '16px 24px' }
+      }}>
+        {id ? "Editar Devolucion" : "Crear Devolucion"}
+      </DialogTitle>
       <form onSubmit={handleSubmit}>
-        <DialogContent>
-          <DialogContentText>
+        <DialogContent sx={{ padding: { xs: '8px 16px', sm: '16px 24px' } }}>
+          <DialogContentText sx={{
+            fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' },
+            marginBottom: { xs: 1, sm: 2 }
+          }}>
             Completa la información para poder crear una nueva Devolucion.
           </DialogContentText>
-            <Grid container spacing={2} sx={{ marginTop: 2 }}>
-              <Grid item xs={6}>
+            <Grid container spacing={{ xs: 1.5, sm: 2 }} sx={{ marginTop: { xs: 1, sm: 2 } }}>
+              <Grid item xs={12} sm={12} md={6}>
                 <FormControl fullWidth>
                   <Autocomplete
                       disablePortal
@@ -139,13 +159,14 @@ export const FormDialogUser = () => {
                           label="Clientes"
                           error={!!errors.id_cliente}
                           helperText={errors.id_cliente}
+                          size={window.innerWidth < 600 ? "small" : "medium"}
                         />
                       )}
                     />
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <FormControl fullWidth>
                   <Autocomplete
                       disablePortal
@@ -161,13 +182,14 @@ export const FormDialogUser = () => {
                           label="Tarjetas"
                           error={!!errors.id_tarjeta_bancaria}
                           helperText={errors.id_tarjeta_bancaria}
+                          size={window.innerWidth < 600 ? "small" : "medium"}
                         />
                       )}
                     />
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <TextField
                   autoComplete="off"
                   fullWidth
@@ -178,11 +200,12 @@ export const FormDialogUser = () => {
                   onChange={handleChange}
                   error={!!errors.fecha_transaccion}
                   helperText={errors.fecha_transaccion}
-                  InputLabelProps={{ shrink: true }} // Esto asegura que el label no se sobreponga
+                  InputLabelProps={{ shrink: true }}
+                  size={window.innerWidth < 600 ? "small" : "medium"}
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <TextField
                   autoComplete="off"
                   fullWidth
@@ -193,6 +216,7 @@ export const FormDialogUser = () => {
                   onChange={handlePrecioLeyChange}
                   error={!!errors.valor}
                   helperText={errors.valor}
+                  size={window.innerWidth < 600 ? "small" : "medium"}
                 />
               </Grid>
 
@@ -205,22 +229,39 @@ export const FormDialogUser = () => {
                   type="text"
                   value={observacion}
                   multiline
-                  rows={4} // You can adjust this number based on your needs
+                  rows={window.innerWidth < 600 ? 3 : 4}
                   onChange={handleChange}
                   error={!!errors.observacion}
                   helperText={errors.observacion}
+                  size={window.innerWidth < 600 ? "small" : "medium"}
                 />
               </Grid>
 
             </Grid>
 
-          
+
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} variant="outlined" color="error">
+        <DialogActions sx={{
+          padding: { xs: '12px 16px', sm: '16px 24px' },
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: { xs: 1, sm: 0 }
+        }}>
+          <Button
+            onClick={handleClose}
+            variant="outlined"
+            color="error"
+            fullWidth={window.innerWidth < 600}
+            size={window.innerWidth < 600 ? "small" : "medium"}
+          >
             Cancelar
           </Button>
-          <Button type="submit" variant="outlined" color="primary">
+          <Button
+            type="submit"
+            variant="outlined"
+            color="primary"
+            fullWidth={window.innerWidth < 600}
+            size={window.innerWidth < 600 ? "small" : "medium"}
+          >
             {id ? "Editar Devolucion" : "Crear Devolucion"}
           </Button>
         </DialogActions>

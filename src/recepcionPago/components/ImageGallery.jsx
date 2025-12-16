@@ -1,10 +1,43 @@
-import { ImageListItem, ImageList } from '@mui/material';
+import { ImageListItem, ImageList, useTheme, useMediaQuery } from '@mui/material';
 
 
 export const ImageGallery = () => {
 
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+
+  const getCols = () => {
+    if (isXs) return 1;
+    if (isSm) return 2;
+    if (isMd) return 3;
+    return 4;
+  };
+
+  const getHeight = () => {
+    if (isXs) return 300;
+    if (isSm) return 400;
+    return 500;
+  };
+
+  const getRowHeight = () => {
+    if (isXs) return 150;
+    if (isSm) return 180;
+    return 200;
+  };
+
   return (
-    <ImageList sx={{ width: '100%', height: 500 }} cols={4} rowHeight={200}>
+    <ImageList
+      sx={{
+        width: '100%',
+        height: getHeight(),
+        overflowY: 'auto'
+      }}
+      cols={getCols()}
+      rowHeight={getRowHeight()}
+      gap={isXs ? 8 : 16}
+    >
       { itemData.map((item) => (
         <ImageListItem key={item.img}>
           <img
@@ -12,6 +45,11 @@ export const ImageGallery = () => {
             srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
             alt={item.title}
             loading="lazy"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
           />
         </ImageListItem>
       ))}

@@ -332,7 +332,7 @@ export const getAllThunksFilter = (fechaInicio, fechaFin) => {
 
     return async (dispatch, getState) => {
         await dispatch(showBackDropStore());
-        
+
         const { authStore } = getState();
         const token         = authStore.token;
 
@@ -373,5 +373,60 @@ export const getAllThunksFilter = (fechaInicio, fechaFin) => {
 
         // Ocultar el loader sin importar si hubo éxito o error
         await dispatch(hideBackDropStore());
+    };
+};
+
+export const downloadExcelThunk = (fechaInicio = "", fechaFin = "") => {
+    return async (dispatch, getState) => {
+        const { authStore } = getState();
+        const token = authStore.token;
+
+        await dispatch(showBackDropStore());
+
+        // Construir la URL con los parámetros de fecha
+        let url = `${URL}/${parametersURL}gastosgenerales/download_excel/`;
+
+        // Agregar las fechas a los parámetros de la URL si existen
+        if (fechaInicio || fechaFin) {
+            const params = new URLSearchParams();
+            if (fechaInicio) params.append("fechaInicio", fechaInicio);
+            if (fechaFin) params.append("fechaFin", fechaFin);
+            url += `?${params.toString()}`;
+        }
+
+        const options = {
+            method: "GET",
+            url: url,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            responseType: "blob", // Indicar que la respuesta es un archivo binario
+        };
+
+        try {
+            const response = await axios(options);
+
+            // Crear un blob y un enlace de descarga
+            const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+
+            // Crear nombre del archivo con fechas si existen
+            const fileName = fechaInicio && fechaFin
+                ? `Gastos_Generales_${fechaInicio}_${fechaFin}.xlsx`
+                : `Gastos_Generales.xlsx`;
+
+            link.setAttribute("download", fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            await dispatch(hideBackDropStore());
+
+        } catch (error) {
+            await dispatch(hideBackDropStore());
+            await dispatch(setAlert({ message: "Error al descargar el archivo Excel", type: "error" }));
+            console.error("Error al descargar el archivo:", error);
+        }
     };
 };

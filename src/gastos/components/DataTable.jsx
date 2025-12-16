@@ -37,21 +37,45 @@ export function DataTable() {
     );
 
     const columns = [
-      { field: 'id',                headerName: 'ID',                    width: 100 },
-      { field: 'name',              headerName: 'Nombre',   width: 200 },
-      { field: 'observacion',       headerName: 'Observacion',   width: 200 },
-      { field: 'fecha_ingreso',     headerName: 'Fecha Ingreso',   width: 200,        
+      {
+        field: 'id',
+        headerName: 'ID',
+        width: 80,
+        minWidth: 60,
+        flex: 0.5
+      },
+      {
+        field: 'name',
+        headerName: 'Nombre',
+        width: 200,
+        minWidth: 150,
+        flex: 1
+      },
+      {
+        field: 'observacion',
+        headerName: 'Observación',
+        width: 200,
+        minWidth: 150,
+        flex: 1.2
+      },
+      {
+        field: 'fecha_ingreso',
+        headerName: 'Fecha Ingreso',
+        width: 180,
+        minWidth: 150,
+        flex: 1,
         valueFormatter: (params) => {
           console.log("params ",params)
           if (!params) return "";
           // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
           return params.slice(0, 16).replace("T", " ");
-        } 
+        }
       },
       {
         field: 'actions',
-        headerName: 'Actions',
-        width: 150,
+        headerName: 'Acciones',
+        width: 120,
+        minWidth: 100,
         sortable: false,
         renderCell: (params) => (
           <>
@@ -59,15 +83,17 @@ export function DataTable() {
               aria-label="edit"
               onClick={() => handleEdit(params.row)}
               color="primary"
+              size={window.innerWidth < 600 ? "small" : "medium"}
             >
-              <EditIcon />
+              <EditIcon fontSize={window.innerWidth < 600 ? "small" : "medium"} />
             </IconButton>
             <IconButton
               aria-label="delete"
               onClick={() => handleDelete(params.row.id)}
               color="error"
+              size={window.innerWidth < 600 ? "small" : "medium"}
             >
-              <DeleteIcon />
+              <DeleteIcon fontSize={window.innerWidth < 600 ? "small" : "medium"} />
             </IconButton>
           </>
         ),
@@ -131,30 +157,53 @@ export function DataTable() {
 
 
   return (
-    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{
+      height: { xs: 'calc(100vh - 150px)', sm: 'calc(100vh - 120px)', md: '100vh' },
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
 
-      <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          {/*<FilterData  cotizador="gastos"/>   Componente de filtros adicionales */}
-          <DateRange   cotizador="gastos"/>  {/* Componente para selección de rango de fechas */}
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        justifyContent={{ xs: 'flex-start', sm: 'space-between' }}
+        gap={{ xs: 1, sm: 2 }}
+        marginBottom={{ xs: 1, sm: 2 }}
+      >
+        {/*<FilterData  cotizador="gastos"/>   Componente de filtros adicionales */}
+        <DateRange cotizador="gastos"/>  {/* Componente para selección de rango de fechas */}
       </Box>
 
       <DataGrid
         rows={gastos}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        //checkboxSelection
+        pageSizeOptions={[5, 10, 15]}
         sx={{
           border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
-          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+          minHeight: { xs: 400, sm: 500, md: 600 },
+          "& .even-row": { backgroundColor: "#f5f5f5" },
+          "& .odd-row": { backgroundColor: "#ffffff" },
+          "& .MuiDataGrid-cell": {
+            fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
+            padding: { xs: '4px 8px', sm: '8px 16px' }
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
+            fontWeight: 'bold'
+          },
+          "& .MuiDataGrid-footerContainer": {
+            minHeight: { xs: '40px', sm: '52px' }
+          }
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
         slots={{
-          noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
+          noRowsOverlay: NoRowsOverlay,
         }}
+        autoHeight={false}
       />
     </Box>
   );

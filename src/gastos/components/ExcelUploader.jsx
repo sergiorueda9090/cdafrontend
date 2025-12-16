@@ -132,8 +132,8 @@ const ExcelUploader = () => {
       </Grid>
 
       {preciosLey.map((precio, index) => (
-        <Grid container spacing={2} key={index} sx={{ marginTop: 1 }}>
-          <Grid item xs={4}>
+        <Grid container spacing={{ xs: 1, sm: 2 }} key={index} sx={{ marginTop: { xs: 0.5, sm: 1 } }}>
+          <Grid item xs={12} sm={12} md={4}>
             <TextField
               fullWidth
               label="📝 Descripción"
@@ -141,9 +141,10 @@ const ExcelUploader = () => {
               onChange={(e) =>
                 handlePrecioLeyChange(index, "descripcion", e.target.value)
               }
+              size={window.innerWidth < 600 ? "small" : "medium"}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
               label="💰 Precio de Ley"
@@ -151,9 +152,10 @@ const ExcelUploader = () => {
               onChange={(e) =>
                 handlePrecioLeyChange(index, "precio_ley", e.target.value)
               }
+              size={window.innerWidth < 600 ? "small" : "medium"}
             />
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
               label="📊 Comisión"
@@ -161,13 +163,16 @@ const ExcelUploader = () => {
               onChange={(e) =>
                 handlePrecioLeyChange(index, "comision", e.target.value)
               }
+              size={window.innerWidth < 600 ? "small" : "medium"}
             />
           </Grid>
-          <Grid item xs={1}>
+          <Grid item xs={12} sm={12} md={2}>
             <Button
               variant="outlined"
               color="error"
               onClick={() => removePrecioLey(index)}
+              fullWidth
+              size={window.innerWidth < 600 ? "small" : "medium"}
             >
               🗑 Eliminar
             </Button>

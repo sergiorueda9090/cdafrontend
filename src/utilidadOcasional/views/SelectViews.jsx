@@ -45,20 +45,61 @@ export const SelectViews = () => {
     }
   
   return (
-    <Grid container direction="row" justifyContent="space-between" sx={{ mb:1 }} alignItems='center'>
+    <Grid
+      container
+      direction="row"
+      justifyContent="space-between"
+      sx={{ mb: { xs: 1, sm: 1.5, md: 2 } }}
+      alignItems='center'
+    >
 
-        <Grid item>
-            <Typography fontSize={39} fontWeight="light"> </Typography>
+        <Grid item xs={12} sm="auto" sx={{ mb: { xs: 1, sm: 0 } }}>
+            <Typography
+              fontSize={{ xs: 24, sm: 32, md: 39 }}
+              fontWeight="light"
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+            >
+              {" "}
+            </Typography>
         </Grid>
 
-        <Grid item>
-            <Button color="primary" variant="outlined" onClick={ (e) => handleOpenModal() }>
-                <PersonAddAltIcon sx={{ fontSize:30, mr:1 }}/>
+        <Grid
+          item
+          xs={12}
+          sm="auto"
+          sx={{
+            display: 'flex',
+            justifyContent: { xs: 'center', sm: 'flex-end' },
+            width: { xs: '100%', sm: 'auto' }
+          }}
+        >
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={ (e) => handleOpenModal() }
+              fullWidth={window.innerWidth < 600}
+              size={window.innerWidth < 600 ? "medium" : "large"}
+              sx={{
+                fontSize: { xs: '0.875rem', sm: '0.95rem', md: '1rem' },
+                padding: { xs: '8px 12px', sm: '10px 16px' }
+              }}
+            >
+                <PersonAddAltIcon sx={{
+                  fontSize: { xs: 20, sm: 24, md: 30 },
+                  mr: { xs: 0.5, sm: 1 }
+                }}/>
                  Crear Nueva Utilidad ocasional
             </Button>
         </Grid>
 
-        <Grid container sx={{ mt:2, width:"99.99%" }}>
+        <Grid
+          container
+          sx={{
+            mt: { xs: 1.5, sm: 2 },
+            width: "100%",
+            overflowX: 'auto'
+          }}
+        >
             < DataTable/>
         </Grid>
         

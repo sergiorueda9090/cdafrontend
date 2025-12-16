@@ -41,24 +41,46 @@ export function DataTable() {
     );
 
     const columns = [
-      { field: 'id',                      headerName: 'ID',                     width: 100 },
-      { field: 'nombre_tarjeta',          headerName: 'Tarjeta',                width: 200 },
+      {
+        field: 'id',
+        headerName: 'ID',
+        width: 80,
+        minWidth: 60,
+        flex: 0.5
+      },
+      {
+        field: 'nombre_tarjeta',
+        headerName: 'Tarjeta',
+        width: 180,
+        minWidth: 120,
+        flex: 1
+      },
       {
         field: 'fecha_ingreso',
         headerName: 'Fecha de Ingreso',
-        width: 200,
+        width: 180,
+        minWidth: 150,
+        flex: 1,
         valueFormatter: (params) => {
           if (!params) return "";
-          // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
           return params.slice(0, 16).replace("T", " ");
         }
       },
-      { field: 'fecha_transaccion',       headerName: 'Fecha de Transacción',   width: 200 },
-      { field: 'valor',                
-        headerName: 'Valor',                
-        width: 160, 
-        align: "right", 
-        headerAlign: "right",   
+      {
+        field: 'fecha_transaccion',
+        headerName: 'Fecha de Transacción',
+        width: 180,
+        minWidth: 150,
+        flex: 1
+      },
+      {
+        field: 'valor',
+        headerName: 'Valor',
+        width: 140,
+        minWidth: 100,
+        flex: 0.8,
+        align: "right",
+        headerAlign: "right",
         valueFormatter: (params) => {
           return new Intl.NumberFormat('es-CO').format(params);
         },
@@ -66,17 +88,24 @@ export function DataTable() {
           const valor = params.value || 0;
           const color = valor < 0 ? 'red' : 'green';
           return (
-            <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+            <span style={{
+              color,
+              fontWeight: 'bold',
+              fontSize: window.innerWidth < 600 ? "18px" : "26px"
+            }}>
              {new Intl.NumberFormat('es-CO').format(valor)}
             </span>
           );
         }
       },
-      { field: 'cuatro_por_mil',                
-        headerName: 'Cuatro por Mil',                
-        width: 160, 
-        align: "right", 
-        headerAlign: "right",   
+      {
+        field: 'cuatro_por_mil',
+        headerName: 'Cuatro por Mil',
+        width: 140,
+        minWidth: 100,
+        flex: 0.8,
+        align: "right",
+        headerAlign: "right",
         valueFormatter: (params) => {
           return new Intl.NumberFormat('es-CO').format(params);
         },
@@ -84,17 +113,24 @@ export function DataTable() {
           const valor = params.value || 0;
           const color = valor < 0 ? 'red' : 'green';
           return (
-            <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+            <span style={{
+              color,
+              fontWeight: 'bold',
+              fontSize: window.innerWidth < 600 ? "18px" : "26px"
+            }}>
              {new Intl.NumberFormat('es-CO').format(valor)}
             </span>
           );
         }
       },
-      { field: 'total',                
-        headerName: 'Total',                
-        width: 160, 
-        align: "right", 
-        headerAlign: "right",   
+      {
+        field: 'total',
+        headerName: 'Total',
+        width: 140,
+        minWidth: 100,
+        flex: 0.8,
+        align: "right",
+        headerAlign: "right",
         valueFormatter: (params) => {
           return new Intl.NumberFormat('es-CO').format(params);
         },
@@ -102,18 +138,35 @@ export function DataTable() {
           const valor = params.value || 0;
           const color = valor < 0 ? 'red' : 'green';
           return (
-            <span style={{ color, fontWeight: 'bold', fontSize:"26px" }}> 
+            <span style={{
+              color,
+              fontWeight: 'bold',
+              fontSize: window.innerWidth < 600 ? "18px" : "26px"
+            }}>
              {new Intl.NumberFormat('es-CO').format(valor)}
             </span>
           );
         }
       },
-      { field: 'observacion',             headerName: 'observacion',            width: 160 },
-      { field: 'nombre_cliente',          headerName: 'Cliente',                width: 160 },
-       {
+      {
+        field: 'observacion',
+        headerName: 'Observación',
+        width: 160,
+        minWidth: 120,
+        flex: 1
+      },
+      {
+        field: 'nombre_cliente',
+        headerName: 'Cliente',
+        width: 160,
+        minWidth: 120,
+        flex: 1
+      },
+      {
         field: 'actions',
-        headerName: 'Actions',
-        width: 150,
+        headerName: 'Acciones',
+        width: 120,
+        minWidth: 100,
         sortable: false,
         renderCell: (params) => (
           <>
@@ -121,15 +174,17 @@ export function DataTable() {
               aria-label="edit"
               onClick={() => handleEdit(params.row)}
               color="primary"
+              size={window.innerWidth < 600 ? "small" : "medium"}
             >
-              <EditIcon />
+              <EditIcon fontSize={window.innerWidth < 600 ? "small" : "medium"} />
             </IconButton>
             <IconButton
               aria-label="delete"
               onClick={() => handleDelete(params.row.id)}
               color="error"
+              size={window.innerWidth < 600 ? "small" : "medium"}
             >
-              <DeleteIcon />
+              <DeleteIcon fontSize={window.innerWidth < 600 ? "small" : "medium"} />
             </IconButton>
           </>
         ),
@@ -195,30 +250,53 @@ export function DataTable() {
 
 
   return (
-    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{
+      height: { xs: 'calc(100vh - 150px)', sm: 'calc(100vh - 120px)', md: '100vh' },
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
 
-      <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          {/* <FilterData  cotizador="devoluciones"/>   Componente de filtros adicionales */}
-          <DateRange  cotizador="devoluciones"/>  {/* Componente para selección de rango de fechas */}
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        justifyContent={{ xs: 'flex-start', sm: 'space-between' }}
+        gap={{ xs: 1, sm: 2 }}
+        marginBottom={{ xs: 1, sm: 2 }}
+      >
+        {/* <FilterData  cotizador="devoluciones"/>   Componente de filtros adicionales */}
+        <DateRange cotizador="devoluciones"/>
       </Box>
 
       <DataGrid
         rows={devolucionesPagos}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        //checkboxSelection
+        pageSizeOptions={[5, 10, 15]}
         sx={{
           border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
-          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+          minHeight: { xs: 400, sm: 500, md: 600 },
+          "& .even-row": { backgroundColor: "#f5f5f5" },
+          "& .odd-row": { backgroundColor: "#ffffff" },
+          "& .MuiDataGrid-cell": {
+            fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
+            padding: { xs: '4px 8px', sm: '8px 16px' }
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
+            fontWeight: 'bold'
+          },
+          "& .MuiDataGrid-footerContainer": {
+            minHeight: { xs: '40px', sm: '52px' }
+          }
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
         slots={{
-          noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
+          noRowsOverlay: NoRowsOverlay,
         }}
+        autoHeight={false}
       />
     </Box>
   );

@@ -21,20 +21,25 @@ export const Layout = ({ children }) => {
     };
   
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
 
         <NavBar drawerWidth={ drawerWidth } nameModule={nameModule} handleDrawerToggle={handleDrawerToggle} isSidebarOpen={isSidebarOpen}/>
 
         <SideBar drawerWidth={ drawerWidth } mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} isSidebarOpen={isSidebarOpen} />
 
-        <Box 
+        <Box
             component='main'
-            sx={{ flexGrow: 1, p: 3 }}
+            sx={{
+              flexGrow: 1,
+              p: { xs: 1, sm: 2, md: 3 },
+              width: { xs: '100%', sm: 'auto' },
+              overflowX: 'hidden'
+            }}
         >
             <Toolbar />
 
             { children }
-            
+
         </Box>
     </Box>
   )

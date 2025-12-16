@@ -1,10 +1,29 @@
-import { ImageListItem, ImageList } from '@mui/material';
+import { ImageListItem, ImageList, useMediaQuery, useTheme } from '@mui/material';
 
 
 export const ImageGallery = () => {
 
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isMd = useMediaQuery(theme.breakpoints.between('md', 'lg'));
+
+  const getCols = () => {
+    if (isXs) return 1;
+    if (isSm) return 2;
+    if (isMd) return 3;
+    return 4;
+  };
+
   return (
-    <ImageList sx={{ width: '100%', height: 500 }} cols={4} rowHeight={200}>
+    <ImageList
+      sx={{
+        width: '100%',
+        height: { xs: 300, sm: 400, md: 500 }
+      }}
+      cols={getCols()}
+      rowHeight={window.innerWidth < 600 ? 150 : 200}
+    >
       { itemData.map((item) => (
         <ImageListItem key={item.img}>
           <img

@@ -96,28 +96,44 @@ const ExcelUploader = () => {
   return (
     <>
       {/* Botón para subir Excel */}
-   
-        <Grid item>
+      <Grid container spacing={{ xs: 1, sm: 2 }} sx={{ marginBottom: { xs: 1, sm: 2 } }}>
+        <Grid item xs={12} sm="auto">
           <input
             type="file"
             accept=".xlsx, .xls"
             onChange={handleFileUpload}
-            ref={fileInputRef} // Asigna la referencia al input
+            ref={fileInputRef}
+            style={{
+              padding: '8px',
+              fontSize: window.innerWidth < 600 ? '0.875rem' : '1rem'
+            }}
           />
         </Grid>
 
         {/* Muestra el nombre del archivo y el botón de eliminar */}
         {selectedFile && (
-          <Grid item>
-            <Typography variant="body1">
+          <Grid item xs={12} sm="auto">
+            <Typography
+              variant="body1"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+                wordBreak: 'break-word'
+              }}
+            >
               📂 {selectedFile}
-              <IconButton color="error" onClick={handleRemoveFile}>
-                <DeleteIcon />
+              <IconButton
+                color="error"
+                onClick={handleRemoveFile}
+                size={window.innerWidth < 600 ? "small" : "medium"}
+              >
+                <DeleteIcon fontSize={window.innerWidth < 600 ? "small" : "medium"} />
               </IconButton>
             </Typography>
           </Grid>
         )}
-      
+      </Grid>
 
       {/* Botón para agregar un precio manualmente */}
       <Grid item xs={12}>
@@ -125,15 +141,25 @@ const ExcelUploader = () => {
           variant="contained"
           color="primary"
           onClick={handleAddPrecioLey}
-          sx={{ marginTop: 2 }}
+          fullWidth={window.innerWidth < 600}
+          size={window.innerWidth < 600 ? "small" : "medium"}
+          sx={{
+            marginTop: { xs: 1, sm: 2 },
+            fontSize: { xs: '0.875rem', sm: '1rem' }
+          }}
         >
           ➕ Agregar Precio de Ley
         </Button>
       </Grid>
 
       {preciosLey.map((precio, index) => (
-        <Grid container spacing={2} key={index} sx={{ marginTop: 1 }}>
-          <Grid item xs={4}>
+        <Grid
+          container
+          spacing={{ xs: 1, sm: 2 }}
+          key={index}
+          sx={{ marginTop: { xs: 0.5, sm: 1 } }}
+        >
+          <Grid item xs={12} sm={12} md={4}>
             <TextField
               fullWidth
               label="📝 Descripción"
@@ -141,9 +167,10 @@ const ExcelUploader = () => {
               onChange={(e) =>
                 handlePrecioLeyChange(index, "descripcion", e.target.value)
               }
+              size={window.innerWidth < 600 ? "small" : "medium"}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
               label="💰 Precio de Ley"
@@ -151,9 +178,10 @@ const ExcelUploader = () => {
               onChange={(e) =>
                 handlePrecioLeyChange(index, "precio_ley", e.target.value)
               }
+              size={window.innerWidth < 600 ? "small" : "medium"}
             />
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
               label="📊 Comisión"
@@ -161,13 +189,20 @@ const ExcelUploader = () => {
               onChange={(e) =>
                 handlePrecioLeyChange(index, "comision", e.target.value)
               }
+              size={window.innerWidth < 600 ? "small" : "medium"}
             />
           </Grid>
-          <Grid item xs={1}>
+          <Grid item xs={12} sm={12} md={2}>
             <Button
               variant="outlined"
               color="error"
               onClick={() => removePrecioLey(index)}
+              fullWidth
+              size={window.innerWidth < 600 ? "small" : "medium"}
+              sx={{
+                height: { xs: '40px', sm: '56px' },
+                fontSize: { xs: '0.75rem', sm: '0.875rem' }
+              }}
             >
               🗑 Eliminar
             </Button>
