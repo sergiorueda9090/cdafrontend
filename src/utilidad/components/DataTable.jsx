@@ -32,14 +32,18 @@ export function DataTable() {
         field: 'comisionproveedor',
         headerName: 'Comisión Proveedor',
         width: 230,
+        align: 'right',
+        headerAlign: 'right',
         renderCell: (params) => {
           if (params.value == null) return '';
           return (
-            <span style={{ color: 'green', fontSize: '27px', fontWeight: 'bold' }}>
-              {new Intl.NumberFormat('es-CO', {
-                minimumFractionDigits: 0,
-              }).format(params.value)}
-            </span>
+            <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%', justifyContent: 'flex-end' }}>
+              <span style={{ color: 'green', fontSize: '1.1rem', fontWeight: 'bold' }}>
+                {new Intl.NumberFormat('es-CO', {
+                  minimumFractionDigits: 0,
+                }).format(params.value)}
+              </span>
+            </Box>
           );
         },
       },
@@ -58,27 +62,46 @@ export function DataTable() {
     <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
 
       {/* Contenedor de filtros */}
-      <Box display="flex" justifyContent="space-between" marginBottom={2}>
-        <FilterData cotizador="utilidad"/>  {/* Componente de filtros adicionales */}
-        <DateRange  cotizador="utilidad"/>  {/* Componente para selección de rango de fechas */}
+      <Box
+        display="flex"
+        justifyContent={{ xs: "center", sm: "space-between" }}
+        marginBottom={{ xs: 1.5, sm: 2 }}
+        flexWrap="wrap"
+        gap={1}
+      >
+        <FilterData cotizador="utilidad"/>
+        <DateRange  cotizador="utilidad"/>
       </Box>
-      
-        <Paper 
-            elevation={3} 
-            sx={{ 
-              p: 2, 
-              mb: 3, 
-              maxWidth: 600, 
-              mx: 'auto', 
-              backgroundColor: '#e3f2fd', 
-              borderRadius: 2, 
+
+        <Paper
+            elevation={3}
+            sx={{
+              p: { xs: 1.5, sm: 2 },
+              mb: { xs: 2, sm: 3 },
+              maxWidth: 600,
+              mx: 'auto',
+              backgroundColor: '#e3f2fd',
+              borderRadius: 2,
               boxShadow: '0 4px 10px rgba(33, 150, 243, 0.3)'
             }}
           >
-            <Typography variant="subtitle1" align="center" color="textSecondary">
+            <Typography
+              variant="subtitle1"
+              align="center"
+              color="textSecondary"
+              sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
+            >
               Total Utilidad
             </Typography>
-            <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
+            <Typography
+              variant="h4"
+              align="center"
+              color="primary"
+              sx={{
+                fontWeight: 'bold',
+                fontSize: { xs: "1.75rem", sm: "2rem", md: "2.125rem" }
+              }}
+            >
               {total == 0 ? 0 : new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(total)}
             </Typography>
         </Paper>
@@ -88,11 +111,28 @@ export function DataTable() {
         columns={ columns }
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
+        rowHeight={60}
         //checkboxSelection
         sx={{
           border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
-          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+          "& .even-row": { backgroundColor: "#f5f5f5" },
+          "& .odd-row": { backgroundColor: "#ffffff" },
+          "& .MuiDataGrid-cell": {
+            fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" },
+            padding: { xs: "4px", sm: "8px", md: "16px" },
+            display: 'flex',
+            alignItems: 'center'
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" }
+          },
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: "bold"
+          },
+          "& .MuiDataGrid-row": {
+            minHeight: "60px !important",
+            maxHeight: "60px !important"
+          }
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"

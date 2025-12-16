@@ -155,10 +155,8 @@ export const FormDialogUser = () => {
                     name="etiquetaDos"
                     label="Etiqueta Dos"
                     value={etiquetaDos}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
-
 
                 <Grid item xs={6}>
                   <TextField
@@ -167,7 +165,6 @@ export const FormDialogUser = () => {
                     name="placa"
                     label="Placa"
                     value={placa}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -178,7 +175,6 @@ export const FormDialogUser = () => {
                     name="cilindraje"
                     label="Cilindraje"
                     value={cilindraje}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -189,7 +185,6 @@ export const FormDialogUser = () => {
                     name="modelo"
                     label="Modelo"
                     value={modelo}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -200,7 +195,6 @@ export const FormDialogUser = () => {
                     name="chasis"
                     label="Chasis"
                     value={chasis}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -211,7 +205,6 @@ export const FormDialogUser = () => {
                     name="tipoDocumento"
                     label="Tipo Documento"
                     value={tipoDocumento}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -222,7 +215,6 @@ export const FormDialogUser = () => {
                     name="numeroDocumento"
                     label="Número Documento"
                     value={numeroDocumento}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -233,7 +225,6 @@ export const FormDialogUser = () => {
                     name="nombreCompleto"
                     label="Nombre Completo"
                     value={nombreCompleto}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -244,7 +235,6 @@ export const FormDialogUser = () => {
                     name="telefono"
                     label="Teléfono"
                     value={telefono}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -255,7 +245,6 @@ export const FormDialogUser = () => {
                     name="correo"
                     label="Correo"
                     value={correo}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -266,7 +255,6 @@ export const FormDialogUser = () => {
                     name="direccion"
                     label="Dirección"
                     value={direccion}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -277,7 +265,6 @@ export const FormDialogUser = () => {
                     name="pagoInmediato"
                     label="Pago Inmediato"
                     value={pagoInmediato}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -288,7 +275,6 @@ export const FormDialogUser = () => {
                     name="linkPago"
                     label="Link de Pago"
                     value={linkPago}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -299,7 +285,6 @@ export const FormDialogUser = () => {
                     name="precioDeLey"
                     label="Precio de Ley"
                     value={precioDeLey}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -310,7 +295,6 @@ export const FormDialogUser = () => {
                     name="comisionPrecioLey"
                     label="Comisión Precio Ley"
                     value={comisionPrecioLey}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -321,7 +305,6 @@ export const FormDialogUser = () => {
                     name="total"
                     label="Total"
                     value={total}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -332,7 +315,6 @@ export const FormDialogUser = () => {
                     name="pdf"
                     label="PDF"
                     value={pdf}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -343,7 +325,6 @@ export const FormDialogUser = () => {
                     name="archivo"
                     label="Archivo"
                     value={archivo}
-                     // Hace que el campo sea solo de lectura
                   />
                 </Grid>
 
@@ -362,9 +343,6 @@ export const FormDialogUser = () => {
 
                 {/* Repite para el resto de campos según sea necesario */}
           </Grid>
-
-
-          
         </DialogContent>
         <DialogActions>
         </DialogActions>

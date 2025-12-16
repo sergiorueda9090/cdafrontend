@@ -21,13 +21,13 @@ export function DataTable() {
   const dispatch = useDispatch();
   const { historial, count } = useSelector(state => state.historialtramitesemitidosStore);
 
-  // ✅ Estado de paginación controlada
+  // Estado de paginación controlada
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: 20,
   });
 
-  //Cargar datos al cambiar de página
+  // Cargar datos al cambiar de página
   React.useEffect(() => {
     const fetchData = async () => {
       await dispatch(
@@ -63,7 +63,9 @@ export function DataTable() {
   );
 
   const handleCopy = (text) => {
-    navigator.clipboard.writeText(text).catch(err => console.error("Error al copiar: ", err));
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success("Link copiado al portapapeles");
+    }).catch(err => console.error("Error al copiar: ", err));
   };
 
   const columns = [
@@ -77,47 +79,20 @@ export function DataTable() {
     { field: "nombre_usuario", headerName: "Usuario", width: 120 },
     { field: "nombre_cliente", headerName: "Cliente", width: 150 },
     { field: "placa", headerName: "Placa", width: 120 },
-    { field: "precioDeLey", headerName: "Precio de Ley", width: 150 },
-    { field: "comisionPrecioLey", headerName: "Comisión", width: 120 },
-    { field: "total", headerName: "Total", width: 120 },
-    { field: "nombre_tarjeta", headerName: "Tarjeta", width: 120 },
-    {
-      field: "pdf",
-      headerName: "PDF",
-      width: 150,
-      renderCell: (params) => {
-        const fileUrl = params.value ? `${params.value}` : null;
-        return fileUrl ? (
-          <Tooltip title="Ver PDF">
-            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-              <PictureAsPdfIcon
-                style={{
-                  color: "red",
-                  fontSize: 40,
-                  cursor: "pointer",
-                }}
-              />
-            </a>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Sin PDF disponible">
-            <PictureAsPdfIcon style={{ color: "gray", fontSize: 40 }} />
-          </Tooltip>
-        );
-      },
-    },
-    { field: "cilindraje", headerName: "Cilindraje", width: 100 },
+    { field: "cilindraje", headerName: "Cilindraje", width: 120 },
     { field: "modelo", headerName: "Modelo", width: 100 },
-    { field: "chasis", headerName: "Chasis", width: 100 },
-    { field: "tipoDocumento", headerName: "Tipo de Documento", width: 100 },
-    { field: "numeroDocumento", headerName: "Número de Documento", width: 150 },
-    { field: "correo", headerName: "Correo", width: 200 },
+    { field: "chasis", headerName: "Chasis", width: 150 },
+    { field: "tipoDocumento", headerName: "Tipo Documento", width: 150 },
+    { field: "numeroDocumento", headerName: "N° Documento", width: 150 },
     { field: "telefono", headerName: "Teléfono", width: 150 },
+    { field: "correo", headerName: "Correo", width: 200 },
+    { field: "direccion", headerName: "Dirección", width: 200 },
+    { field: "pagoInmediato", headerName: "Pago Inmediato", width: 120 },
     {
       field: "linkPago",
       headerName: "Link de Pago",
       width: 200,
-      renderCell: (params) =>
+      renderCell: (params) => (
         params.value ? (
           <Tooltip title="Copiar">
             <ContentCopyIcon
@@ -125,20 +100,42 @@ export function DataTable() {
               onClick={() => handleCopy(params.value)}
             />
           </Tooltip>
-        ) : "No disponible",
+        ) : (
+          "No disponible"
+        )
+      ),
     },
-    
+    { field: "precioDeLey", headerName: "Precio de Ley", width: 120 },
+    { field: "comisionPrecioLey", headerName: "Comisión", width: 100 },
+    { field: "total", headerName: "Total", width: 100 },
+    { field: "nombre_tarjeta", headerName: "Tarjeta", width: 120 },
+    {
+      field: "pdf",
+      headerName: "PDF",
+      width: 150,
+      renderCell: (params) => (
+        params.value ? (
+          <a href={params.value} target="_blank" rel="noopener noreferrer">
+            <PictureAsPdfIcon style={{ color: "red", fontSize: 40 }} />
+          </a>
+        ) : (
+          "No disponible"
+        )
+      ),
+    },
     {
       field: 'actions',
       headerName: 'Acciones',
       width: 150,
       sortable: false,
       renderCell: (params) => (
-        <Tooltip title="Ver">
-          <IconButton onClick={() => handleEdit(params.row)} color="primary">
-            <VisibilityIcon />
-          </IconButton>
-        </Tooltip>
+        <IconButton
+          aria-label="view"
+          onClick={() => handleEdit(params.row)}
+          color="primary"
+        >
+          <VisibilityIcon />
+        </IconButton>
       ),
     }
   ];
@@ -148,8 +145,18 @@ export function DataTable() {
   };
 
   return (
-    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box display="flex" justifyContent="space-between" marginBottom={2}>
+    <Paper sx={{
+      padding: { xs: 1, sm: 1.5, md: 2 },
+      height: { xs: 600, sm: 650, md: 700 },
+      width: '100%'
+    }}>
+      <Box
+        display="flex"
+        justifyContent={{ xs: "center", sm: "space-between" }}
+        marginBottom={{ xs: 1.5, sm: 2 }}
+        flexWrap="wrap"
+        gap={1}
+      >
         <FilterData cotizador="historialtramitesemitidos" />
         <DateRange cotizador="historialtramitesemitidos" />
       </Box>
@@ -159,13 +166,34 @@ export function DataTable() {
         columns={columns}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
-        paginationMode="server" // ✅ importante para paginación del backend
+        paginationMode="server"
         rowCount={count}
         pageSizeOptions={[15, 30, 50, 100]}
+        rowHeight={60}
         sx={{
           border: 0,
           "& .even-row": { backgroundColor: "#f5f5f5" },
           "& .odd-row": { backgroundColor: "#ffffff" },
+          "& .MuiDataGrid-cell": {
+            fontSize: { xs: "0.7rem", sm: "0.875rem", md: "0.875rem" },
+            padding: { xs: "4px", sm: "8px", md: "16px" },
+            display: 'flex',
+            alignItems: 'center'
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            fontSize: { xs: "0.7rem", sm: "0.875rem", md: "0.875rem" },
+            minHeight: { xs: "45px !important", sm: "56px !important" }
+          },
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: "bold"
+          },
+          "& .MuiDataGrid-row": {
+            minHeight: "60px !important",
+            maxHeight: "60px !important"
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            overflowX: "auto"
+          }
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
@@ -174,6 +202,6 @@ export function DataTable() {
           noRowsOverlay: NoRowsOverlay,
         }}
       />
-    </Box>
+    </Paper>
   );
 }

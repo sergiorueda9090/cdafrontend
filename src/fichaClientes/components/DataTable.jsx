@@ -32,8 +32,8 @@ export function DataTable() {
         setModalImageUrl(null);
     };
     const columns = [
-      { field: 'id',                      headerName: 'ID',                         width: 100 },
-      { field: 'fi',                      headerName: 'Fecha de Transaccion',       width: 200 , 
+      { field: 'id',                      headerName: 'ID',                         width: 80, minWidth: 60 },
+      { field: 'fi',                      headerName: 'Fecha Transacción',       width: 180, minWidth: 150, flex: 0.5,
         valueFormatter: (params) => {
           if (!params) return "";
           // Toma los primeros 16 caracteres y reemplaza la "T" por un espacio
@@ -43,18 +43,25 @@ export function DataTable() {
       {
         field: 'valor_alias',
         headerName: 'Valor',
-        width: 200,
+        width: 150,
+        minWidth: 120,
+        flex: 0.5,
+        align: 'right',
+        headerAlign: 'right',
         renderCell: (params) => (
-          <span style={{ color: params.value < 0 ? 'red' : 'green', fontWeight: "bold", fontSize:"26px" }}>
-            {new Intl.NumberFormat('es-CO').format(params.value)}
-          </span>
+          <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%', justifyContent: 'flex-end' }}>
+            <span style={{ color: params.value < 0 ? 'red' : 'green', fontWeight: "bold", fontSize:"1.1rem" }}>
+              {new Intl.NumberFormat('es-CO').format(params.value)}
+            </span>
+          </Box>
         ),
       },
-      { field: 'desc_alias',              headerName: 'Observacion',                width: 200 },
+      { field: 'desc_alias',              headerName: 'Observación',                width: 180, minWidth: 150, flex: 1 },
       {
         field: 'archivo',
         headerName: 'Soporte',
-        width: 200,
+        width: 100,
+        minWidth: 80,
         renderCell: (params) => {
             return params.value ? (
                 <>
@@ -67,24 +74,40 @@ export function DataTable() {
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     >
-                        <Box  sx={{
-                            p:4,
-                            justifyContent: 'center', // Centrar horizontalmente
-                            alignItems: 'center', // Centrar verticalmente
+                        <Box sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: { xs: '95%', sm: '85%', md: '70%', lg: '60%' },
+                            maxWidth: 800,
+                            bgcolor: 'background.paper',
+                            boxShadow: 24,
+                            p: { xs: 2, sm: 3, md: 4 },
+                            borderRadius: 2,
+                            maxHeight: '90vh',
+                            overflow: 'auto'
                         }}>
-                          <Grid Grid container spacing={2} justifyContent="center" alignItems="center">
-                                <Grid item xs={12} md={6}>
-                                  <Card>
+                          <Grid container spacing={2} justifyContent="center" alignItems="center">
+                                <Grid item xs={12}>
+                                  <Card elevation={0}>
                                       <CardMedia
                                         component="img"
-                                        image={modalImageUrl} // URL de la imagen
+                                        image={modalImageUrl}
                                         alt="Soporte de Pago"
                                         sx={{
-                                          maxWidth: "100%", // Asegura que la imagen no se desborde
+                                          maxWidth: "100%",
+                                          height: "auto",
+                                          objectFit: "contain",
+                                          maxHeight: { xs: '400px', sm: '500px', md: '600px' }
                                         }}
                                       />
                                     <CardContent>
-                                      <Typography variant="body2" color="textSecondary">
+                                      <Typography
+                                        variant="body2"
+                                        color="textSecondary"
+                                        sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                                      >
                                         Imagen del soporte de pago
                                       </Typography>
                                     </CardContent>
@@ -97,12 +120,14 @@ export function DataTable() {
             ) : null;
         },
     },
-      { field: 'Fecha de ingreso (Auto)', headerName: 'Fecha de ingreso (Auto)',    width: 200 },
-      { field: 'placa',                   headerName: 'Placa',    width: 200 },
+      { field: 'Fecha de ingreso (Auto)', headerName: 'Fecha Ingreso',    width: 150, minWidth: 120, flex: 0.5 },
+      { field: 'placa',                   headerName: 'Placa',    width: 120, minWidth: 100 },
       {
         field: "origen",
         headerName: "Origen",
-        width: 230,
+        width: 180,
+        minWidth: 150,
+        flex: 0.5,
         renderCell: (params) => {
           // Obtener el valor de origen
           const origen = params.value;
@@ -191,11 +216,21 @@ export function DataTable() {
     id: uuidv4() // Usa el ID existente o genera uno nuevo
   }));
   return (
-    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
-      
-      <Box display="flex" justifyContent="space-between" marginBottom={2}>
+    <Paper sx={{
+      padding: { xs: 1, sm: 1.5, md: 2 },
+      height: { xs: 600, sm: 650, md: 700 },
+      width: '100%'
+    }}>
+
+      <Box
+        display="flex"
+        justifyContent={{ xs: "center", sm: "space-between" }}
+        marginBottom={{ xs: 1.5, sm: 2 }}
+        flexWrap="wrap"
+        gap={1}
+      >
            {/*<FilterData  cotizador="fichacliente"/>  Componente de filtros adicionales */}
-          <DateRange   cotizador="fichacliente"/>  {/* Componente para selección de rango de fechas */}
+          <DateRange cotizador="fichacliente"/>
       </Box>
 
       <DataGrid
@@ -203,16 +238,37 @@ export function DataTable() {
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
+        rowHeight={60}
         //checkboxSelection
         sx={{
           border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
-          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+          "& .even-row": { backgroundColor: "#f5f5f5" },
+          "& .odd-row": { backgroundColor: "#ffffff" },
+          "& .MuiDataGrid-cell": {
+            fontSize: { xs: "0.7rem", sm: "0.875rem", md: "0.875rem" },
+            padding: { xs: "4px", sm: "8px", md: "16px" },
+            display: 'flex',
+            alignItems: 'center'
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            fontSize: { xs: "0.7rem", sm: "0.875rem", md: "0.875rem" },
+            minHeight: { xs: "45px !important", sm: "56px !important" }
+          },
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: "bold"
+          },
+          "& .MuiDataGrid-row": {
+            minHeight: "60px !important",
+            maxHeight: "60px !important"
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            overflowX: "auto"
+          }
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
       />
-    </Box>
+    </Paper>
   );
 }

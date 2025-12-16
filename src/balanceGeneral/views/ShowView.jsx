@@ -195,57 +195,62 @@ const dataBalanceUtilidad = [
 
 
   return (
-    <Box sx={{ height: 500, width: "100%", p: 3 }}>
-     
-     <Typography 
-          variant="h4" 
-          fontWeight="light" 
-          gutterBottom 
-          sx={{ display: "flex", alignItems: "center", cursor: "pointer" }} // Aquí añadimos cursor: pointer
-          onClick={returnTramites} // Asegúrate de tener el evento onClick
+    <Box sx={{ width: "100%", p: { xs: 1, sm: 2, md: 3 } }}>
+
+     <Typography
+          variant="h4"
+          fontWeight="light"
+          gutterBottom
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+            fontSize: { xs: "1.5rem", sm: "2rem", md: "2.125rem" }
+          }}
+          onClick={returnTramites}
         >
-          <KeyboardReturnIcon color="primary" sx={{ fontSize: 30, marginRight: 1 }} /> 
+          <KeyboardReturnIcon color="primary" sx={{ fontSize: { xs: 24, sm: 28, md: 30 }, marginRight: 1 }} />
       </Typography>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={{ xs: 1, sm: 2, md: 2 }}>
 
       <Grid item xs={12}>
-          <Box display="flex" justifyContent="space-between">
-              <DateRange cotizador="balancegeneral"/>  {/* Componente para selección de rango de fechas */}
+          <Box display="flex" justifyContent={{ xs: "center", sm: "space-between" }} flexWrap="wrap">
+              <DateRange cotizador="balancegeneral"/>
           </Box>
       </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid item xs={12} sm={12} md={6} lg={4}>
             <Card
               elevation={0}
               sx={{
                 borderRadius: 2,
-                p: 2,
+                p: { xs: 1.5, sm: 2 },
                 backgroundColor: "#f5b0d0ff",
                 height: "100%",
                 display: "flex",
-                flexDirection: "column",  
+                flexDirection: "column",
               }}
             >
               <Box display="flex" justifyContent="space-between">
-                <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
+                <AttachMoneyIcon sx={{ fontSize: { xs: 32, sm: 36, md: 40 }, color: "#0088fe" }} />
               </Box>
 
-              <Box mt={2} mb={2}>
-                <Typography variant="subtitle2" color="text.secondary">
+              <Box mt={{ xs: 1, sm: 2 }} mb={{ xs: 1, sm: 2 }}>
+                <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                   Saldos total tarjetas
                 </Typography>
-                <Typography variant="h3">
+                <Typography variant="h3" sx={{ fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3rem" } }}>
                   ${new Intl.NumberFormat("es-CO").format(totalTarjetas)}
                 </Typography>
               </Box>
 
               <Box>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                   Tarjetas disponibles:
                 </Typography>
 
-                <Box sx={{ maxHeight: 200, overflowY: "auto" }}>
+                <Box sx={{ maxHeight: { xs: 150, sm: 180, md: 200 }, overflowY: "auto" }}>
                   <List dense>
                     {tarjetas.map((tarjeta, index) => (
                       <ListItemButton
@@ -255,13 +260,24 @@ const dataBalanceUtilidad = [
                           display: "flex",
                           justifyContent: "space-between",
                           alignItems: "center",
+                          py: { xs: 0.5, sm: 1 },
                         }}
                       >
                         <Box display="flex" alignItems="center">
-                          <ListItemText primary={tarjeta.nombre} />
+                          <ListItemText
+                            primary={tarjeta.nombre}
+                            primaryTypographyProps={{
+                              fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" }
+                            }}
+                          />
                         </Box>
 
-                        <Typography variant="body2" fontWeight="bold" color="text.primary">
+                        <Typography
+                          variant="body2"
+                          fontWeight="bold"
+                          color="text.primary"
+                          sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                        >
                           ${new Intl.NumberFormat("es-CO").format(tarjeta.valor)}
                         </Typography>
                       </ListItemButton>
@@ -271,25 +287,27 @@ const dataBalanceUtilidad = [
               </Box>
             </Card>
           </Grid>
-        
-        <Grid item xs={4}>
+
+        <Grid item xs={12} sm={6} md={6} lg={4}>
             <Card elevation={0} sx={{
                                 borderRadius: 2,
-                                p: 2,
-                                backgroundColor: "#d2b0f5ff", // 🎨 Fondo suave
+                                p: { xs: 1.5, sm: 2 },
+                                backgroundColor: "#d2b0f5ff",
                               }}>
                 <Box display="flex" justifyContent="space-between">
-                  <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
+                  <AttachMoneyIcon sx={{ fontSize: { xs: 32, sm: 36, md: 40 }, color: "#0088fe" }} />
                 </Box>
-                <Box mt={2}>
-                  <Typography variant="subtitle2" color="text.secondary">
+                <Box mt={{ xs: 1, sm: 2 }}>
+                  <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                     Total saldo clientes
                   </Typography>
-                  <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(totalSaldoClientes)}</Typography>
+                  <Typography variant="h3" sx={{ fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3rem" } }}>
+                    ${new Intl.NumberFormat("es-CO").format(totalSaldoClientes)}
+                  </Typography>
                 </Box>
 
                 <Box>
-                  <Box sx={{ maxHeight: 200, overflowY: "auto" }}>
+                  <Box sx={{ maxHeight: { xs: 150, sm: 180, md: 200 }, overflowY: "auto" }}>
                       <List dense>
                         {clientes.map((cliente, index) => (
                           <ListItemButton
@@ -299,16 +317,23 @@ const dataBalanceUtilidad = [
                               display: "flex",
                               justifyContent: "space-between",
                               alignItems: "center",
+                              py: { xs: 0.5, sm: 1 },
                             }}
                           >
                             <Box display="flex" alignItems="center">
-                              <ListItemText primary={cliente.nombre} />
+                              <ListItemText
+                                primary={cliente.nombre}
+                                primaryTypographyProps={{
+                                  fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" }
+                                }}
+                              />
                             </Box>
 
                             <Typography
                               variant="body2"
                               fontWeight="bold"
                               color="text.primary"
+                              sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                             >
                               ${new Intl.NumberFormat("es-CO").format(cliente.valor)}
                             </Typography>
@@ -321,109 +346,132 @@ const dataBalanceUtilidad = [
           </Card>
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={6} md={6} lg={4}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
-                                p: 2,
-                                backgroundColor: "#f3d88fff", // 🎨 Fondo suave
+                                p: { xs: 1.5, sm: 2 },
+                                backgroundColor: "#f3d88fff",
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
+              <AttachMoneyIcon sx={{ fontSize: { xs: 32, sm: 36, md: 40 }, color: "#0088fe" }} />
             </Box>
-            <Box mt={2}>
-              <Typography variant="subtitle2" color="text.secondary">
+            <Box mt={{ xs: 1, sm: 2 }}>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                Total gastos generales
               </Typography>
-              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(totalGastosGenerales)}</Typography>
+              <Typography variant="h3" sx={{ fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3rem" } }}>
+                ${new Intl.NumberFormat("es-CO").format(totalGastosGenerales)}
+              </Typography>
             </Box>
           </Card>
         </Grid>
 
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
-                                p: 2,
-                                backgroundColor: "#a6eff1ff", // 🎨 Fondo suave
+                                p: { xs: 1.5, sm: 2 },
+                                backgroundColor: "#a6eff1ff",
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
+              <AttachMoneyIcon sx={{ fontSize: { xs: 32, sm: 36, md: 40 }, color: "#0088fe" }} />
             </Box>
-            <Box mt={2}>
-              <Typography variant="subtitle2" color="text.secondary">
+            <Box mt={{ xs: 1, sm: 2 }}>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                 Total comisiones proveedores
               </Typography>
-              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(totalComisionesProveedores)}</Typography>
+              <Typography variant="h3" sx={{ fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3rem" } }}>
+                ${new Intl.NumberFormat("es-CO").format(totalComisionesProveedores)}
+              </Typography>
             </Box>
           </Card>
         </Grid>
 
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
-                                p: 2,
-                                backgroundColor: "#f0f1abff", // 🎨 Fondo suave
+                                p: { xs: 1.5, sm: 2 },
+                                backgroundColor: "#f0f1abff",
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
+              <AttachMoneyIcon sx={{ fontSize: { xs: 32, sm: 36, md: 40 }, color: "#0088fe" }} />
             </Box>
-            <Box mt={2}>
-              <Typography variant="subtitle2" color="text.secondary">
+            <Box mt={{ xs: 1, sm: 2 }}>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                 Recepción de pagos
               </Typography>
-              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_recepcion_pago)}</Typography>
+              <Typography variant="h3" sx={{ fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3rem" } }}>
+                ${new Intl.NumberFormat("es-CO").format(total_recepcion_pago)}
+              </Typography>
             </Box>
           </Card>
         </Grid>
 
 
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
-                                p: 2,
-                                backgroundColor: "#a9f3efff", // 🎨 Fondo suave
+                                p: { xs: 1.5, sm: 2 },
+                                backgroundColor: "#a9f3efff",
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
+              <AttachMoneyIcon sx={{ fontSize: { xs: 32, sm: 36, md: 40 }, color: "#0088fe" }} />
             </Box>
-            <Box mt={2}>
-              <Typography variant="subtitle2" color="text.secondary">
+            <Box mt={{ xs: 1, sm: 2 }}>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                 Cargos no registrados
               </Typography>
-              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_cargo_no_deseados)}</Typography>
+              <Typography variant="h3" sx={{ fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3rem" } }}>
+                ${new Intl.NumberFormat("es-CO").format(total_cargo_no_deseados)}
+              </Typography>
             </Box>
           </Card>
         </Grid>
 
 
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
           <Card elevation={0} sx={{
                                 borderRadius: 2,
-                                p: 2,
-                                backgroundColor: "#f5ceb7ff", // 🎨 Fondo suave
+                                p: { xs: 1.5, sm: 2 },
+                                backgroundColor: "#f5ceb7ff",
                               }}>
             <Box display="flex" justifyContent="space-between">
-              <AttachMoneyIcon sx={{ fontSize: 40, color: "#0088fe" }} />
+              <AttachMoneyIcon sx={{ fontSize: { xs: 32, sm: 36, md: 40 }, color: "#0088fe" }} />
             </Box>
-            <Box mt={2}>
-              <Typography variant="subtitle2" color="text.secondary">
+            <Box mt={{ xs: 1, sm: 2 }}>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                 4 X MIL
               </Typography>
-              <Typography variant="h3">${new Intl.NumberFormat("es-CO").format(total_cuatro_por_mil)}</Typography>
+              <Typography variant="h3" sx={{ fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3rem" } }}>
+                ${new Intl.NumberFormat("es-CO").format(total_cuatro_por_mil)}
+              </Typography>
             </Box>
           </Card>
         </Grid>
   
-        <Grid item xs={6}>
-          <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" align="center">
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: { xs: 1.5, sm: 2 } }}>
+              <Typography
+                variant="h6"
+                align="center"
+                sx={{ fontSize: { xs: "1rem", sm: "1.15rem", md: "1.25rem" }, mb: { xs: 1, sm: 2 } }}
+              >
                 📊 Resumen Financiero
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={data} layout="vertical" margin={{ left: 20, right: 20 }}>
-                  <XAxis type="number" tickFormatter={(value) => new Intl.NumberFormat("es-CO").format(value)} />
-                  <YAxis dataKey="name" type="category" width={120} />
+              <ResponsiveContainer width="100%" height={{ xs: 250, sm: 280, md: 300 }}>
+                <BarChart data={data} layout="vertical" margin={{ left: { xs: 10, sm: 15, md: 20 }, right: { xs: 10, sm: 15, md: 20 } }}>
+                  <XAxis
+                    type="number"
+                    tickFormatter={(value) => new Intl.NumberFormat("es-CO").format(value)}
+                    style={{ fontSize: "0.75rem" }}
+                  />
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    width={{ xs: 80, sm: 100, md: 120 }}
+                    style={{ fontSize: "0.75rem" }}
+                  />
                   <Tooltip formatter={(value) => new Intl.NumberFormat("es-CO").format(value)} />
-                  <Legend />
+                  <Legend wrapperStyle={{ fontSize: "0.75rem" }} />
                   <Bar dataKey="value" radius={[5, 5, 0, 0]}>
                     {data.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -434,17 +482,30 @@ const dataBalanceUtilidad = [
           </Paper>
         </Grid>
 
-        <Grid item xs={6}>
-          <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" align="center">
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: { xs: 1.5, sm: 2 } }}>
+              <Typography
+                variant="h6"
+                align="center"
+                sx={{ fontSize: { xs: "1rem", sm: "1.15rem", md: "1.25rem" }, mb: { xs: 1, sm: 2 } }}
+              >
                 📊 Total Balance vs. Utilidades
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={dataBalanceUtilidad} layout="vertical" margin={{ left: 20, right: 20 }}>
-                  <XAxis type="number" tickFormatter={(value) => new Intl.NumberFormat("es-CO").format(value)} />
-                  <YAxis dataKey="name" type="category" width={120} />
+              <ResponsiveContainer width="100%" height={{ xs: 250, sm: 280, md: 300 }}>
+                <BarChart data={dataBalanceUtilidad} layout="vertical" margin={{ left: { xs: 10, sm: 15, md: 20 }, right: { xs: 10, sm: 15, md: 20 } }}>
+                  <XAxis
+                    type="number"
+                    tickFormatter={(value) => new Intl.NumberFormat("es-CO").format(value)}
+                    style={{ fontSize: "0.75rem" }}
+                  />
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    width={{ xs: 80, sm: 100, md: 120 }}
+                    style={{ fontSize: "0.75rem" }}
+                  />
                   <Tooltip formatter={(value) => new Intl.NumberFormat("es-CO").format(value)} />
-                  <Legend />
+                  <Legend wrapperStyle={{ fontSize: "0.75rem" }} />
                   <Bar dataKey="value" radius={[5, 5, 0, 0]}>
                     {dataBalanceUtilidad.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -458,48 +519,8 @@ const dataBalanceUtilidad = [
         <BalanceIntervalo />
 
         <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
-            {/*<Typography variant="h5" align="center" gutterBottom color="primary" sx={{ fontWeight: 'bold' }}>
-              Balance General
-            </Typography>
-
-            <Paper 
-              elevation={3} 
-              sx={{ 
-                p: 2, 
-                mb: 3, 
-                maxWidth: 600, 
-                mx: 'auto', 
-                backgroundColor: '#e3f2fd', 
-                borderRadius: 2, 
-                boxShadow: '0 4px 10px rgba(33, 150, 243, 0.3)'
-              }}
-            >
-              <Typography variant="subtitle1" align="center" color="textSecondary">
-                Total Balance
-              </Typography>
-              <Typography variant="h4" align="center" color="primary" sx={{ fontWeight: 'bold' }}>
-                {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(sumaTotal)}
-              </Typography>
-            </Paper>*/}
-
-            {/*<DataGrid
-              rows={enhancedDashboardData}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[5, 10]}
-              autoHeight
-              sx={{
-                "& .MuiDataGrid-cell": {
-                  fontSize: "14px",
-                },
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#eeeeee",
-                },
-                borderRadius: 2,
-                boxShadow: '0 0 8px rgba(0,0,0,0.1)'
-              }}
-            />*/}
+          <Paper sx={{ p: { xs: 1.5, sm: 2, md: 3 } }}>
+            {/* Contenido comentado - DataGrid y Balance General */}
           </Paper>
         </Grid>
 

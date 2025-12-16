@@ -249,11 +249,21 @@ export function DataTable() {
 
     console.log("enhancedDashboardData ",enhancedDashboardData)
   return (
-    <Paper sx={{ padding: 2, height: 700, width: '100%' }}>
+    <Paper sx={{
+      padding: { xs: 1, sm: 1.5, md: 2 },
+      height: { xs: 500, sm: 600, md: 700 },
+      width: '100%'
+    }}>
 
-      <Box display="flex" justifyContent="space-between" marginBottom={2}>
+      <Box
+        display="flex"
+        justifyContent={{ xs: "center", sm: "space-between" }}
+        marginBottom={{ xs: 1, sm: 2 }}
+        flexWrap="wrap"
+        gap={1}
+      >
             {/* <FilterData  cotizador="cuentasbancarias"/> Componente de filtros adicionales */}
-          <DateRange   cotizador="cuentasbancarias"/>  {/* Componente para selección de rango de fechas */}
+          <DateRange cotizador="cuentasbancarias"/>
       </Box>
 
       <DataGrid
@@ -264,14 +274,24 @@ export function DataTable() {
         //checkboxSelection
         sx={{
           border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
-          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+          "& .even-row": { backgroundColor: "#f5f5f5" },
+          "& .odd-row": { backgroundColor: "#ffffff" },
+          "& .MuiDataGrid-cell": {
+            fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" },
+            padding: { xs: "4px", sm: "8px", md: "16px" }
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" }
+          },
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: "bold"
+          }
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
         slots={{
-          noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
+          noRowsOverlay: NoRowsOverlay,
         }}
       />
     </Paper>

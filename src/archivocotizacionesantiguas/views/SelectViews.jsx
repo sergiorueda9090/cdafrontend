@@ -42,14 +42,14 @@ export const SelectViews = () => {
     }
   
   return (
-    <Grid container direction="row" justifyContent="space-between" sx={{ mb:1 }} alignItems='center'>
+    <Grid container direction="row" justifyContent="space-between" sx={{ mb: { xs: 0.5, sm: 1 } }} alignItems='center'>
 
-        <Grid item>
-            <Typography fontSize={39} fontWeight="light"> </Typography>
+        <Grid item xs={12}>
+            <Typography fontSize={{ xs: 24, sm: 32, md: 39 }} fontWeight="light"> </Typography>
         </Grid>
 
-        <Grid container sx={{ mt:2, width:"99.99%" }}>
-            < DataTable/>
+        <Grid container sx={{ mt: { xs: 1, sm: 2 }, width: "100%" }}>
+            <DataTable />
         </Grid>
         
         {/* START MODAL */}

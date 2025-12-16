@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Grid, TextField, Button, IconButton, Typography } from "@mui/material";
+import { Grid, TextField, Button, IconButton, Typography, useMediaQuery, useTheme, Box, Paper, Divider } from "@mui/material";
 import * as XLSX from "xlsx";
-import DeleteIcon from "@mui/icons-material/Delete"; // Icono para eliminar
+import DeleteIcon from "@mui/icons-material/Delete";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import AddIcon from "@mui/icons-material/Add";
 
 import { addPreciosLeyThunks } from "../../store/clientesStore/clientesThunks";
 import { useDispatch } from "react-redux";
@@ -93,88 +95,189 @@ const ExcelUploader = () => {
     setPreciosLey(preciosLey.filter((_, i) => i !== index));
   };
 
-  return (
-    <>
-      {/* Botón para subir Excel */}
-   
-        <Grid item>
-          <input
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={handleFileUpload}
-            ref={fileInputRef} // Asigna la referencia al input
-          />
-        </Grid>
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
-        {/* Muestra el nombre del archivo y el botón de eliminar */}
-        {selectedFile && (
-          <Grid item>
-            <Typography variant="body1">
-              📂 {selectedFile}
-              <IconButton color="error" onClick={handleRemoveFile}>
+  return (
+    <Box sx={{ width: '100%', p: isMobile ? 1 : 2 }}>
+      {/* Sección de carga de archivo */}
+      <Paper
+        elevation={2}
+        sx={{
+          p: isMobile ? 2 : 3,
+          mb: 3,
+          backgroundColor: '#f5f5f5',
+          borderRadius: 2
+        }}
+      >
+        <Typography
+          variant={isMobile ? "h6" : "h5"}
+          sx={{ mb: 2, fontWeight: 'bold', color: 'primary.main' }}
+        >
+          Cargar Precios desde Excel
+        </Typography>
+
+        <Box sx={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          alignItems: isMobile ? 'stretch' : 'center',
+          gap: 2
+        }}>
+          <Button
+            variant="contained"
+            component="label"
+            startIcon={<CloudUploadIcon />}
+            fullWidth={isMobile}
+            size={isMobile ? "medium" : "large"}
+            sx={{ minWidth: isMobile ? '100%' : '200px' }}
+          >
+            Subir Excel
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              onChange={handleFileUpload}
+              ref={fileInputRef}
+              hidden
+            />
+          </Button>
+
+          {selectedFile && (
+            <Paper
+              elevation={1}
+              sx={{
+                p: 1.5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexGrow: 1,
+                backgroundColor: 'white'
+              }}
+            >
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {selectedFile}
+              </Typography>
+              <IconButton color="error" onClick={handleRemoveFile} size="small">
                 <DeleteIcon />
               </IconButton>
-            </Typography>
-          </Grid>
-        )}
-      
+            </Paper>
+          )}
+        </Box>
+      </Paper>
 
-      {/* Botón para agregar un precio manualmente */}
-      <Grid item xs={12}>
+      <Divider sx={{ my: 3 }} />
+
+      {/* Botón para agregar precio manualmente */}
+      <Box sx={{ mb: 3, textAlign: isMobile ? 'center' : 'left' }}>
         <Button
           variant="contained"
           color="primary"
           onClick={handleAddPrecioLey}
-          sx={{ marginTop: 2 }}
+          startIcon={<AddIcon />}
+          fullWidth={isMobile}
+          size={isMobile ? "medium" : "large"}
         >
-          ➕ Agregar Precio de Ley
+          Agregar Precio de Ley
         </Button>
-      </Grid>
+      </Box>
+
+      {/* Lista de precios */}
+      {preciosLey.length > 0 && (
+        <Typography
+          variant={isMobile ? "subtitle1" : "h6"}
+          sx={{ mb: 2, fontWeight: 'bold' }}
+        >
+          Precios Agregados ({preciosLey.length})
+        </Typography>
+      )}
 
       {preciosLey.map((precio, index) => (
-        <Grid container spacing={2} key={index} sx={{ marginTop: 1 }}>
-          <Grid item xs={4}>
-            <TextField
-              fullWidth
-              label="📝 Descripción"
-              value={precio.descripcion}
-              onChange={(e) =>
-                handlePrecioLeyChange(index, "descripcion", e.target.value)
-              }
-            />
+        <Paper
+          key={index}
+          elevation={3}
+          sx={{
+            p: isMobile ? 2 : 2.5,
+            mb: 2,
+            backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9f9f9',
+            transition: 'transform 0.2s, box-shadow 0.2s',
+            '&:hover': {
+              transform: 'translateY(-2px)',
+              boxShadow: 6
+            }
+          }}
+        >
+          <Grid container spacing={isMobile ? 1.5 : 2} alignItems="center">
+            <Grid item xs={12} sm={12} md={4}>
+              <TextField
+                fullWidth
+                label="Descripción"
+                value={precio.descripcion}
+                onChange={(e) =>
+                  handlePrecioLeyChange(index, "descripcion", e.target.value)
+                }
+                size={isMobile ? 'small' : 'medium'}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="Precio de Ley"
+                value={precio.precio_ley}
+                onChange={(e) =>
+                  handlePrecioLeyChange(index, "precio_ley", e.target.value)
+                }
+                size={isMobile ? 'small' : 'medium'}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="Comisión"
+                value={precio.comision}
+                onChange={(e) =>
+                  handlePrecioLeyChange(index, "comision", e.target.value)
+                }
+                size={isMobile ? 'small' : 'medium'}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={12} md={2}>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => removePrecioLey(index)}
+                fullWidth
+                startIcon={<DeleteIcon />}
+                size={isMobile ? 'small' : 'medium'}
+              >
+                {isMobile ? 'Eliminar' : 'Eliminar'}
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={4}>
-            <TextField
-              fullWidth
-              label="💰 Precio de Ley"
-              value={precio.precio_ley}
-              onChange={(e) =>
-                handlePrecioLeyChange(index, "precio_ley", e.target.value)
-              }
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <TextField
-              fullWidth
-              label="📊 Comisión"
-              value={precio.comision}
-              onChange={(e) =>
-                handlePrecioLeyChange(index, "comision", e.target.value)
-              }
-            />
-          </Grid>
-          <Grid item xs={1}>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => removePrecioLey(index)}
-            >
-              🗑 Eliminar
-            </Button>
-          </Grid>
-        </Grid>
+        </Paper>
       ))}
-    </>
+
+      {preciosLey.length === 0 && (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 4,
+            textAlign: 'center',
+            backgroundColor: '#f5f5f5',
+            borderRadius: 2
+          }}
+        >
+          <Typography variant="body1" color="text.secondary">
+            No hay precios agregados. Sube un archivo Excel o agrégalos manualmente.
+          </Typography>
+        </Paper>
+      )}
+    </Box>
   );
 };
 

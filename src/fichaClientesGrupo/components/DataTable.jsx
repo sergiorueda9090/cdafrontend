@@ -58,14 +58,21 @@ export function DataTable() {
   };
 
   return (
-    <Box sx={{ width: "100%", p: 2 }}>
-      <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
+    <Box sx={{ width: "100%", p: { xs: 1, sm: 1.5, md: 2 } }}>
+      <Typography
+        variant="h5"
+        sx={{
+          mb: { xs: 2, sm: 3 },
+          fontWeight: "bold",
+          fontSize: { xs: "1.25rem", sm: "1.5rem", md: "1.5rem" }
+        }}
+      >
         Fichas de Clientes Agrupado
       </Typography>
 
       {/* BUSCADOR */}
-      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <SearchIcon sx={{ mr: 1, color: "gray" }} />
+      <Box sx={{ display: "flex", alignItems: "center", mb: { xs: 2, sm: 3 }, gap: 1 }}>
+        <SearchIcon sx={{ color: "gray", fontSize: { xs: 20, sm: 24 } }} />
         <TextField
           label="Buscar cliente..."
           variant="outlined"
@@ -76,6 +83,11 @@ export function DataTable() {
             setSearch(e.target.value);
             setPage(1);
           }}
+          sx={{
+            '& .MuiInputBase-input': {
+              fontSize: { xs: '0.875rem', sm: '1rem' }
+            }
+          }}
         />
       </Box>
 
@@ -83,12 +95,14 @@ export function DataTable() {
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
-          alignItems: "center",
-          mb: 1,
+          alignItems: { xs: "stretch", sm: "center" },
+          mb: { xs: 1.5, sm: 1 },
+          gap: { xs: 1, sm: 0 }
         }}
       >
-        <Typography variant="body2">
+        <Typography variant="body2" sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
           {rowsPerPage === "ALL"
             ? `Mostrando ${filteredData.length} de ${filteredData.length} clientes`
             : `Mostrando ${paginatedData.length} de ${filteredData.length} clientes`}
@@ -104,7 +118,12 @@ export function DataTable() {
             setRowsPerPage(e.target.value);
             setPage(1);
           }}
-          sx={{ width: 160 }}
+          sx={{
+            width: { xs: "100%", sm: 160 },
+            '& .MuiInputBase-input': {
+              fontSize: { xs: '0.875rem', sm: '1rem' }
+            }
+          }}
         >
           {pageOptions.map((opt) => (
             <option key={opt} value={opt}>
@@ -115,15 +134,23 @@ export function DataTable() {
       </Box>
 
       {/* TABLA PRINCIPAL */}
-      <TableContainer component={Paper} sx={{ borderRadius: "10px" }}>
-        <Table>
+      <TableContainer component={Paper} sx={{ borderRadius: "10px", overflowX: "auto" }}>
+        <Table sx={{ minWidth: { xs: 300, sm: 500, md: 600 } }}>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#F7C548" }}>
-              <TableCell />
-              <TableCell sx={{ fontWeight: "bold", color: "#000" }}>
+              <TableCell sx={{ width: { xs: 40, sm: 60 } }} />
+              <TableCell sx={{
+                fontWeight: "bold",
+                color: "#000",
+                fontSize: { xs: "0.875rem", sm: "1rem" }
+              }}>
                 Cliente
               </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#000" }}>
+              <TableCell sx={{
+                fontWeight: "bold",
+                color: "#000",
+                fontSize: { xs: "0.875rem", sm: "1rem" }
+              }}>
                 Total
               </TableCell>
             </TableRow>
@@ -142,17 +169,24 @@ export function DataTable() {
                       "&:hover": { backgroundColor: "#FCECC2" },
                     }}
                   >
-                    <TableCell width={60}>
-                      <IconButton onClick={() => handleExpand(index)}>
+                    <TableCell sx={{ width: { xs: 40, sm: 60 }, p: { xs: 0.5, sm: 2 } }}>
+                      <IconButton
+                        onClick={() => handleExpand(index)}
+                        size={window.innerWidth < 600 ? "small" : "medium"}
+                      >
                         {expandedRow === index ? (
-                          <ExpandLessIcon />
+                          <ExpandLessIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
                         ) : (
-                          <ExpandMoreIcon />
+                          <ExpandMoreIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
                         )}
                       </IconButton>
                     </TableCell>
 
-                    <TableCell sx={{ fontSize: "18px", fontWeight: "bold" }}>
+                    <TableCell sx={{
+                      fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
+                      fontWeight: "bold",
+                      p: { xs: 1, sm: 2 }
+                    }}>
                       {row.cliente}
                     </TableCell>
 
@@ -160,7 +194,8 @@ export function DataTable() {
                       sx={{
                         color: row.total < 0 ? "red" : "green",
                         fontWeight: "bold",
-                        fontSize: "20px",
+                        fontSize: { xs: "1rem", sm: "1.125rem", md: "1.25rem" },
+                        p: { xs: 1, sm: 2 }
                       }}
                     >
                       {new Intl.NumberFormat("es-CO", {
@@ -283,12 +318,18 @@ function SubTables({ row }) {
   }, [filteredCot, cotPage, cotPerPage]);
 
   return (
-    <Card sx={{ m: 1 }}>
-      <CardContent>
+    <Card sx={{ m: { xs: 0.5, sm: 1 } }}>
+      <CardContent sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
         <Tabs
           value={activeTab}
           onChange={(e, v) => setActiveTab(v)}
-          sx={{ mb: 2 }}
+          sx={{
+            mb: { xs: 1, sm: 2 },
+            '& .MuiTab-root': {
+              fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" },
+              minWidth: { xs: 80, sm: 120 }
+            }
+          }}
         >
           <Tab label="Movimientos" value="movimientos" />
           <Tab label="SOAT" value="cotizador" />
@@ -302,10 +343,10 @@ function SubTables({ row }) {
             <Box
               sx={{
                 display: "flex",
-                gap: 2,
-                mb: 2,
-                alignItems: "center",
-                justifyContent: "space-between",
+                flexDirection: { xs: "column", md: "row" },
+                gap: { xs: 1, sm: 2 },
+                mb: { xs: 1.5, sm: 2 },
+                alignItems: { xs: "stretch", md: "center" },
               }}
             >
               <TextField
@@ -317,21 +358,26 @@ function SubTables({ row }) {
                   setSearchMov(e.target.value);
                   setMovPage(1);
                 }}
+                sx={{
+                  '& .MuiInputBase-input': {
+                    fontSize: { xs: '0.875rem', sm: '1rem' }
+                  }
+                }}
               />
 
               <Box
                 sx={{
                   display: "flex",
-                  alignItems: "center",
-                  gap: 2,
-                  minWidth: 260,
-                  justifyContent: "flex-end",
+                  flexDirection: { xs: "column", sm: "row" },
+                  alignItems: { xs: "stretch", sm: "center" },
+                  gap: { xs: 1, sm: 2 },
+                  minWidth: { xs: "auto", md: 260 },
                 }}
               >
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" }, display: { xs: "none", sm: "block" } }}>
                   {movPerPage === "ALL"
                     ? `Movimientos: ${filteredMov.length}`
-                    : `Mostrando ${paginatedMov.length} de ${filteredMov.length} movimientos`}
+                    : `${paginatedMov.length} de ${filteredMov.length}`}
                 </Typography>
 
                 <TextField
@@ -340,7 +386,12 @@ function SubTables({ row }) {
                   label="Filas"
                   SelectProps={{ native: true }}
                   value={movPerPage}
-                  sx={{ width: 120 }}
+                  sx={{
+                    width: { xs: "100%", sm: 120 },
+                    '& .MuiInputBase-input': {
+                      fontSize: { xs: '0.875rem', sm: '1rem' }
+                    }
+                  }}
                   onChange={(e) => {
                     setMovPerPage(e.target.value);
                     setMovPage(1);
@@ -356,62 +407,65 @@ function SubTables({ row }) {
             </Box>
 
             {/* TABLA MOVIMIENTOS */}
-            <Table size="small">
-              <TableHead>
-                <TableRow sx={{ backgroundColor: "#F7C548" }}>
-                  <TableCell><strong>Tipo</strong></TableCell>
-                  <TableCell><strong>Origen</strong></TableCell>
-                  <TableCell><strong>Año</strong></TableCell>
-                  <TableCell><strong>Cilindraje</strong></TableCell>
-                  <TableCell><strong>Placa</strong></TableCell>
-                  <TableCell><strong>Observación</strong></TableCell>
-                  <TableCell><strong>Valor</strong></TableCell>
-                  <TableCell><strong>Fecha</strong></TableCell>
-                </TableRow>
-              </TableHead>
+            <TableContainer sx={{ overflowX: "auto" }}>
+              <Table size="small" sx={{ minWidth: { xs: 600, sm: 800 } }}>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: "#F7C548" }}>
+                    <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}><strong>Tipo</strong></TableCell>
+                    <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}><strong>Origen</strong></TableCell>
+                    <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}><strong>Año</strong></TableCell>
+                    <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}><strong>Cilindraje</strong></TableCell>
+                    <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}><strong>Placa</strong></TableCell>
+                    <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}><strong>Observación</strong></TableCell>
+                    <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}><strong>Valor</strong></TableCell>
+                    <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}><strong>Fecha</strong></TableCell>
+                  </TableRow>
+                </TableHead>
 
-              <TableBody>
-                {paginatedMov.map((m, i) => {
-                  const bg = i % 2 === 0 ? "#FFF7E6" : "#FFFDF7";
+                <TableBody>
+                  {paginatedMov.map((m, i) => {
+                    const bg = i % 2 === 0 ? "#FFF7E6" : "#FFFDF7";
 
-                  return (
-                    <TableRow
-                      key={i}
-                      sx={{
-                        backgroundColor: bg,
-                        "&:hover": { backgroundColor: "#FCECC2" },
-                      }}
-                    >
-                      <TableCell sx={{ fontSize: "16px" }}>{m.tipo}</TableCell>
-                      <TableCell sx={{ fontSize: "16px" }}>{m.origen}</TableCell>
-                      <TableCell sx={{ fontSize: "16px" }}>{m.anio}</TableCell>
-                      <TableCell sx={{ fontSize: "16px" }}>{m.cilindraje}</TableCell>
-                      <TableCell sx={{ fontSize: "16px" }}>{m.placa}</TableCell>
-                      <TableCell sx={{ fontSize: "16px" }}>
-                        {m.observacion}
-                      </TableCell>
-                      <TableCell
+                    return (
+                      <TableRow
+                        key={i}
                         sx={{
-                          fontSize: "18px",
-                          fontWeight: "bold",
-                          color: m.valor.includes("-") ? "red" : "green",
+                          backgroundColor: bg,
+                          "&:hover": { backgroundColor: "#FCECC2" },
                         }}
                       >
-                        {m.valor}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: "16px" }}>
-                        {(m.fecha ||
-                          m.fecha_ingreso ||
-                          m.fecha_transaccion ||
-                          "")
-                          .slice(0, 16)
-                          .replace("T", " ")}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                        <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" }, p: { xs: 0.75, sm: 1.5 } }}>{m.tipo}</TableCell>
+                        <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" }, p: { xs: 0.75, sm: 1.5 } }}>{m.origen}</TableCell>
+                        <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" }, p: { xs: 0.75, sm: 1.5 } }}>{m.anio}</TableCell>
+                        <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" }, p: { xs: 0.75, sm: 1.5 } }}>{m.cilindraje}</TableCell>
+                        <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" }, p: { xs: 0.75, sm: 1.5 } }}>{m.placa}</TableCell>
+                        <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" }, p: { xs: 0.75, sm: 1.5 } }}>
+                          {m.observacion}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
+                            fontWeight: "bold",
+                            color: m.valor.includes("-") ? "red" : "green",
+                            p: { xs: 0.75, sm: 1.5 }
+                          }}
+                        >
+                          {m.valor}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" }, p: { xs: 0.75, sm: 1.5 } }}>
+                          {(m.fecha ||
+                            m.fecha_ingreso ||
+                            m.fecha_transaccion ||
+                            "")
+                            .slice(0, 16)
+                            .replace("T", " ")}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
             {movPerPage !== "ALL" && (
               <Stack direction="row" justifyContent="center" mt={2}>

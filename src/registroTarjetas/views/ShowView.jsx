@@ -91,36 +91,53 @@ export const ShowView = () => {
   };
 
   return (
-    <Box sx={{ height: 500, width: "100%", p: 3 }}>
-     
-     <Typography 
-          variant="h4" 
-          fontWeight="light" 
-          gutterBottom 
-          sx={{ display: "flex", alignItems: "center", cursor: "pointer" }} // Aquí añadimos cursor: pointer
-          onClick={returnTramites} // Asegúrate de tener el evento onClick
+    <Box sx={{
+      minHeight: 500,
+      width: "100%",
+      p: { xs: 1, sm: 2, md: 3 }
+    }}>
+
+     <Typography
+          variant="h4"
+          fontWeight="light"
+          gutterBottom
+          sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+          onClick={returnTramites}
         >
-          <KeyboardReturnIcon color="primary" sx={{ fontSize: 30, marginRight: 1 }} /> 
+          <KeyboardReturnIcon color="primary" sx={{ fontSize: 30, marginRight: 1 }} />
       </Typography>
 
-      <Grid container spacing={2} sx={{mb:2}}>
+      <Grid container spacing={{ xs: 2, sm: 2, md: 3 }} sx={{mb:2}}>
           {getTotalTarjetas?.map((tarjeta) => (
-            <Grid item xs={6} key={tarjeta.id}>
+            <Grid item xs={12} sm={6} md={6} key={tarjeta.id}>
               <Card
-                elevation={1}
+                elevation={3}
                 sx={{
                   borderRadius: 3,
-                  p: 3,
+                  p: { xs: 2, sm: 2.5, md: 3 },
                   backgroundColor: "#F4F6F8",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
                   height: "100%",
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: 6
+                  }
                 }}
               >
                 {/* Información principal */}
                 <Box mt={2}>
-                  <Typography variant="h6" fontWeight="bold" sx={{ cursor: "pointer" }} onClick={() => handleShow(tarjeta.id)}>
+                  <Typography
+                    variant="h6"
+                    fontWeight="bold"
+                    sx={{
+                      cursor: "pointer",
+                      fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' }
+                    }}
+                    onClick={() => handleShow(tarjeta.id)}
+                  >
                     {tarjeta.nombre_cuenta}
                   </Typography>
                   <Typography variant="subtitle2" color="text.secondary">
@@ -133,14 +150,24 @@ export const ShowView = () => {
                   <Typography variant="body2" color="text.secondary">
                     Banco:
                   </Typography>
-                  <Typography variant="h6">{tarjeta.banco || "No especificado"}</Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' } }}
+                  >
+                    {tarjeta.banco || "No especificado"}
+                  </Typography>
                 </Box>
 
                 <Box mt={1}>
                   <Typography variant="body2" color="text.secondary">
                     Número de cuenta:
                   </Typography>
-                  <Typography variant="h6">{tarjeta.numero_cuenta}</Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' } }}
+                  >
+                    {tarjeta.numero_cuenta}
+                  </Typography>
                 </Box>
 
                 {/* Saldo disponible */}
@@ -148,17 +175,23 @@ export const ShowView = () => {
                   <Typography variant="body2" color="text.secondary">
                     Saldo disponible:
                   </Typography>
-                  <Typography variant="h2" fontWeight="bold">
+                  <Typography
+                    variant="h2"
+                    fontWeight="bold"
+                    sx={{
+                      fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' },
+                      color: 'primary.main'
+                    }}
+                  >
                     ${new Intl.NumberFormat("es-CO").format(tarjeta.valor || 0)}
                   </Typography>
                 </Box>
               </Card>
             </Grid>
           ))}
-          <br /><br />
       </Grid>
-      <Divider component="div" role="presentation">
-        <Typography>Total de cada Tarjeta</Typography>
+      <Divider component="div" role="presentation" sx={{ my: 2 }}>
+        <Typography variant="body1">Total de cada Tarjeta</Typography>
       </Divider>
     </Box>
   );

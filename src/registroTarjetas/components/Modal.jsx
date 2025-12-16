@@ -228,7 +228,7 @@ export const FormDialogUser = () => {
             Completa la información para poder crear una nueva tarjeta bancaria.
           </DialogContentText>
           <Grid container spacing={2} sx={{ marginTop: 2 }}>
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="off"
                   fullWidth
@@ -241,7 +241,7 @@ export const FormDialogUser = () => {
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="off"
                   fullWidth
@@ -255,7 +255,7 @@ export const FormDialogUser = () => {
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="off"
                   fullWidth
@@ -271,7 +271,7 @@ export const FormDialogUser = () => {
 
               {transMoneyState ? (
                 <>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                       <Autocomplete
                         options={tarjetasBancarias}
@@ -286,36 +286,36 @@ export const FormDialogUser = () => {
                           <TextField
                             {...params}
                             label="Seleccione la tarjeta a la que desea transferir dinero"
-                            error={!!errors.idTarTranMoney}   // 🔴 Mostrar en rojo si hay error
-                            helperText={errors.idTarTranMoney}       // Mensaje de error debajo
+                            error={!!errors.idTarTranMoney}
+                            helperText={errors.idTarTranMoney}
                           />
                         )}
                       />
                     </FormControl>
                   </Grid>
 
-                  <Grid item xs={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextField
                       autoComplete="off"
                       fullWidth
                       name="saldo"
                       label="📄 Saldo Actual"
                       type="text"
-                      value={ new Intl.NumberFormat("es-CO").format(saldo) } 
+                      value={ new Intl.NumberFormat("es-CO").format(saldo) }
                       onChange={handleChange}
                       disabled={true}
                     />
                   </Grid>
 
-                
-                  <Grid item xs={6}>
+
+                  <Grid item xs={12} sm={6}>
                     <TextField
                       autoComplete="off"
                       fullWidth
                       name="soldoTransferencia"
                       label="📄 Saldo Tranferencia"
                       type="text"
-                      value={ new Intl.NumberFormat("es-CO").format(soldoTransferencia) } 
+                      value={ new Intl.NumberFormat("es-CO").format(soldoTransferencia) }
                       onChange={handleChange}
                       error={!!errors.soldoTransferencia}
                       helperText={errors.soldoTransferencia}
@@ -324,8 +324,8 @@ export const FormDialogUser = () => {
                 </>
                 ):(
                 <>
-                
-                  <Grid item xs={6}>
+
+                  <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                       <Autocomplete
                         options={paymentMethods}
@@ -348,7 +348,7 @@ export const FormDialogUser = () => {
 
 
 
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={6}>
                 <FormControlLabel
                   control={
                     <Checkbox

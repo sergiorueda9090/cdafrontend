@@ -118,10 +118,15 @@ export const EtapaUno = () => {
     //Validar placa (máximo 6 caracteres)
     if (!placa) {
       newErrors.placa = "Este campo es obligatorio.";
-    } else if (placa.length > 6) {
-      newErrors.placa = "La placa no puede tener más de 6 caracteres.";
+    } else if (placa.length !== 6) {
+      newErrors.placa = "La placa debe tener exactamente 6 caracteres.";
     }
 
+    if (telefono) {
+      if (!/^\d{10}$/.test(telefono)) {
+        newErrors.telefono = "El teléfono debe tener exactamente 10 dígitos numéricos.";
+      }
+    }
 
     if (!cilindraje) {
       newErrors.cilindraje = "Este campo es obligatorio.";
@@ -363,12 +368,20 @@ export const EtapaUno = () => {
           <Grid item xs={3}>
             <TextField
               fullWidth
-              label="🚗 Placa (Clave Única)"
+              label="🚗 Placa (6 caracteres)"
               name="placa"
               variant="outlined"
-              value={(placa ?? "").trimStart().toUpperCase()}
-              onInput={(e) => e.target.value = e.target.value.toUpperCase()}
-              onChange={handleChange}
+              value={(placa ?? "").toUpperCase()}
+              onChange={(e) => {
+                const value = e.target.value
+                  .replace(/\s/g, "")       // sin espacios
+                  .toUpperCase();           // mayúsculas
+
+                if (value.length <= 6) {
+                  dispatch(handleFormStoreThunk({ name: 'placa', value }));
+                }
+              }}
+              inputProps={{ maxLength: 6 }}
               error={!!errors.placa}
               helperText={errors.placa}
               autoComplete="off"
@@ -479,14 +492,19 @@ export const EtapaUno = () => {
           {/* Teléfono */}
           <Grid item xs={6}>
             <div style={{ display: "flex", width: "100%", gap: "10px" }}>
-              <TextField
+             <TextField
                 fullWidth
-                label="📞 Teléfono"
+                label="📞 Teléfono (opcional)"
                 name="telefono"
-                variant="outlined"
                 value={(telefono ?? "").trimStart()}
-                onChange={handleChange}
-                autoComplete="off"
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+                  if (value.length <= 10) {
+                    dispatch(handleFormStoreThunk({ name: 'telefono', value }));
+                  }
+                }}
+                error={!!errors.telefono}
+                helperText={errors.telefono}
                 inputProps={{ maxLength: 10 }}
               />
               <Button

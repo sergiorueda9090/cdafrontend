@@ -35,23 +35,24 @@ export const SelectViews = () => {
   },[]);
 
   return (
-    <Grid container direction="row" justifyContent="space-between" sx={{ mb: 1 }} alignItems='center'>
+    <Grid container direction="row" justifyContent="space-between" sx={{ mb: { xs: 0.5, sm: 1 } }} alignItems='center'>
 
-      <Grid item>
-        <Typography fontSize={39} fontWeight="light"></Typography>
+      <Grid item xs={12}>
+        <Typography fontSize={{ xs: 24, sm: 32, md: 39 }} fontWeight="light"></Typography>
       </Grid>
 
       {/* ================================
-              GRID 7 COLUMNAS + 5 COLUMNAS
+              GRID RESPONSIVE
          ================================= */}
-      <Grid container sx={{ mt: 2, width: "100%" }}>
-        
-        <Grid item xs={4}>
+      <Grid container sx={{ mt: { xs: 1, sm: 2 }, width: "100%" }} spacing={{ xs: 1, sm: 2 }}>
+
+        {/* CardClientes: En móvil ocupa 100%, en tablet+ ocupa 4 columnas */}
+        <Grid item xs={12} md={4}>
           <CardClientes />
         </Grid>
 
-
-        <Grid item xs={8}>
+        {/* DataTable: En móvil ocupa 100%, en tablet+ ocupa 8 columnas */}
+        <Grid item xs={12} md={8}>
             <DataTable />
         </Grid>
 

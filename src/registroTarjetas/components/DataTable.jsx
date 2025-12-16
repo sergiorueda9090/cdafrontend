@@ -149,31 +149,60 @@ export function DataTable() {
 
 
   return (
-    <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
-
-      <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          {/*<FilterData  cotizador="registroTarjetas"/>*/}  {/* Componente de filtros adicionales */}
-          {/*<DateRange   cotizador="registroTarjetas"/>*/}  {/* Componente para selección de rango de fechas */}
+    <Paper sx={{
+      padding: { xs: 1, sm: 1.5, md: 2 },
+      height: { xs: 600, sm: 650, md: 700 },
+      width: '100%'
+    }}>
+      <Box
+        display="flex"
+        justifyContent={{ xs: "center", sm: "space-between" }}
+        marginBottom={{ xs: 1.5, sm: 2 }}
+        flexWrap="wrap"
+        gap={1}
+      >
+        {/*<FilterData  cotizador="registroTarjetas"/>*/}
+        {/*<DateRange   cotizador="registroTarjetas"/>*/}
       </Box>
 
       <DataGrid
         rows={tarjetasBancarias}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        //checkboxSelection
+        pageSizeOptions={[5, 10, 15]}
+        rowHeight={60}
         sx={{
           border: 0,
-          "& .even-row": { backgroundColor: "#f5f5f5" }, // Gris claro
-          "& .odd-row": { backgroundColor: "#ffffff" }, // Blanco
+          "& .even-row": { backgroundColor: "#f5f5f5" },
+          "& .odd-row": { backgroundColor: "#ffffff" },
+          "& .MuiDataGrid-cell": {
+            fontSize: { xs: "0.7rem", sm: "0.875rem", md: "0.875rem" },
+            padding: { xs: "4px", sm: "8px", md: "16px" },
+            display: 'flex',
+            alignItems: 'center'
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            fontSize: { xs: "0.7rem", sm: "0.875rem", md: "0.875rem" },
+            minHeight: { xs: "45px !important", sm: "56px !important" }
+          },
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: "bold"
+          },
+          "& .MuiDataGrid-row": {
+            minHeight: "60px !important",
+            maxHeight: "60px !important"
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            overflowX: "auto"
+          }
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
         }
         slots={{
-          noRowsOverlay: NoRowsOverlay, // Personaliza el estado sin datos
+          noRowsOverlay: NoRowsOverlay,
         }}
       />
-    </Box>
+    </Paper>
   );
 }

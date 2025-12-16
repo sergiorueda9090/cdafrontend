@@ -13,7 +13,7 @@ export const Layout = ({ children }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
     const handleDrawerToggle = () => {
-        if (window.innerWidth < 600) {
+        if (window.innerWidth < 900) {
             setMobileOpen(!mobileOpen);
         } else {
             setIsSidebarOpen(!isSidebarOpen);
@@ -27,9 +27,13 @@ export const Layout = ({ children }) => {
 
         <SideBar drawerWidth={ drawerWidth } mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} isSidebarOpen={isSidebarOpen} />
 
-        <Box 
+        <Box
             component='main'
-            sx={{ flexGrow: 1, p: 3 }}
+            sx={{
+              flexGrow: 1,
+              p: { xs: 1, sm: 2, md: 3 },
+              width: { xs: '100%', sm: 'auto' }
+            }}
         >
             <Toolbar />
 
