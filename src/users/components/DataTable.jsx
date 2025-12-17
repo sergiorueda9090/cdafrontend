@@ -95,7 +95,12 @@ export function DataTable() {
             headerAlign: 'center',
             align: 'center',
             renderCell: (params) => {
-                const imageUrl = URL + params.row.image;
+                // Si la URL de la imagen ya es absoluta (empieza con http/https), usarla directamente
+                // Si no, concatenar con la URL base del backend
+                const imageUrl = params.row.image && (params.row.image.startsWith('http://') || params.row.image.startsWith('https://'))
+                    ? params.row.image
+                    : params.row.image ? URL + params.row.image : null;
+
                 const fullName = `${params.row.first_name || ""} ${params.row.last_name || ""}`.trim();
                 return (
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
@@ -326,7 +331,12 @@ export function DataTable() {
                 </Box>
             ) : (
                 filteredUsers.map((user) => {
-                    const imageUrl = URL + user.image;
+                    // Si la URL de la imagen ya es absoluta (empieza con http/https), usarla directamente
+                    // Si no, concatenar con la URL base del backend
+                    const imageUrl = user.image && (user.image.startsWith('http://') || user.image.startsWith('https://'))
+                        ? user.image
+                        : user.image ? URL + user.image : null;
+
                     const fullName = `${user.first_name || ""} ${user.last_name || ""}`.trim();
 
                     return (
