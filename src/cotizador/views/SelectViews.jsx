@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Box } from '@mui/material';
 import Button               from '@mui/material/Button';
 import PersonAddAltIcon     from '@mui/icons-material/PersonAddAlt';
 import ArticleIcon          from '@mui/icons-material/Article';
@@ -83,15 +83,37 @@ export const SelectViews = () => {
             <Typography fontSize={39} fontWeight="light"> </Typography>
         </Grid>
 
-        <Grid item>
-            <Button color="primary" variant="outlined" onClick={ (e) => handleOpenModal() }>
-                <PersonAddAltIcon sx={{ fontSize:30, mr:1 }}/>
-                 Crear Tramite
+        <Grid item xs={12} sm="auto" sx={{ display: 'flex', gap: 2, justifyContent: { xs: 'center', sm: 'flex-end' } }}>
+            {/* Botón Crear Trámite */}
+            <Button 
+                color="primary" 
+                variant="contained" // Cambiado a contained para jerarquía visual
+                onClick={handleOpenModal}
+                sx={{ 
+                minWidth: { xs: '48px', sm: '160px' },
+                px: { xs: 1, sm: 2 } 
+                }}
+            >
+                <PersonAddAltIcon sx={{ fontSize: 24, mr: { xs: 0, sm: 1 } }} />
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                Crear Trámite
+                </Box>
             </Button>
 
-            <Button color="success" variant="outlined" onClick={ (e) => handleOpenModalExcel() }>
-                <ArticleIcon sx={{ fontSize:30, ml:2 }}/>
-                Subir Documento
+            {/* Botón Subir Documento */}
+            <Button 
+                color="success" 
+                variant="outlined" 
+                onClick={handleOpenModalExcel}
+                sx={{ 
+                minWidth: { xs: '48px', sm: '160px' },
+                px: { xs: 1, sm: 2 } 
+                }}
+            >
+                <ArticleIcon sx={{ fontSize: 24, mr: { xs: 0, sm: 1 } }} />
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                    Subir Documento
+                </Box>
             </Button>
         </Grid>
 

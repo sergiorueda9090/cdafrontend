@@ -888,10 +888,35 @@ export function DataTable({loggedUser}) {
   return (
     <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
 
-      <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          <FilterData  cotizador="pdfs"/>  {/* Componente de filtros adicionales */}
-          <DateRange   cotizador="pdfs"/>  {/* Componente para selección de rango de fechas */}
+    <Box 
+      sx={{ 
+        display: 'flex', 
+        // Columna en móviles (xs) y tablets pequeñas (sm), fila en escritorio (md+)
+        flexDirection: { xs: 'column', md: 'row' }, 
+        justifyContent: 'space-between', 
+        alignItems: { xs: 'stretch', md: 'center' }, 
+        gap: 2, 
+        marginBottom: 3, 
+        width: '100%',
+        // Un pequeño padding lateral en móvil para que no toque los bordes del layout
+        px: { xs: 0.5, md: 0 } 
+      }}
+    >
+      {/* El buscador de PDFs se expande para ocupar el espacio sobrante */}
+      <Box sx={{ flexGrow: 1 }}>
+        <FilterData cotizador="pdfs" />
       </Box>
+
+      {/* El rango de fechas se alinea a la derecha en escritorio y se centra en móvil */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: { xs: 'center', md: 'flex-end' },
+        // Evitamos que el DateRange se vea muy pequeño
+        minWidth: { md: '350px' } 
+      }}>
+        <DateRange cotizador="pdfs" />
+      </Box>
+    </Box>
 
       {/* Input de archivo oculto */}
       <input

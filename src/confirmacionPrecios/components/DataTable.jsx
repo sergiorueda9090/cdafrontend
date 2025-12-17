@@ -1592,9 +1592,26 @@ export function DataTable({loggedUser}) {
     <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
 
       {/* Contenedor de filtros */}
-      <Box display="flex" justifyContent="space-between" marginBottom={2}>
-          <FilterData  cotizador="confirmacionprecios"/>  {/* Componente de filtros adicionales */}
-          <DateRange   cotizador="confirmacionprecios"/>  {/* Componente para selección de rango de fechas */}
+      <Box sx={{ 
+          display: 'flex', 
+          // En móviles (xs) se apilan en columna, en escritorio (md) van en fila
+          flexDirection: { xs: 'column', md: 'row' }, 
+          justifyContent: 'space-between', 
+          alignItems: { xs: 'stretch', md: 'center' }, 
+          gap: 2, // Espacio constante entre elementos
+          marginBottom: 3,
+          width: '100%'
+        }}>
+          <Box sx={{ flexGrow: 1, maxWidth: { md: '40%' } }}>
+            <FilterData  cotizador="confirmacionprecios"/>
+          </Box>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: { xs: 'center', md: 'flex-end' },
+            width: { xs: '100%', md: 'auto' }
+          }}>
+            <DateRange cotizador="confirmacionprecios" />
+          </Box>
       </Box>
 
       {/* Input de archivo oculto */}

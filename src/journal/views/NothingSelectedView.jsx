@@ -20,7 +20,7 @@ export const NothingSelectedView = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-      //dispatch(getAllThunks());
+      dispatch(getAllThunks());
     },[])
 
   return (

@@ -1380,9 +1380,33 @@ export function DataTable({loggedUser}) {
       <ToastContainer />
 
       {/* Contenedor de filtros */}
-      <Box display="flex" justifyContent="space-between" marginBottom={2}>
-        <FilterData cotizador="tramite"/>  {/* Componente de filtros adicionales buscar */}
-        <DateRange  cotizador="tramite"/>  {/* Componente para selección de rango de fechas */}
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          // Columna en móvil (xs), fila en escritorio (md)
+          flexDirection: { xs: 'column', md: 'row' }, 
+          justifyContent: 'space-between', 
+          alignItems: { xs: 'stretch', md: 'center' }, 
+          gap: { xs: 2, md: 0 }, // Espacio entre elementos solo cuando se apilan
+          marginBottom: 3,
+          width: '100%',
+          // Un toque de diseño: fondo sutil o padding si es necesario
+          padding: { xs: 1, md: 0 }
+        }}
+      >
+        {/* El buscador/filtro suele necesitar más espacio */}
+        <Box sx={{ flex: { md: '1 1 auto' }, marginRight: { md: 2 } }}>
+          <FilterData cotizador="tramite" />
+        </Box>
+
+        {/* El rango de fechas se mantiene compacto a la derecha */}
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: { xs: 'center', md: 'flex-end' },
+          minWidth: { md: '400px' } // Evita que el calendario se comprima demasiado
+        }}>
+          <DateRange cotizador="tramite" />
+        </Box>
       </Box>
 
          <DataGrid
