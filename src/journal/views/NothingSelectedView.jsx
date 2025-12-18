@@ -14,7 +14,7 @@ export const NothingSelectedView = () => {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate("/users"); // Redirige al dashboard o a la página de inicio
+    //navigate("/users"); // Redirige al dashboard o a la página de inicio
   };
   
   const dispatch = useDispatch();
