@@ -54,8 +54,8 @@ export const SelectViews = () => {
     }, [alert]);
 
     useEffect(() => {
-        dispatch(getAllCotizadorPdfsThunks());
-      },[])
+      dispatch(getAllCotizadorPdfsThunks());
+    },[])
 
     const handleOpenModal = async () => {
         await dispatch(resetFormularioStore());

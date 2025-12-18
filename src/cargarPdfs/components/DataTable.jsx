@@ -14,7 +14,7 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk, updatePdfThunks, update_cotizador_devolver, getAllCotizadorPdfsThunks }   from '../../store/cotizadorStore/cotizadorThunks';
+import { showThunk, deleteThunk, updatePdfThunks, update_cotizador_devolver, getAllCotizadorPdfsThunks, updatePdfModuloThunks  }   from '../../store/cotizadorStore/cotizadorThunks';
 
 import { toast, Bounce } from 'react-toastify';
 
@@ -206,10 +206,23 @@ export function DataTable({loggedUser}) {
 
     }
     
-    const handleUploadFileConfirmar = (id) => {
+  const handleUploadFileConfirmar = async (id) => {
+    try {
+      await dispatch(
+        updatePdfModuloThunks(
+          {
+            id,
+            pdf: fileUpload,
+            confirmacionPreciosModulo: 0,
+            cotizadorModulo: 0,
+            pdfsModulo: 0,
+            tramiteModulo: 0
+          },
+          'pdf'
+        )
+      );
 
-      dispatch(updatePdfThunks({id, 'pdf':fileUpload, confirmacionPreciosModulo: 0, cotizadorModulo:0, pdfsModulo:1, tramiteModulo:0}, 'pdf'))
-      
+      // ✅ Endpoint finalizado
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           type: "refresh_request_pdf",
@@ -218,7 +231,10 @@ export function DataTable({loggedUser}) {
         }));
       }
 
+    } catch (error) {
+      console.error("Error al actualizar PDF:", error);
     }
+  };
 
     const handleDevolverConfirmar = (data) => {
       dispatch(update_cotizador_devolver({'id':data.id, 'devolver':data.devolver}))
@@ -397,7 +413,6 @@ export function DataTable({loggedUser}) {
               case "refresh_request_pdf": // 👈 Nuevo caso
                 handleRefreshPdfRequest(message);
                 break;
-
               case "row_select":
                 handleRowSelect(message);
                 break;

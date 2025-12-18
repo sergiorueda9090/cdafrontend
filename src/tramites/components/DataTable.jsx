@@ -203,7 +203,7 @@ export function DataTable({loggedUser}) {
               ✅ Pago Exitoso
             </button>
             <button 
-              onClick={() => noPuedePagar(idToast)} 
+              onClick={() => noPuedePagar(idToast,id, placa)} 
               style={{ background: "red", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
               ❌ No Puedo Pagar RRR
             </button>
@@ -239,7 +239,7 @@ export function DataTable({loggedUser}) {
                   ✅ Pago Exitoso
                 </button>
                 <button 
-                  onClick={() => noPuedePagar(idToast)} 
+                  onClick={() => noPuedePagar(idToast,id, placa)} 
                   style={{ background: "red", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>
                   ❌ No Puedo Pagar
                 </button>
@@ -286,16 +286,19 @@ export function DataTable({loggedUser}) {
     };
   
     const noPuedePagar = async (idToast, id = "") => {
+      
       await toast.dismiss(idToast);
-
+      console.log(" === toast.dismiss idToast === ",idToast);
       // 🔄 Apagar la ruedita para todos
       if (ws && ws.readyState === WebSocket.OPEN) {
+
         ws.send(
           JSON.stringify({
             type: "stop_loading",
             rowId: id,
           })
         );
+
       }
 
       setLoading(false);
@@ -948,8 +951,6 @@ export function DataTable({loggedUser}) {
         width: 200,
         renderCell: (params) => {
           const isLoading = loadingRows[params.row.id];
-          console.log("params.row.id ", params.row.id);
-          console.log("isLoading ", isLoading);
 
           const handleCopy = () => {
             if (isLoading) {
@@ -973,7 +974,7 @@ export function DataTable({loggedUser}) {
               return;
             }
 
-            // ✅ Activamos el estado de carga
+            //Activamos el estado de carga
             setLoadingRows((prev) => ({
               ...prev,
               [params.row.id]: true,

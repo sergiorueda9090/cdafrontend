@@ -472,6 +472,75 @@ export const updatePdfThunks = (data, modulo="") => {
 
 }
 
+
+export const updatePdfModuloThunks = (data) => {
+    
+    return async (dispatch, getState) => {
+
+        const {authStore} = getState();
+        const token       = authStore.token
+        console.log(" === data === ",data)
+        await dispatch(showBackDropStore());
+
+        const options = {
+            method: 'PUT',
+            url: `${URL}/${urlPatter}/api/${data.id}/updatepdf/`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+              },
+            data:data
+        }
+        /******************************** */
+
+        try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+            
+            if(response.status == 201 || response.status == 200){
+                
+                await dispatch(resetFormularioStore());
+
+                await dispatch(setAlert({ message: '¡ ✏️ Acción completada con éxito!', type: 'success'}));
+
+                //await dispatch( getAllCotizadorPdfsThunks() );
+
+                await dispatch( closeModalShared() );
+
+                await dispatch( hideBackDropStore() );
+                //toast.success('Successfully created!');
+            }else{
+
+                await dispatch(setAlert({ message: '❌ Ocurrió un error.', type: 'error'}));
+
+                //await dispatch( getAllCotizadorPdfsThunks() );
+
+                await dispatch( closeModalShared() );
+
+                await dispatch( hideBackDropStore() );
+                //toast.error('This is an error!');;
+            }
+            
+
+        } catch (error) {
+
+            
+            await dispatch(setAlert({ message: '❌ Error en el servidor.', type: 'error'}));
+            
+            //await dispatch ( loginFail() );
+
+            await dispatch( closeModalShared() );
+
+            await dispatch( hideBackDropStore() );
+            // Manejar errores
+            console.error(error);
+       
+        }
+
+    }
+
+}
+
 export const deleteThunk = (idUser = "", modulo="") => {
 
     return async (dispatch, getState) => {
@@ -1055,9 +1124,7 @@ export const getAllCotizadorPdfsThunks = () => {
 
     return async (dispatch, getState) => {
        
-        await dispatch(listStore({'cotizadores':[]}))
-        
-        await dispatch(showBackDropStore());
+        //await dispatch(showBackDropStore());
         
         const {authStore} = getState();
         const token = authStore.token
@@ -1084,32 +1151,32 @@ export const getAllCotizadorPdfsThunks = () => {
                     
                     await dispatch(listStore({'cotizadores':data}))
 
-                    await dispatch(hideBackDropStore());
+                    //await dispatch(hideBackDropStore());
 
                 }else{
 
                     await dispatch(listStore({'cotizadores':[]}))
 
-                    await dispatch(hideBackDropStore());
+                    //await dispatch(hideBackDropStore());
                 }
 
             }else{
 
-                await dispatch(hideBackDropStore());
+                //await dispatch(hideBackDropStore());
 
             }
 
 
         } catch (error) {
             
-            await dispatch(hideBackDropStore());
+            //await dispatch(hideBackDropStore());
 
             // Manejar errores
             console.error(error);
             
             //await dispatch ( loginFail() );
             
-            await dispatch( hideBackDropStore() );
+            //await dispatch( hideBackDropStore() );
 
         }
     };
