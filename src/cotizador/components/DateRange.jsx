@@ -25,7 +25,7 @@ import { getAllThunksFilter as getAllThunksFilterUtilidadOcacional,
          getAllThunks       as getAllThunksUtilidadOcacional  } from '../../store/utilidadOcacionalStore/utilidadOcacionalStoreThunks';
 
 import { getAllThunksFilter as getAllThunksFilterGastosGenerales,
-         getAllThunks       as getAllThunksGastosGenerales } from '../../store/gastosGeneralesStore/gastosGeneralesStoreThunks';
+         getAllThunks       as getAllThunksGastosGenerales  } from '../../store/gastosGeneralesStore/gastosGeneralesStoreThunks';
 
 import { startDateGlobalStore, endDateGlobalStore } from '../../store/globalStore/globalStore';
 
@@ -45,7 +45,7 @@ import { getAllThunks as getAllThunksArchivo } from '../../store/archivocotizaci
 import { getAllThunks as getAllThunksHistorial } from '../../store/historialtramitesemitidosStore/historialtramitesemitidosStoreThunks';
 
 import { getFichaProveedorByIdThunk } from '../../store/fichaProveedoresStore/fichaProveedoresThunks';
-import { getAllThunks as getAllThunksBalanceGeneral, getObtenerTotalTarjetas, getPatrimonioNeto, getUtilidadNominal, getUtilidadReal } from '../../store/balancegeneralStore/balancegeneralStoreThunks';
+import { getAllThunks as getAllThunksBalanceGeneral, getObtenerTotalTarjetas, getPatrimonioNeto, getUtilidadNominal, getUtilidadReal, getGastoTotalesDelPeriodo } from '../../store/balancegeneralStore/balancegeneralStoreThunks';
 import { getAllThunks as getAllThunksUtilidadFilter }       from "../../store/utilidadStore/utilidadStoreThunks";
 
 import dayjs from "dayjs";
@@ -70,6 +70,7 @@ export const DateRange = ({cotizador,id=''}) => {
         const formattedEndDate   = dayjs(endDate).format("YYYY-MM-DD");
         console.log("formattedStartDate ",formattedStartDate)
         console.log("formattedEndDate ",formattedEndDate)
+        console.log(" === cotizador === ",cotizador)
 
         if(cotizador == "dashBoard"){
 
@@ -173,6 +174,7 @@ export const DateRange = ({cotizador,id=''}) => {
             dispatch( startDateGlobalStore({'startDate':formattedStartDate}) );
             dispatch( endDateGlobalStore({'endDate':formattedEndDate}) );
             dispatch( getAllThunksBalanceGeneral(formattedStartDate, formattedEndDate) );
+            dispatch( getGastoTotalesDelPeriodo(formattedStartDate, formattedEndDate) );
 
             //dispatch(getObtenerTotalTarjetas());
             dispatch(getPatrimonioNeto(formattedStartDate, formattedEndDate));
