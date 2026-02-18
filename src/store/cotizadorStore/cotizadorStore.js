@@ -56,6 +56,13 @@ export const cotizadorStore = createSlice({
     clientes        : [],
     tiposDocumentos : [],
     cotizadores     : [],
+    cotizadoresTotalCount: 0,
+    cotizadoresPage: 1,
+    cotizadoresPageSize: 20,
+    cotizadoresActiveFilter: 'default',
+    cotizadoresFilterFechaInicio: null,
+    cotizadoresFilterFechaFin: null,
+    cotizadoresFilterQuery: '',
     tramitesArray   : [],
     cotizadorModulo : '0',
     tramiteModulo   : '0',
@@ -129,12 +136,28 @@ export const cotizadorStore = createSlice({
     listStore:(state, action) => {
       state.cotizadores = action.payload.cotizadores
 
+      if(action.payload.cotizadoresTotalCount !== undefined){
+        state.cotizadoresTotalCount = action.payload.cotizadoresTotalCount
+      }
+      if(action.payload.cotizadoresPage !== undefined){
+        state.cotizadoresPage = action.payload.cotizadoresPage
+      }
+      if(action.payload.cotizadoresPageSize !== undefined){
+        state.cotizadoresPageSize = action.payload.cotizadoresPageSize
+      }
+
       if(action.payload.dateFilter){
         state.dateFilter =  action.payload.dateFilter
       }else{
         state.dateFilter =  action.payload.dateFilter
       }
-      
+
+    },
+    setCotizadoresActiveFilter:(state, action) => {
+      state.cotizadoresActiveFilter = action.payload.activeFilter || 'default';
+      state.cotizadoresFilterFechaInicio = action.payload.fechaInicio || null;
+      state.cotizadoresFilterFechaFin = action.payload.fechaFin || null;
+      state.cotizadoresFilterQuery = action.payload.query || '';
     },
     listStoreUpdate:(state, action) => {
       const updated = action.payload.cotizadores; // tu objeto actualizado (data)
@@ -262,4 +285,4 @@ export const cotizadorStore = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { showStore, listTramitesStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore, listAddStore } = cotizadorStore.actions;
+export const { showStore, listTramitesStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore, listAddStore, setCotizadoresActiveFilter } = cotizadorStore.actions;

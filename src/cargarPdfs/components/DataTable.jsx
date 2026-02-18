@@ -14,7 +14,7 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk, updatePdfThunks, update_cotizador_devolver, getAllCotizadorPdfsThunks, updatePdfModuloThunks  }   from '../../store/cotizadorStore/cotizadorThunks';
+import { showThunk, deleteThunk, updatePdfThunks, update_cotizador_devolver, getAllCotizadorPdfsThunks, getAllFilterDatePdfThunks, updatePdfModuloThunks  }   from '../../store/cotizadorStore/cotizadorThunks';
 
 import { toast, Bounce } from 'react-toastify';
 
@@ -59,8 +59,8 @@ export function DataTable({loggedUser}) {
 
     const dispatch = useDispatch();
     
-    let { cotizadores } = useSelector(state => state.cotizadorStore);
-    
+    let { cotizadores, cotizadoresTotalCount, cotizadoresPage, cotizadoresPageSize, cotizadoresActiveFilter, cotizadoresFilterFechaInicio, cotizadoresFilterFechaFin, cotizadoresFilterQuery } = useSelector(state => state.cotizadorStore);
+
     const [rows, setRows] = useState(cotizadores);
 
 
@@ -354,7 +354,11 @@ export function DataTable({loggedUser}) {
           };
 
           const handleRefreshPdfRequest = (message) => {
-             dispatch( getAllCotizadorPdfsThunks() );
+             if (cotizadoresActiveFilter === 'filter') {
+               dispatch( getAllFilterDatePdfThunks(cotizadoresFilterFechaInicio, cotizadoresFilterFechaFin, cotizadoresFilterQuery, cotizadoresPage, cotizadoresPageSize) );
+             } else {
+               dispatch( getAllCotizadorPdfsThunks(cotizadoresPage, cotizadoresPageSize) );
+             }
           };
 
           const handleRowSelect = (message) => {
@@ -892,7 +896,17 @@ export function DataTable({loggedUser}) {
       navigate(`/tramites/PageShow/${id}`);
     };
     
-    const paginationModel = { page: 0, pageSize: 15 };
+    const handlePaginationModelChange = (model) => {
+      // MUI DataGrid usa page 0-indexed, el backend usa 1-indexed
+      const newPage = model.page + 1;
+      const newPageSize = model.pageSize;
+
+      if (cotizadoresActiveFilter === 'filter') {
+        dispatch(getAllFilterDatePdfThunks(cotizadoresFilterFechaInicio, cotizadoresFilterFechaFin, cotizadoresFilterQuery, newPage, newPageSize));
+      } else {
+        dispatch(getAllCotizadorPdfsThunks(newPage, newPageSize));
+      }
+    };
 
   // Función para manejar la edición
   const handleEdit = async (row) => {
@@ -944,11 +958,12 @@ export function DataTable({loggedUser}) {
      <DataGrid
         rows={rows}
         columns={columns}
-        initialState={{
-        pagination: { paginationModel: { pageSize: 100, page: 0 } },
-        }}
+        paginationMode="server"
+        rowCount={cotizadoresTotalCount}
+        paginationModel={{ page: cotizadoresPage - 1, pageSize: cotizadoresPageSize }}
+        onPaginationModelChange={handlePaginationModelChange}
         onRowClick={(params) => handleRowClickWs(params.id)}
-        pageSizeOptions={[5, 10, 25, 50, 100]}
+        pageSizeOptions={[20, 50, 100]}
         sx={{
         border: 0,
         "& .even-row": { backgroundColor: "#f5f5f5" },

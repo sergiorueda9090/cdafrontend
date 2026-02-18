@@ -4,7 +4,7 @@ import { loginFail } from "../authStore/authStore.js";
 import { showThunk as precioClientesShow } from "../clientesStore/clientesThunks.js";
 import { showBackDropStore, hideBackDropStore,openModalShared, closeModalShared, setAlert } from "../globalStore/globalStore.js";
 import { URL } from "../../constants.js/constantGlogal.js";
-import { showStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore, listTramitesStore, listAddStore  } from "./cotizadorStore.js";
+import { showStore, listStore, resetFormularioStore, handleFormStore, listStoreUpdate, listRemoveStore, listTramitesStore, listAddStore, setCotizadoresActiveFilter  } from "./cotizadorStore.js";
 import { handleFormColumnsConfirmacionPrecioStore } from "../proveedoresStore/proveedoresStore.js";
 import { getAllThunks as getAllThunksProveedores }   from "../proveedoresStore/proveedoresThunks.js";
 
@@ -1120,45 +1120,46 @@ export const getAllCotizadorConfirmacionPreciosIdThunks = (id) => {
     };
 };
 
-export const getAllCotizadorPdfsThunks = () => {
+export const getAllCotizadorPdfsThunks = (page = 1, pageSize = 20) => {
 
     return async (dispatch, getState) => {
-       
+
         //await dispatch(showBackDropStore());
-        
+
+        await dispatch(setCotizadoresActiveFilter({ activeFilter: 'default' }));
+
         const {authStore} = getState();
         const token = authStore.token
 
         // Iniciar la carga
         const options = {
             method: 'GET',
-            url: `${ URL}/cotizador/get_cotizadores_pdfs/api`,
+            url: `${ URL}/cotizador/get_cotizadores_pdfs/api/?page=${page}&page_size=${pageSize}`,
             headers: {
               Authorization: `Bearer ${token}`
             }
           };
-          
+
 
         try {
             // Hacer la solicitud
             const response = await axios.request(options);
-        
+
             if(response.status === 200){
 
                 let data = response.data;
-                
-                if(data.length > 0){
-                    
-                    await dispatch(listStore({'cotizadores':data}))
 
-                    //await dispatch(hideBackDropStore());
+                const results = data.results || [];
+                const count = data.count || 0;
 
-                }else{
+                await dispatch(listStore({
+                    'cotizadores': results,
+                    'cotizadoresTotalCount': count,
+                    'cotizadoresPage': page,
+                    'cotizadoresPageSize': pageSize,
+                }))
 
-                    await dispatch(listStore({'cotizadores':[]}))
-
-                    //await dispatch(hideBackDropStore());
-                }
+                //await dispatch(hideBackDropStore());
 
             }else{
 
@@ -1168,14 +1169,14 @@ export const getAllCotizadorPdfsThunks = () => {
 
 
         } catch (error) {
-            
+
             //await dispatch(hideBackDropStore());
 
             // Manejar errores
             console.error(error);
-            
+
             //await dispatch ( loginFail() );
-            
+
             //await dispatch( hideBackDropStore() );
 
         }
@@ -1269,11 +1270,18 @@ export const search_cotizadores = (searchTerm) => {
 };
 
 
-export const getAllFilterDatePdfThunks = (fechaInicio, fechaFin, query = "") => {
+export const getAllFilterDatePdfThunks = (fechaInicio, fechaFin, query = "", page = 1, pageSize = 20) => {
 
     return async (dispatch, getState) => {
 
         await dispatch(showBackDropStore());
+
+        await dispatch(setCotizadoresActiveFilter({
+            activeFilter: 'filter',
+            fechaInicio: fechaInicio || null,
+            fechaFin: fechaFin || null,
+            query: query || '',
+        }));
 
         const { authStore } = getState();
         const token = authStore.token;
@@ -1285,11 +1293,10 @@ export const getAllFilterDatePdfThunks = (fechaInicio, fechaFin, query = "") => 
         if (fechaInicio) params.append("fechaInicio", fechaInicio);
         if (fechaFin)    params.append("fechaFin", fechaFin);
         if (query.trim()) params.append("q", query.trim());
+        params.append("page", page);
+        params.append("page_size", pageSize);
 
-        // Agregar parámetros si existen
-        if ([...params].length > 0) {
-            url += `?${params.toString()}`;
-        }
+        url += `?${params.toString()}`;
 
         const options = {
             method: "GET",
@@ -1306,18 +1313,17 @@ export const getAllFilterDatePdfThunks = (fechaInicio, fechaFin, query = "") => 
 
                 let data = response.data;
 
-                if(data.length > 0){
-                    
-                    await dispatch(listStore({'cotizadores':data}))
+                const results = data.results || [];
+                const count = data.count || 0;
 
-                    await dispatch(hideBackDropStore());
+                await dispatch(listStore({
+                    'cotizadores': results,
+                    'cotizadoresTotalCount': count,
+                    'cotizadoresPage': page,
+                    'cotizadoresPageSize': pageSize,
+                }))
 
-                }else{
-
-                    await dispatch(listStore({'cotizadores':[]}))
-
-                    await dispatch(hideBackDropStore());
-                }
+                await dispatch(hideBackDropStore());
 
             }else{
 
