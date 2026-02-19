@@ -5,7 +5,7 @@ import { listStore } from "./utilidadStore.js";
 
 const paramtersURLId = 'utilidad/api/utilidades/';
 
-export const getAllThunks = (proveedorId, fechaInicio, fechaFin, search) => {
+export const getAllThunks = (proveedorId, fechaInicio, fechaFin, search, page = 1, pageSize = 50) => {
 
     return async (dispatch, getState) => {
 
@@ -19,8 +19,11 @@ export const getAllThunks = (proveedorId, fechaInicio, fechaFin, search) => {
 
         if (proveedorId) queryParams.append('proveedorId', proveedorId);
         if (fechaInicio) queryParams.append('fechaInicio', fechaInicio);
-        if (fechaFin) queryParams.append('fechaFin', fechaFin);
-        if (search) queryParams.append('search', search); // <-- Agregado el search
+        if (fechaFin)    queryParams.append('fechaFin', fechaFin);
+        if (search)      queryParams.append('search', search);
+
+        queryParams.append('page',      page);
+        queryParams.append('page_size', pageSize);
 
         const options = {
             method: 'GET',
@@ -37,15 +40,22 @@ export const getAllThunks = (proveedorId, fechaInicio, fechaFin, search) => {
 
             if (response.status === 200) {
                 const data = response.data;
-                console.log("data ",data)
-                await dispatch(listStore({ utilidades: data.data, total: data.total }));
+                await dispatch(listStore({
+                    utilidades  : data.data,
+                    total       : data.total,
+                    count       : data.count,
+                    page,
+                    pageSize,
+                    search      : search      || '',
+                    fechaInicio : fechaInicio || '',
+                    fechaFin    : fechaFin    || '',
+                }));
             } else {
-                await dispatch(listStore({ utilidades: [] }));
+                await dispatch(listStore({ utilidades: [], total: 0, count: 0, page: 1, pageSize }));
             }
 
         } catch (error) {
             // console.error(error);
-            // await dispatch(loginFail());
         } finally {
             await dispatch(hideBackDropStore());
         }

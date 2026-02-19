@@ -5,13 +5,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Box, Chip, Typography } from "@mui/material";
 import { FilterData } from '../../cotizador/components/FilterData';
 import { DateRange } from '../../cotizador/components/DateRange';
+import { getAllThunks } from '../../store/utilidadStore/utilidadStoreThunks';
 
 export function DataTable() {
-  
+
     const dispatch = useDispatch();
-    
-    let { firchaproveedor, id:idProveedor }    = useSelector(state => state.fichaProveedoresStore);
-    let { utilidades, total }                         = useSelector(state => state.utilidadStore);
+
+    let { firchaproveedor, id:idProveedor }                             = useSelector(state => state.fichaProveedoresStore);
+    let { utilidades, total, count, page, pageSize, search, fechaInicio, fechaFin } = useSelector(state => state.utilidadStore);
+
+    const handlePaginationChange = (newModel) => {
+        // MUI DataGrid usa página base-0; el backend usa base-1
+        dispatch(getAllThunks('', fechaInicio, fechaFin, search, newModel.page + 1, newModel.pageSize));
+    };
 
     const columns = [
       { field: 'id',              headerName: 'ID',                    width: 100 },
@@ -55,9 +61,6 @@ export function DataTable() {
     ];
     
     
-  const paginationModel = { page: 0, pageSize: 15 };
-
-
   return (
     <Box sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
 
@@ -107,10 +110,13 @@ export function DataTable() {
         </Paper>
 
       <DataGrid
-        rows={ utilidades }
+        rows={ utilidades ?? [] }
         columns={ columns }
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
+        paginationMode="server"
+        rowCount={ count }
+        paginationModel={{ page: page - 1, pageSize }}
+        onPaginationModelChange={ handlePaginationChange }
+        pageSizeOptions={[50, 100, 200]}
         rowHeight={60}
         //checkboxSelection
         sx={{
