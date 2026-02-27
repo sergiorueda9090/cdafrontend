@@ -19,6 +19,11 @@ export const recepcionPagoStore = createSlice({
     observacion             : 0,
     cliente_id              : '',
     recepcionPagos          : [],
+    count                   : 0,
+    page                    : 1,
+    pageSize                : 20,
+    fechaInicio             : '',
+    fechaFin                : '',
   },
   reducers: {
     showStore:(state,action) => {
@@ -30,7 +35,12 @@ export const recepcionPagoStore = createSlice({
       state.cliente_id              = action.payload.cliente_id;
     },
     listStore:(state, action) => {
-      state.recepcionPagos = action.payload.recepcionPagos
+      state.recepcionPagos = action.payload.recepcionPagos;
+      if (action.payload.count    !== undefined) state.count      = action.payload.count;
+      if (action.payload.page     !== undefined) state.page       = action.payload.page;
+      if (action.payload.pageSize !== undefined) state.pageSize   = action.payload.pageSize;
+      if (action.payload.fechaInicio !== undefined) state.fechaInicio = action.payload.fechaInicio;
+      if (action.payload.fechaFin    !== undefined) state.fechaFin    = action.payload.fechaFin;
     },
     resetFormularioStore:(state) => {
       state.id                      = '';
@@ -39,6 +49,11 @@ export const recepcionPagoStore = createSlice({
       state.observacion             = '';
       state.cliente_id              = '';
       state.valor                   = '';
+      state.count                   = 0;
+      state.page                    = 1;
+      state.pageSize                = 20;
+      state.fechaInicio             = '';
+      state.fechaFin                = '';
     },
     handleFormStore:(state , action) => {
       const { name, value } = action.payload; // Obtener el nombre y el valor

@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
-import { showThunk, deleteThunk } from '../../store/recepcionPagoStore/recepcionPagoStoreThunks';
+import { showThunk, deleteThunk, getAllThunks, getAllThunksFilter } from '../../store/recepcionPagoStore/recepcionPagoStoreThunks';
 import { toast } from 'react-toastify';
 import emptyDataTable from "../../assets/images/emptyDataTable.png"
 import { Box } from '@mui/material';
@@ -19,7 +19,7 @@ export function DataTable() {
 
     const dispatch = useDispatch();
     
-    let { recepcionPagos }    = useSelector(state => state.recepcionPagoStore);
+    let { recepcionPagos, count, page, pageSize, fechaInicio, fechaFin } = useSelector(state => state.recepcionPagoStore);
 
     const NoRowsOverlay = () => (
       <div style={{ 
@@ -243,7 +243,15 @@ export function DataTable() {
       closeToast(); // Cerrar la notificación
     };
     
-    const paginationModel = { page: 0, pageSize: 15 };
+  const handlePaginationChange = (newModel) => {
+    const newPage     = newModel.page + 1;
+    const newPageSize = newModel.pageSize;
+    if (fechaInicio) {
+      dispatch(getAllThunksFilter(fechaInicio, fechaFin, newPage, newPageSize));
+    } else {
+      dispatch(getAllThunks(newPage, newPageSize));
+    }
+  };
 
   // Función para manejar la edición
   const handleEdit = async (row) => {
@@ -275,8 +283,11 @@ export function DataTable() {
       <DataGrid
         rows={recepcionPagos}
         columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10, 15]}
+        paginationMode="server"
+        rowCount={count}
+        paginationModel={{ page: page - 1, pageSize }}
+        onPaginationModelChange={handlePaginationChange}
+        pageSizeOptions={[20, 50, 100]}
         sx={{
           border: 0,
           minHeight: { xs: 400, sm: 500, md: 600 },

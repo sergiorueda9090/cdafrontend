@@ -8,45 +8,41 @@ import { showStore, listStore, resetFormularioStore, handleFormStore  } from "./
 // Función asincrónica para obtener los Pokemons
 const parametersURL = 'recepcionpago/api/';
 
-export const getAllThunks = () => {
+export const getAllThunks = (page = 1, pageSize = 20) => {
 
     return async (dispatch, getState) => {
-        
+
         await dispatch(showBackDropStore());
-        
+
         const {authStore} = getState();
         const token = authStore.token
 
-        // Iniciar la carga
         const options = {
             method: 'GET',
-            url: `${ URL}/${parametersURL}recepciones/`,
+            url: `${ URL}/${parametersURL}recepciones/?page=${page}&page_size=${pageSize}`,
             headers: {
               Authorization: `Bearer ${token}`
             }
           };
-          
+
 
         try {
-            // Hacer la solicitud
             const response = await axios.request(options);
-        
+
             if(response.status === 200){
 
-                let data = response.data;
+                const data = response.data;
 
-                if(data.length > 0){
-                    
-                    await dispatch(listStore({'recepcionPagos':data}))
+                await dispatch(listStore({
+                    recepcionPagos : data.data ?? [],
+                    count          : data.count ?? 0,
+                    page,
+                    pageSize,
+                    fechaInicio    : '',
+                    fechaFin       : '',
+                }));
 
-                    await dispatch(hideBackDropStore());
-
-                }else{
-
-                    await dispatch(listStore({'recepcionPagos':[]}))
-
-                    await dispatch(hideBackDropStore());
-                }
+                await dispatch(hideBackDropStore());
 
             }else{
 
@@ -56,15 +52,9 @@ export const getAllThunks = () => {
 
 
         } catch (error) {
-            
-            await dispatch(hideBackDropStore());
 
-            // Manejar errores
+            await dispatch(hideBackDropStore());
             console.error(error);
-            
-            //await dispatch ( loginFail() );
-            
-            await dispatch( hideBackDropStore() );
 
         }
     };
@@ -322,24 +312,21 @@ export const handleFormStoreThunk = (data) => {
     };
 };
 
-export const getAllThunksFilter = (fechaInicio, fechaFin) => {
+export const getAllThunksFilter = (fechaInicio, fechaFin, page = 1, pageSize = 20) => {
 
     return async (dispatch, getState) => {
         await dispatch(showBackDropStore());
-        
+
         const { authStore } = getState();
         const token         = authStore.token;
 
-        // Construir la URL con los parámetros de fecha
-        let url = `${ URL}/${parametersURL}recepciones/listar_recepciones_pago_filtradas/`;
+        const params = new URLSearchParams();
+        if (fechaInicio) params.append("fechaInicio", fechaInicio);
+        if (fechaFin)    params.append("fechaFin", fechaFin);
+        params.append("page", page);
+        params.append("page_size", pageSize);
 
-        // Agregar las fechas a los parámetros de la URL si existen
-        if (fechaInicio || fechaFin) {
-            const params = new URLSearchParams();
-            if (fechaInicio) params.append("fechaInicio", fechaInicio);
-            if (fechaFin) params.append("fechaFin", fechaFin);
-            url += `?${params.toString()}`;
-        }
+        const url = `${ URL}/${parametersURL}recepciones/listar_recepciones_pago_filtradas/?${params.toString()}`;
 
         const options = {
             method: "GET",
@@ -350,22 +337,24 @@ export const getAllThunksFilter = (fechaInicio, fechaFin) => {
         };
 
         try {
-            // Hacer la solicitud
             const response = await axios.request(options);
 
             if (response.status === 200) {
-                let data = response.data;
-                // Si hay datos, actualizar el store
-                await dispatch(listStore({'recepcionPagos':data}))
-
-                await dispatch(hideBackDropStore());
+                const data = response.data;
+                await dispatch(listStore({
+                    recepcionPagos : data.data ?? [],
+                    count          : data.count ?? 0,
+                    page,
+                    pageSize,
+                    fechaInicio,
+                    fechaFin,
+                }));
             }
 
         } catch (error) {
-            console.error("Error al obtener devoluciones:", error);
+            console.error("Error al obtener recepciones filtradas:", error);
         }
 
-        // Ocultar el loader sin importar si hubo éxito o error
         await dispatch(hideBackDropStore());
     };
 };
